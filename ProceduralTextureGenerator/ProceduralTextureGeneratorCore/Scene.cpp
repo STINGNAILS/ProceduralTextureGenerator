@@ -4,13 +4,17 @@
 
 Scene::Scene()
 {
+	view = nullptr;
+	camera = nullptr;
+	environment = nullptr;
+
 	isInitialized = false;
 }
 
 
 Scene::~Scene()
 {
-
+	Release();
 }
 
 
@@ -90,8 +94,9 @@ void Scene::Render()
 
 void Scene::Release()
 {
-	for(auto it = renderableObjects.begin(); it != renderableObjects.end(); it++)
-	{
-		it->second->Release();
-	}
+	view = nullptr;
+	camera = nullptr;
+	environment = nullptr;
+
+	renderableObjects.clear();
 }

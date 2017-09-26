@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProceduralTextureGenerator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="840" Width="1240" Closed="OnExit">
+        Title="Procedural Texture Generator" Height="840" Width="1240" Closed="OnExit">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="469*"/>

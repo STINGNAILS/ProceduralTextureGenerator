@@ -7,6 +7,8 @@ Camera::Camera()
 {
 	position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	velocity = 1.0f;
+
+	cameraConstantBuffer = nullptr;
 }
 
 
@@ -21,7 +23,7 @@ HRESULT Camera::Init(shared_ptr<DirectXDevice> device_)
 	HRESULT hr = S_OK;
 
 	device = device_;
-
+	
 	D3D11_BUFFER_DESC bufferDesc;
 	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;

@@ -8,6 +8,7 @@ class DirectXDevice
 
 	D3D_DRIVER_TYPE driverType;
 	D3D_FEATURE_LEVEL featureLevel;
+
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 

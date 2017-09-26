@@ -19,9 +19,12 @@ SamplerState basicSampler
 };
 
 
-cbuffer cbCubeMap : register(b0)
+cbuffer cbCamera : register(b0)
 {
 	float4x4 viewProj;
+	float4x4 viewProjCentered;
+	float3 cameraPosW;
+	int aligner1;
 };
 
 
@@ -32,7 +35,7 @@ VertexOut VS(VertexIn vertexIn)
 {
 	VertexOut vertexOut;
 
-	vertexOut.posH = mul(float4(vertexIn.posL, 1.0f), viewProj).xyww;
+	vertexOut.posH = mul(float4(vertexIn.posL, 1.0f), viewProjCentered).xyww;
 	vertexOut.posW = vertexIn.posL;
 
 	return vertexOut;

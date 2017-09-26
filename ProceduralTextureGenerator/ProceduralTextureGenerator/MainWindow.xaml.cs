@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,68 +13,61 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Forms;
 using System.Windows.Threading;
 
 namespace ProceduralTextureGenerator
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        private DateTime timePrevious;
-        private DateTime timeCurrent;
-
-        private System.Drawing.Point mouseCoordsPrevious;
-        private System.Drawing.Point mouseCoordsCurrent;
+	/// <summary>
+	/// Логика взаимодействия для MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
+	{
+		private Stopwatch frameTime;
+		private TimeSpan lastRenderTime;
 
 
-        public MainWindow()
-        {
-            InitializeComponent();
+		public MainWindow()
+		{
+			InitializeComponent();
 
-            CoreDll.Init();
+			CoreDll.Init();
 
-            CompositionTarget.Rendering += Update;
-            
-            //graphView.Init();
-            //textureView.Init();
+			CompositionTarget.Rendering += Update;
 
-            mouseCoordsPrevious = System.Windows.Forms.Cursor.Position;
-
-            timePrevious = DateTime.Now;
-        }
+			frameTime = new Stopwatch();
+			frameTime.Start();
+		}
 
 
-        private void Update(object sender, EventArgs e)
-        {
-            UpdateControls();
-            CoreDll.Render();
-        }
+		private void Update(object sender, EventArgs e)
+		{
+			RenderingEventArgs args = (RenderingEventArgs)e;
+
+			if(this.lastRenderTime != args.RenderingTime)
+			{
+				UpdateControls();
+				objectView.Render();
+				this.lastRenderTime = args.RenderingTime;
+			}
+		}
 
 
-        private void UpdateControls()
-        {
-            mouseCoordsCurrent = System.Windows.Forms.Cursor.Position;
-            timeCurrent = DateTime.Now;
+		private void UpdateControls()
+		{
+			frameTime.Stop();
+			float dt = frameTime.ElapsedMilliseconds / 1000.0f;
 
-            float dx = mouseCoordsCurrent.X - mouseCoordsPrevious.X;
-            float dy = mouseCoordsCurrent.Y - mouseCoordsPrevious.Y;
-            float dt = (timeCurrent - timePrevious).Ticks / 10000000.0f;
+			objectView.Update(dt);
+			//graphView.OnMouseMove(dx, dy, dt);
+			//textureView.OnMouseMove(dx, dy, dt);
 
-            objectView.OnMouseMove(dx, dy, dt);
-            //graphView.OnMouseMove(dx, dy, dt);
-            //textureView.OnMouseMove(dx, dy, dt);
-
-            mouseCoordsPrevious = mouseCoordsCurrent;
-            timePrevious = timeCurrent;
-        }
+			frameTime.Restart();
+		}
 
 
-        private void OnExit(object sender, EventArgs e)
-        {
-            CoreDll.Release();
-        }
-    }
+		private void OnExit(object sender, EventArgs e)
+		{
+			CoreDll.Release();
+		}
+	}
 }

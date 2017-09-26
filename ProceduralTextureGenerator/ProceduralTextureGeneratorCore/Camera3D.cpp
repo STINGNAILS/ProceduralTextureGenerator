@@ -205,6 +205,9 @@ void Camera3D::Navigate(float dx, float dy, float dt)
 
 		XMStoreFloat3(&position, XMVectorMultiplyAdd(distanceV, -yAxis, positionV));
 	}
+
+	CalculateTransform();
+	CalculateView();
 }
 
 

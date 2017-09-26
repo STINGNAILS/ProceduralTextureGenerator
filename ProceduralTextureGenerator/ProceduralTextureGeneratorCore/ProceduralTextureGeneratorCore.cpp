@@ -24,8 +24,6 @@ using namespace std;
 
 shared_ptr<DirectXDevice> device;
 
-map<int, shared_ptr<DirectXView>> views;
-map<int, shared_ptr<Camera>> cameras;
 map<int, shared_ptr<Scene>> scenes;
 
 MapGenerator mapGenerator;
@@ -70,7 +68,7 @@ CPP_API void Init()
 	scenes[1]->SetEnvironment(environment1);
 
 
-	shared_ptr<Cube> cube1(new Cube());
+	shared_ptr<Cube> cube1 = make_shared<Cube>();
 	cube1->Init(device);
 
 	vector<float> baseColorMap;
@@ -98,25 +96,21 @@ CPP_API void Init()
 }
 
 
-CPP_API void BindView(int viewIndex, int hwnd)
+CPP_API void BindView(int viewIndex)
 {
-	views[viewIndex] = make_shared<DirectXView>();
-	views[viewIndex]->Init((HWND)hwnd, device);
+	shared_ptr<DirectXView> view = make_shared<DirectXView>();
 
-	scenes[viewIndex]->SetView(views[viewIndex]);
+	scenes[viewIndex]->SetView(view);
 }
 
 
-CPP_API void ResizeView(int viewIndex, int hwnd)
+CPP_API void OverrideView(int viewIndex, void *viewResource)
 {
-	views[viewIndex]->Resize((HWND)hwnd);
+	shared_ptr<DirectXView> view = scenes[viewIndex]->GetView();
+	shared_ptr<Camera> camera = scenes[viewIndex]->GetCamera();
 
-	RECT rc;
-	GetClientRect((HWND) hwnd, &rc);
-	UINT width = rc.right - rc.left;
-	UINT height = rc.bottom - rc.top;
-
-	scenes[viewIndex]->GetCamera()->Resize(width, height);
+	view->Init(device, viewResource);
+	camera->Resize(view->GetWidth(), view->GetHeight());
 }
 
 
@@ -132,21 +126,18 @@ CPP_API void Zoom(int viewIndex, float dz)
 }
 
 
-CPP_API void Render()
+CPP_API void Render(int viewIndex)
 {
-	for(auto it = scenes.begin(); it != scenes.end(); it++)
-	{
-		it->second->Render();
-	}
+	scenes[viewIndex]->Render();
 }
 
 
 CPP_API void Release()
 {
-	for(auto it = views.begin(); it != views.end(); it++)
-	{
-		it->second->Release();
-	}
+	scenes.clear();
 
-	device->Release();
+	//ID3D11Debug* debug = 0;
+	//device->GetDevice()->QueryInterface(IID_ID3D11Debug, (void**) &debug);
+	device = nullptr;
+	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 }
