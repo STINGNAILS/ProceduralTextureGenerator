@@ -44,7 +44,7 @@ int RadianceMapRenderer::MipLevelsNum(int size)
 		}
 		default:
 		{
-			return 1;
+			return 2;
 		}
 	}
 }

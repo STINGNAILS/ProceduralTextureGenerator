@@ -88,8 +88,10 @@
     <ClInclude Include="Scene.h">
       <Filter>Graphics\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Camera2D.h" />
     <ClInclude Include="Camera3D.h">
+      <Filter>Graphics\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera2D.h">
       <Filter>Graphics\Camera</Filter>
     </ClInclude>
   </ItemGroup>
@@ -142,8 +144,10 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Graphics\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="Camera3D.cpp">
+      <Filter>Graphics\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera2D.cpp">
       <Filter>Graphics\Camera</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,7 +20,7 @@ Cube::Cube()
 
 Cube::~Cube()
 {
-
+	Release();
 }
 
 

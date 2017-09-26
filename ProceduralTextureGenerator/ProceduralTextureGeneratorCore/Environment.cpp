@@ -21,7 +21,7 @@ Environment::Environment()
 
 Environment::~Environment()
 {
-
+	Release();
 }
 
 
@@ -300,9 +300,9 @@ HRESULT Environment::Init(shared_ptr<DirectXDevice> device_, LPCWSTR fileName)
 
 	radianceMapRenderer.Release();
 	brdfLUTRenderer.Release();
+	resource->Release();
 	radianceMap->Release();
 	brdfLUT->Release();
-	resource->Release();
 
 	cubeMapIsInitialized = true;
 
@@ -327,6 +327,9 @@ void Environment::Prepare()
 
 	device->GetPainter()->VSSetConstantBuffers(1, 1, &environmentConstantBuffer);
 	device->GetPainter()->PSSetConstantBuffers(1, 1, &environmentConstantBuffer);
+
+	device->GetPainter()->PSSetShaderResources(0, 1, &radianceMapSRV);
+	device->GetPainter()->PSSetShaderResources(1, 1, &brdfLUTSRV);
 }
 
 
@@ -342,10 +345,8 @@ void Environment::Render()
 	device->GetPainter()->RSSetState(basicRasterizerState);
 
 	device->GetPainter()->VSSetShader(vertexShader, 0, 0);
-	device->GetPainter()->VSSetConstantBuffers(0, 1, &environmentConstantBuffer);
 
 	device->GetPainter()->PSSetShader(pixelShader, 0, 0);
-	device->GetPainter()->PSSetConstantBuffers(0, 1, &environmentConstantBuffer);
 	device->GetPainter()->PSSetShaderResources(0, 1, &cubeMapSRV);
 
 	device->GetPainter()->Draw(36, 0);

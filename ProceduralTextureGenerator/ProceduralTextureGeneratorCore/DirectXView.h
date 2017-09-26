@@ -11,12 +11,15 @@ class DirectXView
 {
 	private:
 
+	bool isInitialized;
+
 	shared_ptr<DirectXDevice> device;
 
-	IDXGISwapChain *swapChain;
+	ID3D11Texture2D *viewBuffer;
+	ID3D11Texture2D *depthStencilBuffer;
 	ID3D11RenderTargetView *renderTargetView;
 	ID3D11DepthStencilView *depthStencilView;
-	ID3D11Texture2D *depthStencilBuffer;
+	ID3D11DepthStencilState *depthStencilState;
 
 	D3D11_VIEWPORT viewport;
 
@@ -25,8 +28,10 @@ class DirectXView
 	DirectXView();
 	~DirectXView();
 
-	HRESULT Init(HWND hwnd, shared_ptr<DirectXDevice> device_);
-	HRESULT Resize(HWND hwnd);
+	HRESULT Init(shared_ptr<DirectXDevice> device_, void *viewResource);
+
+	UINT GetWidth();
+	UINT GetHeight();
 
 	void BeginRender();
 	void FinishRender();

@@ -5,14 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ProceduralTextureGenerator"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" IsHitTestVisible="True" Background="Transparent">
+             d:DesignHeight="300" d:DesignWidth="300" IsHitTestVisible="True" Background="Transparent" Loaded="OnLoaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <WindowsFormsHost Background="Transparent" Grid.Row="1" MouseDown="OnMouseDown" SizeChanged="OnSizeChanged" MouseUp="OnMouseUp">
+        <ContentControl Grid.RowSpan="2">
             <local:View x:Name="view"/>
-        </WindowsFormsHost>
+        </ContentControl>
     </Grid>
 </UserControl>

@@ -1,32 +1,16 @@
-﻿  stdafx.cpp
-  BRDFLUTRenderer.cpp
-  Camera.cpp
-  Camera2D.cpp
-Camera2D.cpp(66): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-  Camera3D.cpp
-  Cube.cpp
+﻿  Camera3D.cpp
   DirectXDevice.cpp
   DirectXView.cpp
+DirectXView.cpp(130): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
+DirectXView.cpp(136): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
   Environment.cpp
-  GeometryHelper.cpp
-  MapGenerator.cpp
-MapGenerator.cpp(67): warning C4018: '<': signed/unsigned mismatch
-MapGenerator.cpp(81): warning C4018: '<': signed/unsigned mismatch
-MapGenerator.cpp(242): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-MapGenerator.cpp(357): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   ProceduralTextureGeneratorCore.cpp
-ProceduralTextureGeneratorCore.cpp(119): warning C4244: 'argument': conversion from 'UINT' to 'float', possible loss of data
-  RadianceMapRenderer.cpp
-  RenderableObject.cpp
-  RNG.cpp
-RNG.cpp(8): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+ProceduralTextureGeneratorCore.cpp(113): warning C4244: 'argument': conversion from 'UINT' to 'float', possible loss of data
   Scene.cpp
-  ShaderCompiler.cpp
-  dllmain.cpp
      Creating library D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.lib and object D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.exp
   Generating code
-  88 of 1290 functions ( 6.8%) were compiled, the rest were copied from previous compilation.
-    47 functions were new in current compilation
-    52 functions had inline decision re-evaluated but remain unchanged
+  9 of 1136 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    4 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   ProceduralTextureGeneratorCore.vcxproj -> D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.dll

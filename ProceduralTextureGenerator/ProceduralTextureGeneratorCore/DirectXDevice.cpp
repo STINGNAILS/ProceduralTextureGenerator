@@ -7,14 +7,14 @@ DirectXDevice::DirectXDevice()
 	driverType = D3D_DRIVER_TYPE_NULL;
 	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
-	device = NULL;
-	painter = NULL;
+	device = nullptr;
+	painter = nullptr;
 }
 
 
 DirectXDevice::~DirectXDevice()
 {
-
+	Release();
 }
 
 
@@ -34,7 +34,7 @@ HRESULT DirectXDevice::Init()
 {
 	HRESULT hr = S_OK;
 
-	UINT createDeviceFlags = 0;
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -73,6 +73,6 @@ void DirectXDevice::Release()
 {
 	if(painter) painter->ClearState();
 
-	if(device) device->Release();
 	if(painter) painter->Release();
+	if(device) device->Release();
 }

@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\App.xaml
-42139908335
+51886297316
 
-14-575308595
-16-1939419819
-Controls\GraphView.xaml;Controls\TextureView.xaml;MainWindow.xaml;Controls\ObjectView.xaml;
+15-1631371651
+17-1787121461
+Controls\GraphView.xaml;Controls\TextureView.xaml;Controls\View.xaml;MainWindow.xaml;Controls\ObjectView.xaml;
 
-False
+True
 
