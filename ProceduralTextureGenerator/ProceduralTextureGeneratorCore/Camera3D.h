@@ -3,6 +3,9 @@
 #include "Camera.h"
 
 
+const XMVECTOR yAxis = {0.0f, 1.0f, 0.0f, 0.0f};
+
+
 class Camera3D : public Camera
 {
 	private:
@@ -17,8 +20,6 @@ class Camera3D : public Camera
 	XMFLOAT3 front;
 	XMFLOAT3 up;
 	XMFLOAT3 right;
-
-	XMVECTOR yAxis;
 
 	void CalculateTransform();
 	void CalculateView();

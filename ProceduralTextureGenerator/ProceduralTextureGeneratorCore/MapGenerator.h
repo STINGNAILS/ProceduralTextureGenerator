@@ -1,7 +1,9 @@
 #pragma once
 
 
+#include <memory>
 #include "DirectXDependencies.h"
+#include "TextureMemory.h"
 #include "RNG.h"
 
 
@@ -63,7 +65,7 @@ class MapGenerator
 	private:
 
 	int size;
-	vector<float> generatedMap;
+	shared_ptr<TextureMemory> generatedMapPtr;
 
 	RNG rng;
 
@@ -80,12 +82,12 @@ class MapGenerator
 	MapGenerator();
 	~MapGenerator();
 
-	vector<float> PerlinNoise(int _size, int _octaves, int _gridSize, float _persistence);
+	shared_ptr<TextureMemory> PerlinNoise(int _size, int _octaves, int _gridSize, float _persistence);
 
-	vector<float> GenerateAlbedoMap(int size_, XMFLOAT4 value);
-	vector<float> GenerateMetallicMap(int size_, float value);
-	vector<float> GenerateRoughnessMap(int size_, float value);
-	vector<float> GenerateNormalMap(int size_, XMFLOAT4 value);
+	shared_ptr<TextureMemory> GenerateAlbedoMap(int size_, XMFLOAT4 value);
+	shared_ptr<TextureMemory> GenerateMetallicMap(int size_, float value);
+	shared_ptr<TextureMemory> GenerateRoughnessMap(int size_, float value);
+	shared_ptr<TextureMemory> GenerateNormalMap(int size_, XMFLOAT4 value);
 
-	void GenerateRustyIronMaps(int size_, vector<float> &albedoMap, vector<float> &metallicMap, vector<float> &roughnessMap);
+	void GenerateRustyIronMaps(int size_, shared_ptr<TextureMemory> &albedoMapPtr, shared_ptr<TextureMemory> &metallicMapPtr, shared_ptr<TextureMemory> &roughnessMapPtr);
 };

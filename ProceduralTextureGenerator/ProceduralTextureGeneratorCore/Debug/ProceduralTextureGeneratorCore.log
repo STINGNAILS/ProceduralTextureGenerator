@@ -1,4 +1,7 @@
-﻿  ProceduralTextureGeneratorCore.cpp
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(113): warning C4244: 'argument': conversion from 'UINT' to 'float', possible loss of data
+﻿  Camera3D.cpp
+  Generating Code...
+  Compiling...
+  ProceduralTextureGeneratorCore.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(123): warning C4244: 'argument': conversion from 'UINT' to 'float', possible loss of data
+  Generating Code...
   ProceduralTextureGeneratorCore.vcxproj -> D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Debug\ProceduralTextureGeneratorCore.dll
-  ProceduralTextureGeneratorCore.vcxproj -> D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Debug\ProceduralTextureGeneratorCore.pdb (Partial PDB)

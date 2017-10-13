@@ -4,13 +4,9 @@
 #include "DirectXDependencies.h"
 #include "DirectXDevice.h"
 #include "Camera.h"
+#include "DirectXTexture.h"
 #include "RadianceMapRenderer.h"
 #include "BRDFLUTRenderer.h"
-#include "DDSTextureLoader.h"
-
-
-using namespace std;
-using namespace DirectX;
 
 
 struct DirectionalLight
@@ -53,9 +49,10 @@ class Environment
 
 	shared_ptr<DirectXDevice> device;
 
-	ID3D11ShaderResourceView *cubeMapSRV;
-	ID3D11ShaderResourceView *radianceMapSRV;
-	ID3D11ShaderResourceView *brdfLUTSRV;
+	shared_ptr<DirectXTexture> cubeMap;
+	shared_ptr<DirectXTexture> radianceMap;
+	shared_ptr<DirectXTexture> brdfLUT;
+
 	ID3D11InputLayout *inputLayout;
 	ID3D11Buffer *vertexBuffer;
 	ID3D11Buffer *environmentConstantBuffer;
@@ -65,7 +62,7 @@ class Environment
 
 	public:
 
-	Environment();
+	Environment(shared_ptr<DirectXDevice> device_);
 	~Environment();
 
 	int AddDirectionalLight(DirectionalLight dirLight);
@@ -77,7 +74,7 @@ class Environment
 	void RemoveDirectionalLight(int directionalLightNum);
 	void RemovePunctualLight(int punctualLightNum);
 
-	HRESULT Init(shared_ptr<DirectXDevice> device_, LPCWSTR fileName);
+	HRESULT Init(LPCWSTR fileName);
 
 	void Prepare();
 

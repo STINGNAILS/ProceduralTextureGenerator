@@ -3,6 +3,7 @@
 #include <vector>
 #include "DirectXDependencies.h"
 #include "DirectXDevice.h"
+#include "DirectXTexture.h"
 #include "RenderableObject.h"
 #include "Environment.h"
 #include "ShaderCompiler.h"
@@ -19,10 +20,11 @@ class Cube : public RenderableObject
 	bool fxIsInitialized;
 	bool geometryIsInitialized;
 
-	ID3D11ShaderResourceView *baseColorMapSRV;
-	ID3D11ShaderResourceView *metallicMapSRV;
-	ID3D11ShaderResourceView *roughnessMapSRV;
-	ID3D11ShaderResourceView *normalMapSRV;
+	shared_ptr<DirectXTexture> baseColorMap;
+	shared_ptr<DirectXTexture> metallicMap;
+	shared_ptr<DirectXTexture> roughnessMap;
+	shared_ptr<DirectXTexture> normalMap;
+
 	ID3D11InputLayout *inputLayout;
 	ID3D11Buffer *vertexBuffer;
 	ID3D11RasterizerState *basicRasterizerState;
@@ -31,15 +33,15 @@ class Cube : public RenderableObject
 
 	public:
 
-	Cube();
+	Cube(shared_ptr<DirectXDevice> device_);
 	~Cube();
 
-	HRESULT Init(shared_ptr<DirectXDevice> device_);
+	HRESULT Init();
 
-	void SetBaseColorMap(vector<float> &baseColorMap);
-	void SetMetallicMap(vector<float> &metallicMap);
-	void SetRoughnessMap(vector<float> &roughnessMap);
-	void SetNormalMap(vector<float> &normalMap);
+	void SetBaseColorMap(shared_ptr<DirectXTexture> baseColorMap_);
+	void SetMetallicMap(shared_ptr<DirectXTexture> metallicMap_);
+	void SetRoughnessMap(shared_ptr<DirectXTexture> roughnessMap_);
+	void SetNormalMap(shared_ptr<DirectXTexture> normalMap_);
 
 	void Render();
 

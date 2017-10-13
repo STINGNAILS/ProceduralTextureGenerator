@@ -11,10 +11,7 @@ Camera3D::Camera3D()
 
 	rotationPhi = 0.0f;
 	rotationPsi = 0.0f;
-
-	XMFLOAT3 yAxisFLOAT3 = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	yAxis = XMLoadFloat3(&yAxisFLOAT3);
-
+	
 	CalculateTransform();
 	CalculateView();
 }

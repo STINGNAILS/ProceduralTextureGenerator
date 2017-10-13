@@ -94,6 +94,13 @@
     <ClInclude Include="Camera2D.h">
       <Filter>Graphics\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="TextureMemory.h" />
+    <ClInclude Include="DirectXTexture.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXRenderer.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderCompiler.cpp">
@@ -149,6 +156,13 @@
     </ClCompile>
     <ClCompile Include="Camera2D.cpp">
       <Filter>Graphics\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureMemory.cpp" />
+    <ClCompile Include="DirectXTexture.cpp">
+      <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXRenderer.cpp">
+      <Filter>Graphics\DirectX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

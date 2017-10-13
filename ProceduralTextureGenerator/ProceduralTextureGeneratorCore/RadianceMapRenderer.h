@@ -2,11 +2,9 @@
 
 #include <memory>
 #include "DirectXDevice.h"
+#include "DirectXRenderer.h"
+#include "DirectXTexture.h"
 #include "ShaderCompiler.h"
-
-
-using namespace std;
-using namespace DirectX;
 
 
 struct RadianceMapCB
@@ -18,11 +16,9 @@ struct RadianceMapCB
 };
 
 
-class RadianceMapRenderer
+class RadianceMapRenderer : public DirectXRenderer
 {
 	private:
-
-	shared_ptr<DirectXDevice> device;
 
 	ID3D11InputLayout *inputLayout;
 	ID3D11Buffer *vertexBuffer;
@@ -31,16 +27,19 @@ class RadianceMapRenderer
 	ID3D11VertexShader *vertexShader;
 	ID3D11PixelShader *pixelShader;
 
+	int size;
+	shared_ptr<DirectXTexture> environmentMap;
+
 	int MipLevelsNum(int size);
 
 	public:
 
-	RadianceMapRenderer();
+	RadianceMapRenderer(shared_ptr<DirectXDevice> device_);
 	~RadianceMapRenderer();
 
-	HRESULT Init(shared_ptr<DirectXDevice> device_);
+	HRESULT Init(shared_ptr<DirectXTexture> environmentMap_, int size_);
 
-	HRESULT Render(int size, ID3D11ShaderResourceView *environmentMapSRV, ID3D11Texture2D **radianceMap);
+	HRESULT Render(ID3D11Texture2D **radianceMap);
 
 	void Release();
 };

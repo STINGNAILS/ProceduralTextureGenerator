@@ -7,15 +7,18 @@ static Vector2D operator+(Vector2D u, Vector2D v)
 	return Vector2D(u.x + v.x, u.y + v.y);
 }
 
+
 static Vector2D operator-(Vector2D u, Vector2D v)
 {
 	return Vector2D(u.x - v.x, u.y - v.y);
 }
 
+
 static Vector2D operator*(float f, Vector2D v)
 {
 	return Vector2D(v.x * f, v.y * f);
 }
+
 
 static Vector2D operator*(Vector2D v, float f)
 {
@@ -61,26 +64,35 @@ float MapGenerator::Qerp(float x)
 
 void MapGenerator::Normalize()
 {
-	float heightMin = generatedMap[0];
-	float heightMax = generatedMap[0];
+	TextureMemory &generatedMap = *generatedMapPtr.get();
 
-	for(int i = 1; i < generatedMap.size(); i++)
+	float heightMin = generatedMap(0, 0, 0);
+	float heightMax = heightMin;
+
+	for(int i = 0; i < generatedMap.GetSize(); i++)
 	{
-		float height = generatedMap[i];
-		if(height < heightMin)
+		for(int j = 0; j < generatedMap.GetSize(); j++)
 		{
-			heightMin = height;
+			float height = generatedMap(i, j, 0);
+			if(height < heightMin)
+			{
+				heightMin = height;
+			}
+			else if(height > heightMax)
+			{
+				heightMax = height;
+			}
 		}
-		else if(height > heightMax)
-		{
-			heightMax = height;
-		}
+		
 	}
 
 	float dh = heightMax - heightMin;
-	for(int i = 0; i < generatedMap.size(); i++)
+	for(int i = 0; i < generatedMap.GetSize(); i++)
 	{
-		generatedMap[i] = (generatedMap[i] - heightMin) / dh;
+		for(int j = 0; j < generatedMap.GetSize(); j++)
+		{
+			generatedMap(i, j, 0) = (generatedMap(i, j, 0) - heightMin) / dh;
+		}
 	}
 }
 
@@ -102,11 +114,12 @@ Vector2D MapGenerator::GenerateGradient()
 }
 
 
-vector<float> MapGenerator::PerlinNoise(int size_, int octaves_, int gridSize_, float persistence_)
+shared_ptr<TextureMemory> MapGenerator::PerlinNoise(int size_, int octaves_, int gridSize_, float persistence_)
 {
 	size = size_;
 
-	generatedMap = std::vector<float>(size * size, 0.0f);
+	generatedMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	TextureMemory &generatedMap = *generatedMapPtr.get();
 
 	for(int k = 0; k < octaves_; k++)
 	{
@@ -132,7 +145,6 @@ vector<float> MapGenerator::PerlinNoise(int size_, int octaves_, int gridSize_, 
 
 			int zPad0 = zNode * gridSize;
 			int zPad1 = (zNode + 1) * gridSize;
-			int isize = i * size;
 			for(int j = 0; j < size; j++)
 			{
 				float x = (float) j / (size - 1) * (gridSize - 1);
@@ -159,87 +171,108 @@ vector<float> MapGenerator::PerlinNoise(int size_, int octaves_, int gridSize_, 
 				float height2 = Lerp(dot21, dot22, xQerp);
 				float height = Lerp(height1, height2, zQerp);
 
-				generatedMap[isize + j] += height * amplitude;
+				generatedMap(i, j, 0) += height * amplitude;
 			}
 		}
 	}
 
 	Normalize();
 
-	return generatedMap;
+	return generatedMapPtr;
 }
 
 
-vector<float> MapGenerator::GenerateAlbedoMap(int size_, XMFLOAT4 value)
+shared_ptr<TextureMemory> MapGenerator::GenerateAlbedoMap(int size_, XMFLOAT4 value)
 {
-	size = size_ * size_;
-	vector<float> albedoMap(size * 4);
+	shared_ptr<TextureMemory> albedoMapPtr = make_shared<TextureMemory>(COLOR, size_);
+	TextureMemory &albedoMap = *albedoMapPtr.get();
 
 	for(int i = 0; i < size; i++)
 	{
-		albedoMap[i * 4] = value.x;
-		albedoMap[i * 4 + 1] = value.y;
-		albedoMap[i * 4 + 2] = value.z;
-		albedoMap[i * 4 + 3] = value.w;
+		for(int j = 0; j < size; j++)
+		{
+			albedoMap(i, j, 0) = value.x;
+			albedoMap(i, j, 1) = value.y;
+			albedoMap(i, j, 2) = value.z;
+			albedoMap(i, j, 3) = value.w;
+		}
 	}
 
-	return albedoMap;
+	return albedoMapPtr;
 }
 
-vector<float> MapGenerator::GenerateMetallicMap(int size_, float value)
+shared_ptr<TextureMemory> MapGenerator::GenerateMetallicMap(int size_, float value)
 {
-	size = size_ * size_;
-	vector<float> metallicMap(size);
+	shared_ptr<TextureMemory> metallicMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	TextureMemory &metallicMap = *metallicMapPtr.get();
 
 	for(int i = 0; i < size; i++)
 	{
-		metallicMap[i] = value;
+		for(int j = 0; j < size; j++)
+		{
+			metallicMap(i, j, 0) = value;
+		}
 	}
 
-	return metallicMap;
+	return metallicMapPtr;
 }
 
-vector<float> MapGenerator::GenerateRoughnessMap(int size_, float value)
+shared_ptr<TextureMemory> MapGenerator::GenerateRoughnessMap(int size_, float value)
 {
-	size = size_ * size_;
-	vector<float> roughnessMap(size);
+	shared_ptr<TextureMemory> roughnessMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	TextureMemory &roughnessMap = *roughnessMapPtr.get();
 
 	for(int i = 0; i < size; i++)
 	{
-		roughnessMap[i] = value;
+		for(int j = 0; j < size; j++)
+		{
+			roughnessMap(i, j, 0) = value;
+		}
 	}
 
-	return roughnessMap;
+	return roughnessMapPtr;
 }
 
 
-vector<float> MapGenerator::GenerateNormalMap(int size_, XMFLOAT4 value)
+shared_ptr<TextureMemory> MapGenerator::GenerateNormalMap(int size_, XMFLOAT4 value)
 {
-	size = size_ * size_;
-	vector<float> normalMap(size * 4);
+	shared_ptr<TextureMemory> normalMapPtr = make_shared<TextureMemory>(COLOR, size_);
+	TextureMemory &normalMap = *normalMapPtr.get();
 
 	for(int i = 0; i < size; i++)
 	{
-		normalMap[i * 4] = value.x;
-		normalMap[i * 4 + 1] = value.y;
-		normalMap[i * 4 + 2] = value.z;
-		normalMap[i * 4 + 3] = value.w;
+		for(int j = 0; j < size; j++)
+		{
+			normalMap(i, j, 0) = value.x;
+			normalMap(i, j, 1) = value.y;
+			normalMap(i, j, 2) = value.z;
+			normalMap(i, j, 3) = value.w;
+		}
 	}
 
-	return normalMap;
+	return normalMapPtr;
 }
 
 
-void MapGenerator::GenerateRustyIronMaps(int size_, vector<float> &albedoMap, vector<float> &metallicMap, vector<float> &roughnessMap)
+void MapGenerator::GenerateRustyIronMaps(int size_, shared_ptr<TextureMemory> &albedoMapPtr, shared_ptr<TextureMemory> &metallicMapPtr, shared_ptr<TextureMemory> &roughnessMapPtr)
 {
-	albedoMap = vector<float>(4 * size_ * size_);
-	metallicMap = vector<float>(size_ * size_);
-	roughnessMap = vector<float>(size_ * size_);
+	albedoMapPtr = make_shared<TextureMemory>(COLOR, size_);
+	metallicMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	roughnessMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
 
-	vector<float> rustNoise = PerlinNoise(size_, 8, 2, 0.8f);
-	for(int i = 0; i < size_ * size_; i++)
+	TextureMemory &albedoMap = *albedoMapPtr.get();
+	TextureMemory &metallicMap = *metallicMapPtr.get();
+	TextureMemory &roughnessMap = *roughnessMapPtr.get();
+
+	shared_ptr<TextureMemory> rustNoisePtr = PerlinNoise(size_, 8, 2, 0.8f);
+	TextureMemory &rustNoise = *rustNoisePtr.get();
+
+	for(int i = 0; i < size_; i++)
 	{
-		rustNoise[i] = min(max(-1.75 + 2.75 * rustNoise[i], 0.0f), 1.0f);
+		for(int j = 0; j < size_; j++)
+		{
+			rustNoise(i, j, 0) = min(max(-1.75 + 2.75 * rustNoise(i, j, 0), 0.0f), 1.0f);
+		}
 	}
 
 	Gradient gradient[72] =
@@ -318,61 +351,76 @@ void MapGenerator::GenerateRustyIronMaps(int size_, vector<float> &albedoMap, ve
 		Gradient(110, 35, 12, 1.00f)
 	};
 
-	vector<float> gradientMap(4 * size_ * size_);
-	for(int i = 0; i < size_ * size_; i++)
+	shared_ptr<TextureMemory> gradientMapPtr = make_shared<TextureMemory>(COLOR, size_);
+	TextureMemory &gradientMap = *gradientMapPtr.get();
+	for(int i = 0; i < size_; i++)
 	{
-		int gradientIndex = 0;
-		while(gradient[gradientIndex].value < rustNoise[i])
+		for(int j = 0; j < size_; j++)
 		{
-			gradientIndex++;
-		}
+			int gradientIndex = 0;
+			while(gradient[gradientIndex].value < rustNoise(i, j, 0))
+			{
+				gradientIndex++;
+			}
 
-		if(gradientIndex == 0)
-		{
-			gradientMap[4 * i] = gradient[0].color.x;
-			gradientMap[4 * i + 1] = gradient[0].color.y;
-			gradientMap[4 * i + 2] = gradient[0].color.z;
-			gradientMap[4 * i + 3] = gradient[0].color.w;
-		}
-		else if(gradientIndex > 71)
-		{
-			gradientMap[4 * i] = gradient[71].color.x;
-			gradientMap[4 * i + 1] = gradient[71].color.y;
-			gradientMap[4 * i + 2] = gradient[71].color.z;
-			gradientMap[4 * i + 3] = gradient[71].color.w;
-		}
-		else
-		{
-			float k = (gradient[gradientIndex].value - rustNoise[i]) / (gradient[gradientIndex].value - gradient[gradientIndex - 1].value);
+			if(gradientIndex == 0)
+			{
+				gradientMap(i, j, 0) = gradient[0].color.x;
+				gradientMap(i, j, 1) = gradient[0].color.y;
+				gradientMap(i, j, 2) = gradient[0].color.z;
+				gradientMap(i, j, 3) = gradient[0].color.w;
+			}
+			else if(gradientIndex > 71)
+			{
+				gradientMap(i, j, 0) = gradient[71].color.x;
+				gradientMap(i, j, 1) = gradient[71].color.y;
+				gradientMap(i, j, 2) = gradient[71].color.z;
+				gradientMap(i, j, 3) = gradient[71].color.w;
+			}
+			else
+			{
+				float k = (gradient[gradientIndex].value - rustNoise(i, j, 0)) / (gradient[gradientIndex].value - gradient[gradientIndex - 1].value);
 
-			gradientMap[4 * i] = (1 - k) * gradient[gradientIndex - 1].color.x + k * gradient[gradientIndex].color.x;
-			gradientMap[4 * i + 1] = (1 - k) * gradient[gradientIndex - 1].color.y + k * gradient[gradientIndex].color.y;
-			gradientMap[4 * i + 2] = (1 - k) * gradient[gradientIndex - 1].color.z + k * gradient[gradientIndex].color.z;
-			gradientMap[4 * i + 3] = (1 - k) * gradient[gradientIndex - 1].color.w + k * gradient[gradientIndex].color.w;
+				gradientMap(i, j, 0) = (1 - k) * gradient[gradientIndex - 1].color.x + k * gradient[gradientIndex].color.x;
+				gradientMap(i, j, 1) = (1 - k) * gradient[gradientIndex - 1].color.y + k * gradient[gradientIndex].color.y;
+				gradientMap(i, j, 2) = (1 - k) * gradient[gradientIndex - 1].color.z + k * gradient[gradientIndex].color.z;
+				gradientMap(i, j, 3) = (1 - k) * gradient[gradientIndex - 1].color.w + k * gradient[gradientIndex].color.w;
+			}
 		}
 	}
 
-	for(int i = 0; i < size_ * size_; i++)
+	for(int i = 0; i < size_; i++)
 	{
-		float k = pow(rustNoise[i], 0.5);
+		for(int j = 0; j < size_; j++)
+		{
+			float k = pow(rustNoise(i, j, 0), 0.5);
 
-		albedoMap[4 * i] = (1 - k) * 0.7686f + k * gradientMap[4 * i];
-		albedoMap[4 * i + 1] = (1 - k) * 0.7803f + k * gradientMap[4 * i + 1];
-		albedoMap[4 * i + 2] = (1 - k) * 0.7803f + k * gradientMap[4 * i + 2];
-		albedoMap[4 * i + 3] = 1.0f;
+			albedoMap(i, j, 0) = (1 - k) * 0.7686f + k * gradientMap(i, j, 0);
+			albedoMap(i, j, 1) = (1 - k) * 0.7803f + k * gradientMap(i, j, 1);
+			albedoMap(i, j, 2) = (1 - k) * 0.7803f + k * gradientMap(i, j, 2);
+			albedoMap(i, j, 3) = 1.0f;
+		}
 	}
 
-	vector<float> grazeNoise = PerlinNoise(size_, 8, 1, 1.5f);
+	shared_ptr<TextureMemory> grazeNoisePtr = PerlinNoise(size_, 8, 1, 1.5f);
+	TextureMemory &grazeNoise = *grazeNoisePtr.get();
 
-	vector<float> metalRoughness(size_ * size_);
-	for(int i = 0; i < size_ * size_; i++)
+	shared_ptr<TextureMemory> metalRoughnessPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	TextureMemory &metalRoughness = *metalRoughnessPtr.get();;
+	for(int i = 0; i < size_; i++)
 	{
-		metalRoughness[i] = 0.35f + 0.2f * min(max(-3 + 4 * grazeNoise[i], 0.0f), 1.0f);
+		for(int j = 0; j < size_; j++)
+		{
+			metalRoughness(i, j, 0) = 0.35f + 0.2f * min(max(-3 + 4 * grazeNoise(i, j, 0), 0.0f), 1.0f);
+		}
 	}
 
-	for(int i = 0; i < size_ * size_; i++)
+	for(int i = 0; i < size_; i++)
 	{
-		roughnessMap[i] = max(metalRoughness[i], rustNoise[i]);
-		metallicMap[i] = max(1.0f - rustNoise[i], 0.0f);
+		for(int j = 0; j < size_; j++)
+		{
+			roughnessMap(i, j, 0) = max(metalRoughness(i, j, 0), rustNoise(i, j, 0));
+			metallicMap(i, j, 0) = max(1.0f - rustNoise(i, j, 0), 0.0f);
+		}
 	}
 }

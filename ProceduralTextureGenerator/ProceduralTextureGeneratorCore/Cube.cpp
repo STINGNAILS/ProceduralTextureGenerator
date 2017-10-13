@@ -11,8 +11,10 @@ struct CubeVertex
 };
 
 
-Cube::Cube()
+Cube::Cube(shared_ptr<DirectXDevice> device_)
 {
+	device = device_;
+
 	fxIsInitialized = false;
 	geometryIsInitialized = false;
 }
@@ -24,11 +26,9 @@ Cube::~Cube()
 }
 
 
-HRESULT Cube::Init(shared_ptr<DirectXDevice> device_)
+HRESULT Cube::Init()
 {
 	HRESULT hr = S_OK;
-
-	device = device_;
 
 	if(!fxIsInitialized)
 	{
@@ -396,203 +396,27 @@ HRESULT Cube::Init(shared_ptr<DirectXDevice> device_)
 }
 
 
-void Cube::SetBaseColorMap(vector<float> &baseColorMap)
+void Cube::SetBaseColorMap(shared_ptr<DirectXTexture> baseColorMap_)
 {
-	HRESULT hr = S_OK;
-
-	int size = (int)sqrt(baseColorMap.size() / 4);
-
-	D3D11_TEXTURE2D_DESC texDesc;
-	ZeroMemory(&texDesc, sizeof(texDesc));
-	texDesc.Width = size;
-	texDesc.Height = size;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA baseColorData;
-	ZeroMemory(&baseColorData, sizeof(baseColorData));
-	baseColorData.pSysMem = &baseColorMap[0];
-	baseColorData.SysMemPitch = size * sizeof(float) * 4;
-	baseColorData.SysMemSlicePitch = 0;
-	ID3D11Texture2D *baseColorMapTexture = 0;
-
-	hr = device->GetDevice()->CreateTexture2D(&texDesc, &baseColorData, &baseColorMapTexture);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = -1;
-
-	hr = device->GetDevice()->CreateShaderResourceView(baseColorMapTexture, &srvDesc, &baseColorMapSRV);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	baseColorMapTexture->Release();
+	baseColorMap = baseColorMap_;
 }
 
 
-void Cube::SetMetallicMap(vector<float> &metallicMap)
+void Cube::SetMetallicMap(shared_ptr<DirectXTexture> metallicMap_)
 {
-	HRESULT hr = S_OK;
-
-	int size = (int)sqrt(metallicMap.size());
-
-	D3D11_TEXTURE2D_DESC texDesc;
-	ZeroMemory(&texDesc, sizeof(texDesc));
-	texDesc.Width = size;
-	texDesc.Height = size;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA metallicData;
-	ZeroMemory(&metallicData, sizeof(metallicData));
-	metallicData.pSysMem = &metallicMap[0];
-	metallicData.SysMemPitch = size * sizeof(float);
-	metallicData.SysMemSlicePitch = 0;
-	ID3D11Texture2D *metallicMapTexture = 0;
-
-	hr = device->GetDevice()->CreateTexture2D(&texDesc, &metallicData, &metallicMapTexture);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = -1;
-
-	hr = device->GetDevice()->CreateShaderResourceView(metallicMapTexture, &srvDesc, &metallicMapSRV);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	metallicMapTexture->Release();
+	metallicMap = metallicMap_;
 }
 
 
-void Cube::SetRoughnessMap(vector<float> &roughnessMap)
+void Cube::SetRoughnessMap(shared_ptr<DirectXTexture> roughnessMap_)
 {
-	HRESULT hr = S_OK;
-
-	int size = (int) sqrt(roughnessMap.size());
-
-	D3D11_TEXTURE2D_DESC texDesc;
-	ZeroMemory(&texDesc, sizeof(texDesc));
-	texDesc.Width = size;
-	texDesc.Height = size;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32_FLOAT;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA roughnessData;
-	ZeroMemory(&roughnessData, sizeof(roughnessData));
-	roughnessData.pSysMem = &roughnessMap[0];
-	roughnessData.SysMemPitch = size * sizeof(float);
-	roughnessData.SysMemSlicePitch = 0;
-	ID3D11Texture2D *roughnessMapTexture = 0;
-
-	hr = device->GetDevice()->CreateTexture2D(&texDesc, &roughnessData, &roughnessMapTexture);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = -1;
-
-	hr = device->GetDevice()->CreateShaderResourceView(roughnessMapTexture, &srvDesc, &roughnessMapSRV);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	roughnessMapTexture->Release();
+	roughnessMap = roughnessMap_;
 }
 
 
-void Cube::SetNormalMap(vector<float> &normalMap)
+void Cube::SetNormalMap(shared_ptr<DirectXTexture> normalMap_)
 {
-	HRESULT hr = S_OK;
-
-	int size = (int) sqrt(normalMap.size() / 4);
-
-	D3D11_TEXTURE2D_DESC texDesc;
-	ZeroMemory(&texDesc, sizeof(texDesc));
-	texDesc.Width = size;
-	texDesc.Height = size;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA normalData;
-	ZeroMemory(&normalData, sizeof(normalData));
-	normalData.pSysMem = &normalMap[0];
-	normalData.SysMemPitch = size * sizeof(float) * 4;
-	normalData.SysMemSlicePitch = 0;
-	ID3D11Texture2D *normalMapTexture = 0;
-
-	hr = device->GetDevice()->CreateTexture2D(&texDesc, &normalData, &normalMapTexture);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = -1;
-
-	hr = device->GetDevice()->CreateShaderResourceView(normalMapTexture, &srvDesc, &normalMapSRV);
-	if(FAILED(hr))
-	{
-		return;
-	}
-
-	normalMapTexture->Release();
+	normalMap = normalMap_;
 }
 
 
@@ -610,10 +434,11 @@ void Cube::Render()
 	device->GetPainter()->VSSetShader(vertexShader, 0, 0);
 
 	device->GetPainter()->PSSetShader(pixelShader, 0, 0);
-	device->GetPainter()->PSSetShaderResources(2, 1, &baseColorMapSRV);
-	device->GetPainter()->PSSetShaderResources(3, 1, &metallicMapSRV);
-	device->GetPainter()->PSSetShaderResources(4, 1, &roughnessMapSRV);
-	device->GetPainter()->PSSetShaderResources(5, 1, &normalMapSRV);
+
+	baseColorMap->Set(2);
+	metallicMap->Set(3);
+	roughnessMap->Set(4);
+	normalMap->Set(5);
 
 	device->GetPainter()->Draw(36, 0);
 
@@ -641,10 +466,10 @@ void Cube::ReleaseGeometry()
 
 void Cube::ReleaseTextures()
 {
-	if(baseColorMapSRV) baseColorMapSRV->Release();
-	if(metallicMapSRV) metallicMapSRV->Release();
-	if(roughnessMapSRV) roughnessMapSRV->Release();
-	if(normalMapSRV) normalMapSRV->Release();
+	baseColorMap = nullptr;
+	metallicMap = nullptr;
+	roughnessMap = nullptr;
+	normalMap = nullptr;
 }
 
 

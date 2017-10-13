@@ -56,33 +56,43 @@ CPP_API void Init()
 	scenes[1]->SetCamera(camera1);
 
 
-	shared_ptr<Environment> environment1 = make_shared<Environment>();
+	shared_ptr<Environment> environment1 = make_shared<Environment>(device);
 
 	DirectionalLight dirLight1;
 	dirLight1.intensity = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	dirLight1.direction = XMFLOAT4(0.4f, -0.824621f, -0.4f, 0.0f);
 	environment1->AddDirectionalLight(dirLight1);
 
-	environment1->Init(device, L"Cubemap.dds");
+	environment1->Init(L"Cubemap.dds");
 
 	scenes[1]->SetEnvironment(environment1);
 
 
-	shared_ptr<Cube> cube1 = make_shared<Cube>();
-	cube1->Init(device);
+	shared_ptr<Cube> cube1 = make_shared<Cube>(device);
+	cube1->Init();
 
-	vector<float> baseColorMap;
-	vector<float> metallicMap;
-	vector<float> roughnessMap;
-	vector<float> normalMap;
+	shared_ptr<TextureMemory> baseColorMapPtr;
+	shared_ptr<TextureMemory> metallicMapPtr;
+	shared_ptr<TextureMemory> roughnessMapPtr;
+	shared_ptr<TextureMemory> normalMapPtr;
 
-	mapGenerator.GenerateRustyIronMaps(1024, baseColorMap, metallicMap, roughnessMap);
-	normalMap = mapGenerator.GenerateNormalMap(1024, XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f));
+	mapGenerator.GenerateRustyIronMaps(2048, baseColorMapPtr, metallicMapPtr, roughnessMapPtr);
+	normalMapPtr = mapGenerator.GenerateNormalMap(2048, XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f));
 
-	cube1->SetBaseColorMap(baseColorMap);
-	cube1->SetMetallicMap(metallicMap);
-	cube1->SetRoughnessMap(roughnessMap);
-	cube1->SetNormalMap(normalMap);
+	shared_ptr<DirectXTexture> baseColorMapTexture = make_shared<DirectXTexture>(device);
+	shared_ptr<DirectXTexture> metallicMapTexture = make_shared<DirectXTexture>(device);
+	shared_ptr<DirectXTexture> roughnessMapTexture = make_shared<DirectXTexture>(device);
+	shared_ptr<DirectXTexture> normalMapTexture = make_shared<DirectXTexture>(device);
+
+	baseColorMapTexture->InitFromMemory(baseColorMapPtr, BPC16);
+	metallicMapTexture->InitFromMemory(metallicMapPtr, BPC16);
+	roughnessMapTexture->InitFromMemory(roughnessMapPtr, BPC16);
+	normalMapTexture->InitFromMemory(normalMapPtr, BPC16);
+
+	cube1->SetBaseColorMap(baseColorMapTexture);
+	cube1->SetMetallicMap(metallicMapTexture);
+	cube1->SetRoughnessMap(roughnessMapTexture);
+	cube1->SetNormalMap(normalMapTexture);
 
 	scenes[1]->AddRenderableObject(cube1, "Cube1");
 

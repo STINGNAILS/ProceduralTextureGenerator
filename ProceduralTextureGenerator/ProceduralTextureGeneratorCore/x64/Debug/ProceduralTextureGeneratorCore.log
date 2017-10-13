@@ -1,0 +1,34 @@
+﻿  stdafx.cpp
+  TextureMemory.cpp
+  ShaderCompiler.cpp
+  Scene.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.h(7): fatal error C1083: Cannot open include file: 'DDSTextureLoader.h': No such file or directory
+  RNG.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\rng.cpp(8): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  RenderableObject.cpp
+  RadianceMapRenderer.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.h(7): fatal error C1083: Cannot open include file: 'DDSTextureLoader.h': No such file or directory
+  ProceduralTextureGeneratorCore.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.h(7): fatal error C1083: Cannot open include file: 'DDSTextureLoader.h': No such file or directory
+  MapGenerator.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\mapgenerator.cpp(258): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\mapgenerator.cpp(379): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  GeometryHelper.cpp
+  Environment.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.h(7): fatal error C1083: Cannot open include file: 'DDSTextureLoader.h': No such file or directory
+  DirectXView.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxview.cpp(130): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxview.cpp(136): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
+  DirectXTexture.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.h(7): fatal error C1083: Cannot open include file: 'DDSTextureLoader.h': No such file or directory
+  DirectXRenderer.cpp
+  DirectXDevice.cpp
+  Cube.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.h(7): fatal error C1083: Cannot open include file: 'DDSTextureLoader.h': No such file or directory
+  Camera3D.cpp
+  Camera2D.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\camera2d.cpp(66): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+  Camera.cpp
+  BRDFLUTRenderer.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\brdflutrenderer.cpp(104): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+  Generating Code...

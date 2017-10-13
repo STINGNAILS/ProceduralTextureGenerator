@@ -5,7 +5,6 @@
 #include "DirectXDevice.h"
 
 using namespace std;
-using namespace DirectX;
 
 
 enum CameraType

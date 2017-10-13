@@ -2,18 +2,13 @@
 
 #include <memory>
 #include "DirectXDevice.h"
+#include "DirectXRenderer.h"
 #include "ShaderCompiler.h"
 
 
-using namespace std;
-using namespace DirectX;
-
-
-class BRDFLUTRenderer
+class BRDFLUTRenderer : public DirectXRenderer
 {
 	private:
-
-	shared_ptr<DirectXDevice> device;
 
 	ID3D11InputLayout *inputLayout;
 	ID3D11Buffer *vertexBuffer;
@@ -21,14 +16,16 @@ class BRDFLUTRenderer
 	ID3D11VertexShader *vertexShader;
 	ID3D11PixelShader *pixelShader;
 
+	int size;
+
 	public:
 
-	BRDFLUTRenderer();
+	BRDFLUTRenderer(shared_ptr<DirectXDevice> device_);
 	~BRDFLUTRenderer();
 
-	HRESULT Init(shared_ptr<DirectXDevice> device_);
+	HRESULT Init(int size_);
 
-	HRESULT Render(int size, ID3D11Texture2D **brdfLUT);
+	HRESULT Render(ID3D11Texture2D **brdfLUT);
 
 	void Release();
 };

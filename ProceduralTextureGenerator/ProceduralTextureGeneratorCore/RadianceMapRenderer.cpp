@@ -2,15 +2,15 @@
 #include "RadianceMapRenderer.h"
 
 
-RadianceMapRenderer::RadianceMapRenderer()
+RadianceMapRenderer::RadianceMapRenderer(shared_ptr<DirectXDevice> device_)
 {
-
+	device = device_;
 }
 
 
 RadianceMapRenderer::~RadianceMapRenderer()
 {
-
+	Release();
 }
 
 
@@ -57,11 +57,12 @@ struct RadianceMapVertex
 };
 
 
-HRESULT RadianceMapRenderer::Init(shared_ptr<DirectXDevice> device_)
+HRESULT RadianceMapRenderer::Init(shared_ptr<DirectXTexture> environmentMap_, int size_)
 {
 	HRESULT hr;
 
-	device = device_;
+	environmentMap = environmentMap_;
+	size = size_;
 
 	ID3DBlob *shaderBlob = 0;
 
@@ -164,7 +165,7 @@ HRESULT RadianceMapRenderer::Init(shared_ptr<DirectXDevice> device_)
 }
 
 
-HRESULT RadianceMapRenderer::Render(int size, ID3D11ShaderResourceView *environmentMapSRV, ID3D11Texture2D **radianceMap)
+HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 {
 	HRESULT hr;
 
@@ -182,7 +183,7 @@ HRESULT RadianceMapRenderer::Render(int size, ID3D11ShaderResourceView *environm
 	radianceMapDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	radianceMapDesc.SampleDesc.Count = 1;
 	radianceMapDesc.SampleDesc.Quality = 0;
-
+	
 	hr = device->GetDevice()->CreateTexture2D(&radianceMapDesc, 0, radianceMap);
 	if(FAILED(hr))
 	{
@@ -203,7 +204,8 @@ HRESULT RadianceMapRenderer::Render(int size, ID3D11ShaderResourceView *environm
 
 	device->GetPainter()->PSSetShader(pixelShader, 0, 0);
 	device->GetPainter()->PSSetConstantBuffers(0, 1, &constantBuffer);
-	device->GetPainter()->PSSetShaderResources(0, 1, &environmentMapSRV);
+
+	environmentMap->Set(0);
 
 	for(int faceIndex = 0; faceIndex < 6; faceIndex++)
 	{
@@ -256,6 +258,7 @@ HRESULT RadianceMapRenderer::Render(int size, ID3D11ShaderResourceView *environm
 void RadianceMapRenderer::Release()
 {
 	device = nullptr;
+	environmentMap = nullptr;
 
 	if(inputLayout) inputLayout->Release();
 	if(vertexBuffer) vertexBuffer->Release();

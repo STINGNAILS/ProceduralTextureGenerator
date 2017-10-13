@@ -8,8 +8,10 @@ struct CubeMapVertex
 };
 
 
-Environment::Environment()
+Environment::Environment(shared_ptr<DirectXDevice> device_)
 {
+	device = device_;
+
 	lastDirectionalLightNum = 0;
 	lastPunctualLightNum = 0;
 
@@ -76,11 +78,9 @@ void Environment::RemovePunctualLight(int punctualLightNum)
 }
 
 
-HRESULT Environment::Init(shared_ptr<DirectXDevice> device_, LPCWSTR fileName)
+HRESULT Environment::Init(LPCWSTR fileName)
 {
 	HRESULT hr = S_OK;
-
-	device = device_;
 
 	if(!fxIsInitialized)
 	{
@@ -232,77 +232,42 @@ HRESULT Environment::Init(shared_ptr<DirectXDevice> device_, LPCWSTR fileName)
 		geometryIsInitialized = true;
 	}
 
-	ID3D11Resource *resource;
+	ReleaseCubeMap();
 
-	hr = CreateDDSTextureFromFile(device->GetDevice(), fileName, &resource, &cubeMapSRV);
+	cubeMap = make_shared<DirectXTexture>(device);
+	hr = cubeMap->InitFromFile(fileName);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
-	RadianceMapRenderer radianceMapRenderer;
-	hr = radianceMapRenderer.Init(device);
+	shared_ptr<RadianceMapRenderer> radianceMapRenderer = make_shared<RadianceMapRenderer>(device);
+	hr = radianceMapRenderer->Init(cubeMap, 2048);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
-	ID3D11Texture2D *radianceMap = nullptr;
-	hr = radianceMapRenderer.Render(2048, cubeMapSRV, &radianceMap);
+	radianceMap = make_shared<DirectXTexture>(device);
+	hr = radianceMap->InitFromRenderer(radianceMapRenderer);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
-	D3D11_TEXTURE2D_DESC radianceMapDesc;
-	radianceMap->GetDesc(&radianceMapDesc);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = radianceMapDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = radianceMapDesc.MipLevels;
-
-	hr = device->GetDevice()->CreateShaderResourceView(radianceMap, &srvDesc, &radianceMapSRV);
+	shared_ptr<BRDFLUTRenderer> brdfLUTRenderer = make_shared<BRDFLUTRenderer>(device);
+	hr = brdfLUTRenderer->Init(2048);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
-	BRDFLUTRenderer brdfLUTRenderer;
-	hr = brdfLUTRenderer.Init(device);
+	brdfLUT = make_shared<DirectXTexture>(device);
+	hr = brdfLUT->InitFromRenderer(brdfLUTRenderer);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
-
-	ID3D11Texture2D *brdfLUT = nullptr;
-	hr = brdfLUTRenderer.Render(2048, &brdfLUT);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	D3D11_TEXTURE2D_DESC brdfLUTDesc;
-	brdfLUT->GetDesc(&brdfLUTDesc);
-
-	srvDesc.Format = brdfLUTDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = brdfLUTDesc.MipLevels;
-
-	hr = device->GetDevice()->CreateShaderResourceView(brdfLUT, &srvDesc, &brdfLUTSRV);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	radianceMapRenderer.Release();
-	brdfLUTRenderer.Release();
-	resource->Release();
-	radianceMap->Release();
-	brdfLUT->Release();
 
 	cubeMapIsInitialized = true;
 
@@ -328,8 +293,8 @@ void Environment::Prepare()
 	device->GetPainter()->VSSetConstantBuffers(1, 1, &environmentConstantBuffer);
 	device->GetPainter()->PSSetConstantBuffers(1, 1, &environmentConstantBuffer);
 
-	device->GetPainter()->PSSetShaderResources(0, 1, &radianceMapSRV);
-	device->GetPainter()->PSSetShaderResources(1, 1, &brdfLUTSRV);
+	radianceMap->Set(0);
+	brdfLUT->Set(1);
 }
 
 
@@ -347,7 +312,8 @@ void Environment::Render()
 	device->GetPainter()->VSSetShader(vertexShader, 0, 0);
 
 	device->GetPainter()->PSSetShader(pixelShader, 0, 0);
-	device->GetPainter()->PSSetShaderResources(0, 1, &cubeMapSRV);
+
+	cubeMap->Set(0);
 
 	device->GetPainter()->Draw(36, 0);
 
@@ -373,9 +339,9 @@ void Environment::ReleaseGeometry()
 
 void Environment::ReleaseCubeMap()
 {
-	if(cubeMapSRV) cubeMapSRV->Release();
-	if(radianceMapSRV) radianceMapSRV->Release();
-	if(brdfLUTSRV) brdfLUTSRV->Release();
+	cubeMap = nullptr;
+	radianceMap = nullptr;
+	brdfLUT = nullptr;
 }
 
 

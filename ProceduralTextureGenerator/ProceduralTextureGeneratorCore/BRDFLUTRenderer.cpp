@@ -3,15 +3,15 @@
 
 
 
-BRDFLUTRenderer::BRDFLUTRenderer()
+BRDFLUTRenderer::BRDFLUTRenderer(shared_ptr<DirectXDevice> device_)
 {
-
+	device = device_;
 }
 
 
 BRDFLUTRenderer::~BRDFLUTRenderer()
 {
-
+	Release();
 }
 
 
@@ -22,11 +22,11 @@ struct BRDFLUTVertex
 };
 
 
-HRESULT BRDFLUTRenderer::Init(shared_ptr<DirectXDevice> device_)
+HRESULT BRDFLUTRenderer::Init(int size_)
 {
 	HRESULT hr;
 
-	device = device_;
+	size = size_;
 
 	ID3DBlob *shaderBlob = 0;
 
@@ -116,7 +116,7 @@ HRESULT BRDFLUTRenderer::Init(shared_ptr<DirectXDevice> device_)
 }
 
 
-HRESULT BRDFLUTRenderer::Render(int size, ID3D11Texture2D **brdfLUT)
+HRESULT BRDFLUTRenderer::Render(ID3D11Texture2D **brdfLUT)
 {
 	HRESULT hr;
 
