@@ -96,6 +96,9 @@ void Camera3D::CalculateView()
 
 void Camera3D::Resize(float width, float height)
 {
+	w = width;
+	h = height;
+
 	XMMATRIX projM;
 	projM = XMMatrixPerspectiveFovLH(yFOV, width / height, zNear, zFar);
 	XMStoreFloat4x4(&proj, projM);
@@ -136,6 +139,12 @@ void Camera3D::SetZNEAR(float zNear_)
 void Camera3D::SetZFAR(float zFar_)
 {
 	zFar = zFar_;
+}
+
+
+const float Camera3D::Zoom()
+{
+	return 1.0f;
 }
 
 

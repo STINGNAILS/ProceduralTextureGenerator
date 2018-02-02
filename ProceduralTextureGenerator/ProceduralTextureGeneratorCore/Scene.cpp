@@ -65,6 +65,12 @@ shared_ptr<Environment> Scene::GetEnvironment()
 }
 
 
+shared_ptr<RenderableObject> Scene::GetRenderableObject(string name)
+{
+	return renderableObjects[name];
+}
+
+
 void Scene::AddRenderableObject(shared_ptr<RenderableObject> renderableObject, string name)
 {
 	renderableObjects[name] = renderableObject;

@@ -9,11 +9,18 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
+#include <memory>
 #include <windows.h>
+#include <omp.h>
 #include <stdlib.h>
+#include <time.h>
+#include <math.h>
 #include <vector>
 #include <map>
+#include <stack>
 
+
+using namespace std;
 
 
 // TODO: reference additional headers your program requires here

@@ -29,5 +29,38 @@ namespace ProceduralTextureGenerator
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Release")]
 		public static extern void Release();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewAddNode")]
+		public static extern void GraphViewAddNode(int functionIndex, float x, float y);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewOnMouseDown")]
+		public static extern void GraphViewOnMouseDown(float x, float y);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewOnMouseMove")]
+		public static extern void GraphViewOnMouseMove(float x, float y);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewOnMouseUp")]
+		public static extern void GraphViewOnMouseUp(float x, float y);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewRemoveSelected")]
+		public static extern void GraphViewRemoveSelected();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetSelectedNodeIndex")]
+		public static extern int GraphViewGetSelectedNodeIndex();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetSelectedNodeFunctionIndex")]
+		public static extern int GraphViewGetSelectedNodeFunctionIndex();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetSelectedNodeIntParameter")]
+		public static extern int GraphViewGetSelectedNodeIntParameter(int parameterIndex);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetSelectedNodeFloatParameter")]
+		public static extern float GraphViewGetSelectedNodeFloatParameter(int parameterIndex);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewSetSelectedNodeIntParameter")]
+		public static extern void GraphViewSetSelectedNodeIntParameter(int parameterIndex, int value);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewSetSelectedNodeFloatParameter")]
+		public static extern void GraphViewSetSelectedNodeFloatParameter(int parameterIndex, float value);
 	}
 }

@@ -101,6 +101,33 @@
     <ClInclude Include="DirectXRenderer.h">
       <Filter>Graphics\DirectX</Filter>
     </ClInclude>
+    <ClInclude Include="FunctionNode.h" />
+    <ClInclude Include="FunctionGraph.h" />
+    <ClInclude Include="FunctionLink.h" />
+    <ClInclude Include="Function.h">
+      <Filter>MapGeneration</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomicFunctions.h">
+      <Filter>MapGeneration</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureFrame.h">
+      <Filter>Graphics\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="InputPin.h">
+      <Filter>Graphics\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputPin.h">
+      <Filter>Graphics\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="Polyline.h">
+      <Filter>Graphics\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="NoiseFunctions.h">
+      <Filter>MapGeneration</Filter>
+    </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderCompiler.cpp">
@@ -163,6 +190,33 @@
     </ClCompile>
     <ClCompile Include="DirectXRenderer.cpp">
       <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionNode.cpp" />
+    <ClCompile Include="FunctionGraph.cpp" />
+    <ClCompile Include="FunctionLink.cpp" />
+    <ClCompile Include="Function.cpp">
+      <Filter>MapGeneration</Filter>
+    </ClCompile>
+    <ClCompile Include="AtomicFunctions.cpp">
+      <Filter>MapGeneration</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureFrame.cpp">
+      <Filter>Graphics\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="InputPin.cpp">
+      <Filter>Graphics\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPin.cpp">
+      <Filter>Graphics\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="Polyline.cpp">
+      <Filter>Graphics\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="NoiseFunctions.cpp">
+      <Filter>MapGeneration</Filter>
+    </ClCompile>
+    <ClCompile Include="MathHelper.cpp">
+      <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

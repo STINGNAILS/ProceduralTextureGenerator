@@ -114,7 +114,7 @@ Vector2D MapGenerator::GenerateGradient()
 }
 
 
-shared_ptr<TextureMemory> MapGenerator::PerlinNoise(int size_, int octaves_, int gridSize_, float persistence_)
+TextureMemoryPtr MapGenerator::PerlinNoise(int size_, int octaves_, int gridSize_, float persistence_)
 {
 	size = size_;
 
@@ -182,9 +182,9 @@ shared_ptr<TextureMemory> MapGenerator::PerlinNoise(int size_, int octaves_, int
 }
 
 
-shared_ptr<TextureMemory> MapGenerator::GenerateAlbedoMap(int size_, XMFLOAT4 value)
+TextureMemoryPtr MapGenerator::GenerateAlbedoMap(int size_, XMFLOAT4 value)
 {
-	shared_ptr<TextureMemory> albedoMapPtr = make_shared<TextureMemory>(COLOR, size_);
+	TextureMemoryPtr albedoMapPtr = make_shared<TextureMemory>(COLOR, size_);
 	TextureMemory &albedoMap = *albedoMapPtr.get();
 
 	for(int i = 0; i < size; i++)
@@ -201,9 +201,9 @@ shared_ptr<TextureMemory> MapGenerator::GenerateAlbedoMap(int size_, XMFLOAT4 va
 	return albedoMapPtr;
 }
 
-shared_ptr<TextureMemory> MapGenerator::GenerateMetallicMap(int size_, float value)
+TextureMemoryPtr MapGenerator::GenerateMetallicMap(int size_, float value)
 {
-	shared_ptr<TextureMemory> metallicMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	TextureMemoryPtr metallicMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
 	TextureMemory &metallicMap = *metallicMapPtr.get();
 
 	for(int i = 0; i < size; i++)
@@ -217,9 +217,9 @@ shared_ptr<TextureMemory> MapGenerator::GenerateMetallicMap(int size_, float val
 	return metallicMapPtr;
 }
 
-shared_ptr<TextureMemory> MapGenerator::GenerateRoughnessMap(int size_, float value)
+TextureMemoryPtr MapGenerator::GenerateRoughnessMap(int size_, float value)
 {
-	shared_ptr<TextureMemory> roughnessMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	TextureMemoryPtr roughnessMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
 	TextureMemory &roughnessMap = *roughnessMapPtr.get();
 
 	for(int i = 0; i < size; i++)
@@ -234,9 +234,9 @@ shared_ptr<TextureMemory> MapGenerator::GenerateRoughnessMap(int size_, float va
 }
 
 
-shared_ptr<TextureMemory> MapGenerator::GenerateNormalMap(int size_, XMFLOAT4 value)
+TextureMemoryPtr MapGenerator::GenerateNormalMap(int size_, XMFLOAT4 value)
 {
-	shared_ptr<TextureMemory> normalMapPtr = make_shared<TextureMemory>(COLOR, size_);
+	TextureMemoryPtr normalMapPtr = make_shared<TextureMemory>(COLOR, size_);
 	TextureMemory &normalMap = *normalMapPtr.get();
 
 	for(int i = 0; i < size; i++)
@@ -254,7 +254,7 @@ shared_ptr<TextureMemory> MapGenerator::GenerateNormalMap(int size_, XMFLOAT4 va
 }
 
 
-void MapGenerator::GenerateRustyIronMaps(int size_, shared_ptr<TextureMemory> &albedoMapPtr, shared_ptr<TextureMemory> &metallicMapPtr, shared_ptr<TextureMemory> &roughnessMapPtr)
+void MapGenerator::GenerateRustyIronMaps(int size_, TextureMemoryPtr &albedoMapPtr, TextureMemoryPtr &metallicMapPtr, TextureMemoryPtr &roughnessMapPtr)
 {
 	albedoMapPtr = make_shared<TextureMemory>(COLOR, size_);
 	metallicMapPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
@@ -264,7 +264,7 @@ void MapGenerator::GenerateRustyIronMaps(int size_, shared_ptr<TextureMemory> &a
 	TextureMemory &metallicMap = *metallicMapPtr.get();
 	TextureMemory &roughnessMap = *roughnessMapPtr.get();
 
-	shared_ptr<TextureMemory> rustNoisePtr = PerlinNoise(size_, 8, 2, 0.8f);
+	TextureMemoryPtr rustNoisePtr = PerlinNoise(size_, 8, 2, 0.8f);
 	TextureMemory &rustNoise = *rustNoisePtr.get();
 
 	for(int i = 0; i < size_; i++)
@@ -351,7 +351,7 @@ void MapGenerator::GenerateRustyIronMaps(int size_, shared_ptr<TextureMemory> &a
 		Gradient(110, 35, 12, 1.00f)
 	};
 
-	shared_ptr<TextureMemory> gradientMapPtr = make_shared<TextureMemory>(COLOR, size_);
+	TextureMemoryPtr gradientMapPtr = make_shared<TextureMemory>(COLOR, size_);
 	TextureMemory &gradientMap = *gradientMapPtr.get();
 	for(int i = 0; i < size_; i++)
 	{
@@ -402,10 +402,10 @@ void MapGenerator::GenerateRustyIronMaps(int size_, shared_ptr<TextureMemory> &a
 		}
 	}
 
-	shared_ptr<TextureMemory> grazeNoisePtr = PerlinNoise(size_, 8, 1, 1.5f);
+	TextureMemoryPtr grazeNoisePtr = PerlinNoise(size_, 8, 1, 1.5f);
 	TextureMemory &grazeNoise = *grazeNoisePtr.get();
 
-	shared_ptr<TextureMemory> metalRoughnessPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
+	TextureMemoryPtr metalRoughnessPtr = make_shared<TextureMemory>(GRAYSCALE, size_);
 	TextureMemory &metalRoughness = *metalRoughnessPtr.get();;
 	for(int i = 0; i < size_; i++)
 	{

@@ -1,10 +1,6 @@
 #pragma once
 
-#include <memory>
-#include "DirectXDependencies.h"
 #include "DirectXDevice.h"
-
-using namespace std;
 
 
 enum CameraType
@@ -30,6 +26,9 @@ class Camera
 
 	XMFLOAT3 position;
 	float velocity;
+
+	float w;
+	float h;
 
 	XMFLOAT4X4 view;
 	XMFLOAT4X4 viewCentered;
@@ -59,6 +58,9 @@ class Camera
 	const XMMATRIX ViewProjCentered();
 
 	const XMFLOAT3 Position();
+	const XMFLOAT2 WidthHeight();
+	virtual const float Zoom() = 0;
+	
 
 	virtual void Navigate(float dx, float dy, float dt) = 0;
 	virtual void Zoom(float dz) = 0;

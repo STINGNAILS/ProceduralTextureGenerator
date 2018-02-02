@@ -5,8 +5,24 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProceduralTextureGenerator"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" MouseDown="OnMouseDown" SizeChanged="OnSizeChanged" MouseUp="OnMouseUp" MouseWheel="OnMouseWheel">
+             d:DesignHeight="300" d:DesignWidth="300" Background="Transparent" Loaded="OnLoaded" MouseDown="OnMouseDown" MouseMove="OnMouseMove" MouseUp="OnMouseUp" KeyDown="OnKeyDown">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ContentControl Grid.RowSpan="2">
+            <local:View x:Name="view"/>
+            <ContentControl.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Uniform Color" Click="AddUniformColorNode"></MenuItem>
+                    <MenuItem Header="Blend" Click="AddBlendNode"></MenuItem>
+                    <MenuItem Header="Levels" Click="AddLevelsNode"></MenuItem>
+                    <MenuItem Header="Gradient" Click="AddGradientNode"></MenuItem>
+                    <MenuItem Header="Perlin Noise" Click="AddPerlinNoiseNode"></MenuItem>
+                    <MenuItem Header="Normal Color" Click="AddNormalColorNode"></MenuItem>
+                </ContextMenu>
+            </ContentControl.ContextMenu>
+        </ContentControl>
     </Grid>
 </UserControl>

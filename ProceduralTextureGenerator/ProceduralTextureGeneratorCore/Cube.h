@@ -1,16 +1,11 @@
 #pragma once
 
-#include <vector>
-#include "DirectXDependencies.h"
 #include "DirectXDevice.h"
 #include "DirectXTexture.h"
 #include "RenderableObject.h"
 #include "Environment.h"
 #include "ShaderCompiler.h"
 #include "GeometryHelper.h"
-
-
-using namespace std;
 
 
 class Cube : public RenderableObject

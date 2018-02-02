@@ -93,6 +93,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PROCEDURALTEXTUREGENERATORCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -105,6 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;PROCEDURALTEXTUREGENERATORCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,6 +121,9 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PROCEDURALTEXTUREGENERATORCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>
+      </LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,6 +140,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;PROCEDURALTEXTUREGENERATORCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>
+      </LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,6 +154,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AtomicFunctions.h" />
     <ClInclude Include="BRDFLUTRenderer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Camera2D.h" />
@@ -157,8 +166,17 @@
     <ClInclude Include="DirectXTexture.h" />
     <ClInclude Include="DirectXView.h" />
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="Function.h" />
+    <ClInclude Include="FunctionGraph.h" />
+    <ClInclude Include="FunctionLink.h" />
+    <ClInclude Include="FunctionNode.h" />
     <ClInclude Include="GeometryHelper.h" />
+    <ClInclude Include="InputPin.h" />
     <ClInclude Include="MapGenerator.h" />
+    <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="NoiseFunctions.h" />
+    <ClInclude Include="OutputPin.h" />
+    <ClInclude Include="Polyline.h" />
     <ClInclude Include="RadianceMapRenderer.h" />
     <ClInclude Include="RenderableObject.h" />
     <ClInclude Include="RNG.h" />
@@ -166,9 +184,11 @@
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TextureFrame.h" />
     <ClInclude Include="TextureMemory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AtomicFunctions.cpp" />
     <ClCompile Include="BRDFLUTRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Camera2D.cpp" />
@@ -193,8 +213,17 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="Function.cpp" />
+    <ClCompile Include="FunctionGraph.cpp" />
+    <ClCompile Include="FunctionLink.cpp" />
+    <ClCompile Include="FunctionNode.cpp" />
     <ClCompile Include="GeometryHelper.cpp" />
+    <ClCompile Include="InputPin.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
+    <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="NoiseFunctions.cpp" />
+    <ClCompile Include="OutputPin.cpp" />
+    <ClCompile Include="Polyline.cpp" />
     <ClCompile Include="ProceduralTextureGeneratorCore.cpp" />
     <ClCompile Include="RadianceMapRenderer.cpp" />
     <ClCompile Include="RenderableObject.cpp" />
@@ -207,6 +236,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextureFrame.cpp" />
     <ClCompile Include="TextureMemory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

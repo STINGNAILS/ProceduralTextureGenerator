@@ -1,9 +1,5 @@
 #pragma once
 
-
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
 #include "DirectXDependencies.h"
 
 using namespace DirectX;

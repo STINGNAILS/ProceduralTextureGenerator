@@ -34,6 +34,8 @@ namespace ProceduralTextureGenerator
 
 			CompositionTarget.Rendering += Update;
 
+			graphView.SetParameterStackPanel(parametersStackPannel);
+
 			frameTime = new Stopwatch();
 			frameTime.Start();
 		}
@@ -47,6 +49,7 @@ namespace ProceduralTextureGenerator
 			{
 				UpdateControls();
 				objectView.Render();
+				graphView.Render();
 				this.lastRenderTime = args.RenderingTime;
 			}
 		}
@@ -58,10 +61,16 @@ namespace ProceduralTextureGenerator
 			float dt = frameTime.ElapsedMilliseconds / 1000.0f;
 
 			objectView.Update(dt);
-			//graphView.OnMouseMove(dx, dy, dt);
+			graphView.Update(dt);
 			//textureView.OnMouseMove(dx, dy, dt);
 
 			frameTime.Restart();
+		}
+
+
+		private void OnKeyDown(object sender, KeyEventArgs e)
+		{
+
 		}
 
 

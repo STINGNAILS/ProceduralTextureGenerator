@@ -14,7 +14,7 @@ DirectXTexture::~DirectXTexture()
 }
 
 
-HRESULT DirectXTexture::InitGrayscale8(shared_ptr<TextureMemory> textureMemoryPtr)
+HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -79,7 +79,7 @@ HRESULT DirectXTexture::InitGrayscale8(shared_ptr<TextureMemory> textureMemoryPt
 }
 
 
-HRESULT DirectXTexture::InitGrayscale16(shared_ptr<TextureMemory> textureMemoryPtr)
+HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -144,7 +144,7 @@ HRESULT DirectXTexture::InitGrayscale16(shared_ptr<TextureMemory> textureMemoryP
 }
 
 
-HRESULT DirectXTexture::InitGrayscale32(shared_ptr<TextureMemory> textureMemoryPtr)
+HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -207,7 +207,7 @@ HRESULT DirectXTexture::InitGrayscale32(shared_ptr<TextureMemory> textureMemoryP
 }
 
 
-HRESULT DirectXTexture::InitColor8(shared_ptr<TextureMemory> textureMemoryPtr)
+HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -271,7 +271,7 @@ HRESULT DirectXTexture::InitColor8(shared_ptr<TextureMemory> textureMemoryPtr)
 }
 
 
-HRESULT DirectXTexture::InitColor16(shared_ptr<TextureMemory> textureMemoryPtr)
+HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -335,7 +335,7 @@ HRESULT DirectXTexture::InitColor16(shared_ptr<TextureMemory> textureMemoryPtr)
 }
 
 
-HRESULT DirectXTexture::InitColor32(shared_ptr<TextureMemory> textureMemoryPtr)
+HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -397,7 +397,7 @@ HRESULT DirectXTexture::InitColor32(shared_ptr<TextureMemory> textureMemoryPtr)
 }
 
 
-HRESULT DirectXTexture::InitFromMemory(shared_ptr<TextureMemory> textureMemoryPtr, BitsPerChannel bpc)
+HRESULT DirectXTexture::InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPerChannel bpc)
 {
 	HRESULT hr = S_OK;
 

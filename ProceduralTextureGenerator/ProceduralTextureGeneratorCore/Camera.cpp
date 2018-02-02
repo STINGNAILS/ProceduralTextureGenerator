@@ -79,6 +79,12 @@ const XMFLOAT3 Camera::Position()
 }
 
 
+const XMFLOAT2 Camera::WidthHeight()
+{
+	return XMFLOAT2(w, h);
+}
+
+
 void Camera::Prepare()
 {
 	CameraCB cameraCB;

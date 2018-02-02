@@ -1,6 +1,6 @@
 #pragma once
 
-using namespace std;
+#define TextureMemoryPtr shared_ptr<TextureMemory>
 
 
 enum TextureType

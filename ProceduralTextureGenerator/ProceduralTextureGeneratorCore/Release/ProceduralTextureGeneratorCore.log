@@ -1,8 +1,9 @@
 ﻿  stdafx.cpp
+  AtomicFunctions.cpp
   BRDFLUTRenderer.cpp
   Camera.cpp
   Camera2D.cpp
-Camera2D.cpp(66): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+Camera2D.cpp(76): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
   Camera3D.cpp
   Cube.cpp
   DirectXDevice.cpp
@@ -12,23 +13,62 @@ Camera2D.cpp(66): warning C4244: '*=': conversion from 'double' to 'float', poss
 DirectXView.cpp(130): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
 DirectXView.cpp(136): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
   Environment.cpp
+  Function.cpp
+  FunctionGraph.cpp
+FunctionGraph.cpp(83): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(98): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(166): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(301): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(311): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(371): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(450): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(461): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(483): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+FunctionGraph.cpp(489): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+FunctionGraph.cpp(536): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(510): warning C4101: 'p0': unreferenced local variable
+FunctionGraph.cpp(511): warning C4101: 'p1': unreferenced local variable
+FunctionGraph.cpp(557): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(566): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(589): warning C4018: '<': signed/unsigned mismatch
+  FunctionLink.cpp
+  FunctionNode.cpp
+FunctionNode.cpp(106): warning C4018: '<': signed/unsigned mismatch
+FunctionNode.cpp(145): warning C4018: '<': signed/unsigned mismatch
+FunctionNode.cpp(159): warning C4018: '<': signed/unsigned mismatch
+FunctionNode.cpp(169): warning C4018: '<': signed/unsigned mismatch
+FunctionNode.cpp(210): warning C4018: '<': signed/unsigned mismatch
+FunctionNode.cpp(223): warning C4018: '<': signed/unsigned mismatch
+FunctionNode.cpp(251): warning C4018: '<': signed/unsigned mismatch
   GeometryHelper.cpp
+  InputPin.cpp
+InputPin.cpp(264): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   MapGenerator.cpp
 MapGenerator.cpp(274): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 MapGenerator.cpp(396): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  MathHelper.cpp
+  NoiseFunctions.cpp
+NoiseFunctions.cpp(20): warning C4018: '<': signed/unsigned mismatch
+  Compiling...
+  OutputPin.cpp
+OutputPin.cpp(344): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  Polyline.cpp
   ProceduralTextureGeneratorCore.cpp
-ProceduralTextureGeneratorCore.cpp(123): warning C4244: 'argument': conversion from 'UINT' to 'float', possible loss of data
+ProceduralTextureGeneratorCore.cpp(131): warning C4244: 'argument': conversion from 'UINT' to 'float', possible loss of data
+ProceduralTextureGeneratorCore.cpp(181): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+ProceduralTextureGeneratorCore.cpp(191): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+ProceduralTextureGeneratorCore.cpp(201): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   RadianceMapRenderer.cpp
   RenderableObject.cpp
   RNG.cpp
-RNG.cpp(8): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+RNG.cpp(10): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Scene.cpp
   ShaderCompiler.cpp
+  TextureFrame.cpp
   TextureMemory.cpp
   dllmain.cpp
      Creating library D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.lib and object D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.exp
   Generating code
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\cube.cpp(396): warning C4715: 'Cube::Init': not all control paths return a value
-  All 1196 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 2701 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   ProceduralTextureGeneratorCore.vcxproj -> D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.dll

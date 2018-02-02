@@ -7,6 +7,9 @@
 #include "DDSTextureLoader.h"
 
 
+#define DirectXTexturePtr shared_ptr<DirectXTexture>
+
+
 enum BitsPerChannel
 {
 	BPC8,
@@ -23,19 +26,19 @@ class DirectXTexture
 
 	ID3D11ShaderResourceView *textureSRV;
 
-	HRESULT InitGrayscale8(shared_ptr<TextureMemory> textureMemoryPtr);
-	HRESULT InitGrayscale16(shared_ptr<TextureMemory> textureMemoryPtr);
-	HRESULT InitGrayscale32(shared_ptr<TextureMemory> textureMemoryPtr);
-	HRESULT InitColor8(shared_ptr<TextureMemory> textureMemoryPtr);
-	HRESULT InitColor16(shared_ptr<TextureMemory> textureMemoryPtr);
-	HRESULT InitColor32(shared_ptr<TextureMemory> textureMemoryPtr);
+	HRESULT InitGrayscale8(TextureMemoryPtr textureMemoryPtr);
+	HRESULT InitGrayscale16(TextureMemoryPtr textureMemoryPtr);
+	HRESULT InitGrayscale32(TextureMemoryPtr textureMemoryPtr);
+	HRESULT InitColor8(TextureMemoryPtr textureMemoryPtr);
+	HRESULT InitColor16(TextureMemoryPtr textureMemoryPtr);
+	HRESULT InitColor32(TextureMemoryPtr textureMemoryPtr);
 
 	public:
 
 	DirectXTexture(shared_ptr<DirectXDevice> device_);
 	~DirectXTexture();
 
-	HRESULT InitFromMemory(shared_ptr<TextureMemory> textureMemoryPtr, BitsPerChannel bpc);
+	HRESULT InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPerChannel bpc);
 	HRESULT InitFromFile(LPCWSTR fileName);
 	HRESULT InitFromRenderer(shared_ptr<DirectXRenderer> renderer);
 

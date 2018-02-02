@@ -15,6 +15,12 @@ Cube::Cube(shared_ptr<DirectXDevice> device_)
 {
 	device = device_;
 
+	inputLayout = nullptr;
+	vertexBuffer = nullptr;
+	basicRasterizerState = nullptr;
+	vertexShader = nullptr;
+	pixelShader = nullptr;
+
 	fxIsInitialized = false;
 	geometryIsInitialized = false;
 }
@@ -393,6 +399,8 @@ HRESULT Cube::Init()
 			return hr;
 		}
 	}
+
+	return hr;
 }
 
 

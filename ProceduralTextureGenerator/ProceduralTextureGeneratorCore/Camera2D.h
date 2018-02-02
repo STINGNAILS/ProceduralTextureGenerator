@@ -8,7 +8,6 @@ class Camera2D : public Camera
 
 	float zoom;
 
-	void CalculateTransform();
 	void CalculateView();
 
 	public:
@@ -19,6 +18,8 @@ class Camera2D : public Camera
 	void Resize(float width, float height);
 
 	void SetPosition(XMFLOAT2 position_);
+
+	const float Zoom();
 
 	void Navigate(float dx, float dy, float dt);
 	void Zoom(float dz);

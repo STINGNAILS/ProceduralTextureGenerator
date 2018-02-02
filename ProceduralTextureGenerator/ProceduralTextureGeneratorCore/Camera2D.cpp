@@ -4,7 +4,7 @@
 
 Camera2D::Camera2D()
 {
-
+	zoom = 1.0f;
 }
 
 
@@ -40,6 +40,9 @@ void Camera2D::CalculateView()
 
 void Camera2D::Resize(float width, float height)
 {
+	w = width;
+	h = height;
+
 	XMMATRIX projM;
 	projM = XMMatrixOrthographicLH(width, height, 0.0f, 1.0f);
 	XMStoreFloat4x4(&proj, projM);
@@ -53,11 +56,18 @@ void Camera2D::SetPosition(XMFLOAT2 position_)
 	CalculateView();
 }
 
+const float Camera2D::Zoom()
+{
+	return zoom;
+}
+
 
 void Camera2D::Navigate(float dx, float dy, float dt)
 {
-	position.x += dx;
+	position.x -= dx;
 	position.y += dy;
+
+	CalculateView();
 }
 
 

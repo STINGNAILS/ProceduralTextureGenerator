@@ -141,7 +141,7 @@ void DirectXView::BeginRender()
 {
 	if(isInitialized)
 	{
-		const float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+		const float clearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
 		device->GetPainter()->ClearRenderTargetView(renderTargetView, clearColor);
 		device->GetPainter()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 

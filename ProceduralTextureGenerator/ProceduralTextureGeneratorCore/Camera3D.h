@@ -37,6 +37,8 @@ class Camera3D : public Camera
 	void SetZNEAR(float zNear_);
 	void SetZFAR(float zFar_);
 
+	const float Zoom();
+
 	void Navigate(float dx, float dy, float dt);
 	void Zoom(float dz);
 };

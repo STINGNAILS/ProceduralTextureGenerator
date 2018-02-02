@@ -102,7 +102,7 @@ namespace ProceduralTextureGenerator
 
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			if(e.ChangedButton == MouseButton.Right)
+			if(e.ChangedButton == MouseButton.Middle)
 			{
 				mouseClickCoords = MouseHelper.GetCursorPosition();
 				
@@ -115,12 +115,18 @@ namespace ProceduralTextureGenerator
 
 		private void OnMouseUp(object sender, MouseButtonEventArgs e)
 		{
-			if(e.ChangedButton == MouseButton.Right)
+			if(e.ChangedButton == MouseButton.Middle)
 			{
 				Mouse.Capture(null);
 				this.Cursor = Cursors.Arrow;
 				isNavigating = false;
 			}
+		}
+
+
+		private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			CoreDll.Zoom(viewIndex, e.Delta);
 		}
 	}
 }

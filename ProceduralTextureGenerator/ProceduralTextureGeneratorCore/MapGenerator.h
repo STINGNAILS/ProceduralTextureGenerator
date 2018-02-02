@@ -65,7 +65,7 @@ class MapGenerator
 	private:
 
 	int size;
-	shared_ptr<TextureMemory> generatedMapPtr;
+	TextureMemoryPtr generatedMapPtr;
 
 	RNG rng;
 
@@ -82,12 +82,12 @@ class MapGenerator
 	MapGenerator();
 	~MapGenerator();
 
-	shared_ptr<TextureMemory> PerlinNoise(int _size, int _octaves, int _gridSize, float _persistence);
+	TextureMemoryPtr PerlinNoise(int _size, int _octaves, int _gridSize, float _persistence);
 
-	shared_ptr<TextureMemory> GenerateAlbedoMap(int size_, XMFLOAT4 value);
-	shared_ptr<TextureMemory> GenerateMetallicMap(int size_, float value);
-	shared_ptr<TextureMemory> GenerateRoughnessMap(int size_, float value);
-	shared_ptr<TextureMemory> GenerateNormalMap(int size_, XMFLOAT4 value);
+	TextureMemoryPtr GenerateAlbedoMap(int size_, XMFLOAT4 value);
+	TextureMemoryPtr GenerateMetallicMap(int size_, float value);
+	TextureMemoryPtr GenerateRoughnessMap(int size_, float value);
+	TextureMemoryPtr GenerateNormalMap(int size_, XMFLOAT4 value);
 
-	void GenerateRustyIronMaps(int size_, shared_ptr<TextureMemory> &albedoMapPtr, shared_ptr<TextureMemory> &metallicMapPtr, shared_ptr<TextureMemory> &roughnessMapPtr);
+	void GenerateRustyIronMaps(int size_, TextureMemoryPtr &albedoMapPtr, TextureMemoryPtr &metallicMapPtr, TextureMemoryPtr &roughnessMapPtr);
 };
