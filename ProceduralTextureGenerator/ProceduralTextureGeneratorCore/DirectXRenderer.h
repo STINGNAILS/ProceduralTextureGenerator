@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include "DirectXDevice.h"
+#include "DirectXObjectPool.h"
 
 class DirectXRenderer
 {

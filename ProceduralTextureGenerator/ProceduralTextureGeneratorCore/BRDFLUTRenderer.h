@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include "DirectXDevice.h"
 #include "DirectXRenderer.h"
 #include "ShaderCompiler.h"
@@ -10,22 +9,24 @@ class BRDFLUTRenderer : public DirectXRenderer
 {
 	private:
 
-	ID3D11InputLayout *inputLayout;
-	ID3D11Buffer *vertexBuffer;
-	ID3D11RasterizerState *rasterizerState;
-	ID3D11VertexShader *vertexShader;
-	ID3D11PixelShader *pixelShader;
+	bool isInitialized;
+
+	ID3D11Device *device;
+	ID3D11DeviceContext *painter;
+
+	shared_ptr<PolygonMesh> polygonMesh;
+	shared_ptr<VertexShader> vertexShader;
+	shared_ptr<PixelShader> pixelShader;
+	shared_ptr<RasterizerState> rasterizerState;
 
 	int size;
 
 	public:
 
-	BRDFLUTRenderer(shared_ptr<DirectXDevice> device_);
+	BRDFLUTRenderer();
 	~BRDFLUTRenderer();
 
 	HRESULT Init(int size_);
 
 	HRESULT Render(ID3D11Texture2D **brdfLUT);
-
-	void Release();
 };

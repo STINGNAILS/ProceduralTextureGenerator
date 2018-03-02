@@ -2,10 +2,9 @@
 #include "FunctionGraph.h"
 
 
-FunctionGraph::FunctionGraph(shared_ptr<DirectXDevice> device_)
+FunctionGraph::FunctionGraph()
 {
-	device = device_;
-	newFunctionLink = make_shared<FunctionLink>(device);
+	newFunctionLink = make_shared<FunctionLink>();
 
 	nextNodeIndex = 0;
 	nextLinkIndex = 0;
@@ -211,7 +210,7 @@ void FunctionGraph::Validate(map<int, FunctionNode> &functionNodesCopy, map<int,
 
 void FunctionGraph::AddNode(int functionIndex, float x, float y)
 {
-	FunctionNode newFunctionNode = FunctionNode(device, functionIndex);
+	FunctionNode newFunctionNode = FunctionNode(functionIndex);
 	newFunctionNode.SetPosition(x, y);
 
 	functionNodes[nextNodeIndex] = newFunctionNode;
@@ -235,7 +234,7 @@ void FunctionGraph::AddLink(int inputNodeIndex, int outputNodeIndex, int inputPi
 		functionLinksCopy.erase(linkToRemoveIndex);
 	}
 
-	functionLinksCopy[nextLinkIndex] = FunctionLink(device);
+	functionLinksCopy[nextLinkIndex] = FunctionLink();
 	functionLinksCopy[nextLinkIndex].SetInputNodeIndex(inputNodeIndex);
 	functionLinksCopy[nextLinkIndex].SetOutputNodeIndex(outputNodeIndex);
 	functionLinksCopy[nextLinkIndex].SetInputPinIndex(inputPinIndex);
@@ -373,7 +372,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 			XMFLOAT2 inputPinPosition = inputPinPositions[i];
 			if((x - inputPinPosition.x) * (x - inputPinPosition.x) + (y - inputPinPosition.y) * (y - inputPinPosition.y) <= 256.0f)
 			{
-				newFunctionLink = make_shared<FunctionLink>(device);
+				newFunctionLink = make_shared<FunctionLink>();
 				newFunctionLink->SetOutputNodeIndex(it->first);
 				newFunctionLink->SetInputPinIndex(i);
 				interactionState = INTERACTION_DRAG_LINK;
@@ -389,7 +388,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 
 		if((x - outputPinPosition.x) * (x - outputPinPosition.x) + (y - outputPinPosition.y) * (y - outputPinPosition.y) <= 256.0f)
 		{
-			newFunctionLink = make_shared<FunctionLink>(device);
+			newFunctionLink = make_shared<FunctionLink>();
 			newFunctionLink->SetInputNodeIndex(it->first);
 			interactionState = INTERACTION_DRAG_LINK;
 

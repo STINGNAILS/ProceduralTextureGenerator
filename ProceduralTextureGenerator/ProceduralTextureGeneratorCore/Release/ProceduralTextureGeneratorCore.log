@@ -3,72 +3,76 @@
   BRDFLUTRenderer.cpp
   Camera.cpp
   Camera2D.cpp
-Camera2D.cpp(76): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+Camera2D.cpp(76): warning C4244: *=: преобразование "double" в "float", возможна потеря данных
   Camera3D.cpp
+  ConstantBuffer.cpp
   Cube.cpp
   DirectXDevice.cpp
+  DirectXObjectPool.cpp
   DirectXRenderer.cpp
   DirectXTexture.cpp
   DirectXView.cpp
-DirectXView.cpp(130): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
-DirectXView.cpp(136): warning C4244: 'return': conversion from 'FLOAT' to 'UINT', possible loss of data
+DirectXView.cpp(147): warning C4244: return: преобразование "FLOAT" в "UINT", возможна потеря данных
+DirectXView.cpp(153): warning C4244: return: преобразование "FLOAT" в "UINT", возможна потеря данных
   Environment.cpp
   Function.cpp
   FunctionGraph.cpp
-FunctionGraph.cpp(83): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(98): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(166): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(301): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(311): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(371): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(450): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(461): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(483): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-FunctionGraph.cpp(489): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-FunctionGraph.cpp(536): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(510): warning C4101: 'p0': unreferenced local variable
-FunctionGraph.cpp(511): warning C4101: 'p1': unreferenced local variable
-FunctionGraph.cpp(557): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(566): warning C4018: '<': signed/unsigned mismatch
-FunctionGraph.cpp(589): warning C4018: '<': signed/unsigned mismatch
+FunctionGraph.cpp(82): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(97): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(165): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(300): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(310): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(370): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(449): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(460): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(482): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+FunctionGraph.cpp(488): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+FunctionGraph.cpp(535): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(509): warning C4101: p0: неиспользованная локальная переменная
+FunctionGraph.cpp(510): warning C4101: p1: неиспользованная локальная переменная
+FunctionGraph.cpp(556): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(565): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionGraph.cpp(588): warning C4018: <: несоответствие типов со знаком и без знака
   FunctionLink.cpp
   FunctionNode.cpp
-FunctionNode.cpp(106): warning C4018: '<': signed/unsigned mismatch
-FunctionNode.cpp(145): warning C4018: '<': signed/unsigned mismatch
-FunctionNode.cpp(159): warning C4018: '<': signed/unsigned mismatch
-FunctionNode.cpp(169): warning C4018: '<': signed/unsigned mismatch
-FunctionNode.cpp(210): warning C4018: '<': signed/unsigned mismatch
-FunctionNode.cpp(223): warning C4018: '<': signed/unsigned mismatch
-FunctionNode.cpp(251): warning C4018: '<': signed/unsigned mismatch
+FunctionNode.cpp(105): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionNode.cpp(144): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionNode.cpp(158): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionNode.cpp(168): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionNode.cpp(209): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionNode.cpp(222): warning C4018: <: несоответствие типов со знаком и без знака
+FunctionNode.cpp(250): warning C4018: <: несоответствие типов со знаком и без знака
   GeometryHelper.cpp
-  InputPin.cpp
-InputPin.cpp(264): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   MapGenerator.cpp
-MapGenerator.cpp(274): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-MapGenerator.cpp(396): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+MapGenerator.cpp(274): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+MapGenerator.cpp(396): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
   MathHelper.cpp
+  Компиляция...
   NoiseFunctions.cpp
-NoiseFunctions.cpp(20): warning C4018: '<': signed/unsigned mismatch
-  Compiling...
+NoiseFunctions.cpp(20): warning C4018: <: несоответствие типов со знаком и без знака
   OutputPin.cpp
-OutputPin.cpp(344): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+OutputPin.cpp(218): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+  PixelShader.cpp
+  PolygonMesh.cpp
   Polyline.cpp
   ProceduralTextureGeneratorCore.cpp
-ProceduralTextureGeneratorCore.cpp(131): warning C4244: 'argument': conversion from 'UINT' to 'float', possible loss of data
-ProceduralTextureGeneratorCore.cpp(181): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-ProceduralTextureGeneratorCore.cpp(191): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-ProceduralTextureGeneratorCore.cpp(201): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+ProceduralTextureGeneratorCore.cpp(100): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
+ProceduralTextureGeneratorCore.cpp(150): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+ProceduralTextureGeneratorCore.cpp(160): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+ProceduralTextureGeneratorCore.cpp(170): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
   RadianceMapRenderer.cpp
+  RasterizerState.cpp
   RenderableObject.cpp
   RNG.cpp
-RNG.cpp(10): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+RNG.cpp(10): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
   Scene.cpp
   ShaderCompiler.cpp
   TextureFrame.cpp
   TextureMemory.cpp
+  VertexShader.cpp
   dllmain.cpp
-     Creating library D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.lib and object D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.exp
-  Generating code
-  All 2701 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Finished generating code
+     Создается библиотека D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.lib и объект D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.exp
+  Создание кода
+  All 3345 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Создание кода завершено
   ProceduralTextureGeneratorCore.vcxproj -> D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.dll

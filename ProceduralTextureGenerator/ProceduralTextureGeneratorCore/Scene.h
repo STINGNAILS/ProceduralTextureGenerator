@@ -29,15 +29,13 @@ class Scene
 	void SetView(shared_ptr<DirectXView> view_);
 	void SetCamera(shared_ptr<Camera> camera_);
 	void SetEnvironment(shared_ptr<Environment> environment_);
+	void AddRenderableObject(shared_ptr<RenderableObject> renderableObject, string name);
 
 	shared_ptr<DirectXView> GetView();
 	shared_ptr<Camera> GetCamera();
 	shared_ptr<Environment> GetEnvironment();
 	shared_ptr<RenderableObject> GetRenderableObject(string name);
 
-	void AddRenderableObject(shared_ptr<RenderableObject> renderableObject, string name);
-
 	void Render();
-	void Release();
 };
 

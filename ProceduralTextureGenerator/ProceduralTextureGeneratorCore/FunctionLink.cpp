@@ -4,17 +4,14 @@
 
 FunctionLink::FunctionLink()
 {
-	isSelected = false;
-}
-
-
-FunctionLink::FunctionLink(shared_ptr<DirectXDevice> device_)
-{
 	inputNodeIndex = -1;
 	outputNodeIndex = -1;
 	inputPinIndex = -1;
 
-	polylinePtr = make_shared<PolyLine>(device_);
+	polylinePtr = make_shared<PolyLine>();
+	polylinePtr->Init();
+
+	isSelected = false;
 }
 
 
@@ -68,7 +65,7 @@ void FunctionLink::SetInputPinIndex(int inputPinIndex_)
 
 void FunctionLink::SetPolylineCoords(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType)
 {
-	polylinePtr->Init(p0, p1, textureType);
+	polylinePtr->SetPoints(p0, p1, textureType);
 }
 
 

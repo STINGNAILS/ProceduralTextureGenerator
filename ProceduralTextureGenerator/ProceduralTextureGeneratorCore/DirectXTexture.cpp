@@ -2,15 +2,17 @@
 #include "DirectXTexture.h"
 
 
-DirectXTexture::DirectXTexture(shared_ptr<DirectXDevice> device_)
+DirectXTexture::DirectXTexture()
 {
-	device = device_;
+	textureSRV = nullptr;
+
+	isInitialized = false;
 }
 
 
 DirectXTexture::~DirectXTexture()
 {
-	Release();
+	if(textureSRV) textureSRV->Release();
 }
 
 
@@ -56,7 +58,7 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
 		delete[] memory;
@@ -70,7 +72,7 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 
-	hr = device->GetDevice()->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
 	delete[] memory;
@@ -121,7 +123,7 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
 		delete[] memory;
@@ -135,7 +137,7 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 
-	hr = device->GetDevice()->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
 	delete[] memory;
@@ -184,7 +186,7 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
 		delete[] memory;
@@ -198,7 +200,7 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 
-	hr = device->GetDevice()->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
 	delete[] memory;
@@ -248,7 +250,7 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
 		delete[] memory;
@@ -262,7 +264,7 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 
-	hr = device->GetDevice()->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
 	delete[] memory;
@@ -312,7 +314,7 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
 		delete[] memory;
@@ -326,7 +328,7 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 
-	hr = device->GetDevice()->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
 	delete[] memory;
@@ -374,7 +376,7 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
 		delete[] memory;
@@ -388,7 +390,7 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 
-	hr = device->GetDevice()->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
 	delete[] memory;
@@ -400,6 +402,18 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 HRESULT DirectXTexture::InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPerChannel bpc)
 {
 	HRESULT hr = S_OK;
+
+	isInitialized = false;
+
+	if(textureSRV) textureSRV->Release();
+
+	if(!DirectXDevice::IsInitialized())
+	{
+		return E_FAIL;
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
 
 	TextureType textureType = textureMemoryPtr->GetTextureType();
 
@@ -452,6 +466,12 @@ HRESULT DirectXTexture::InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPe
 			break;
 		}
 	}
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	isInitialized = true;
 
 	return hr;
 }
@@ -461,10 +481,27 @@ HRESULT DirectXTexture::InitFromFile(LPCWSTR fileName)
 {
 	HRESULT hr = S_OK;
 
-	ID3D11Resource *resource;
-	hr = CreateDDSTextureFromFile(device->GetDevice(), fileName, &resource, &textureSRV);
+	isInitialized = false;
 
+	if(textureSRV) textureSRV->Release();
+
+	if(!DirectXDevice::IsInitialized())
+	{
+		return E_FAIL;
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
+
+	ID3D11Resource *resource;
+	hr = CreateDDSTextureFromFile(device, fileName, &resource, &textureSRV);
 	if(resource) resource->Release();
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	isInitialized = true;
 	
 	return hr;
 }
@@ -473,6 +510,18 @@ HRESULT DirectXTexture::InitFromFile(LPCWSTR fileName)
 HRESULT DirectXTexture::InitFromRenderer(shared_ptr<DirectXRenderer> renderer)
 {
 	HRESULT hr = S_OK;
+
+	isInitialized = false;
+
+	if(textureSRV) textureSRV->Release();
+
+	if(!DirectXDevice::IsInitialized())
+	{
+		return E_FAIL;
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
 
 	ID3D11Texture2D *texture = nullptr;
 	hr = renderer->Render(&texture);
@@ -492,9 +541,14 @@ HRESULT DirectXTexture::InitFromRenderer(shared_ptr<DirectXRenderer> renderer)
 	srvDesc.TextureCube.MostDetailedMip = 0;
 	srvDesc.TextureCube.MipLevels = textureDesc.MipLevels;
 	
-	hr = device->GetDevice()->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
-
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 	texture->Release();
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	isInitialized = true;
 
 	return hr;
 }
@@ -502,14 +556,6 @@ HRESULT DirectXTexture::InitFromRenderer(shared_ptr<DirectXRenderer> renderer)
 
 void DirectXTexture::Set(int slot)
 {
-	device->GetPainter()->VSSetShaderResources(slot, 1, &textureSRV);
-	device->GetPainter()->PSSetShaderResources(slot, 1, &textureSRV);
-}
-
-
-void DirectXTexture::Release()
-{
-	device = nullptr;
-
-	if(textureSRV) textureSRV->Release();
+	painter->VSSetShaderResources(slot, 1, &textureSRV);
+	painter->PSSetShaderResources(slot, 1, &textureSRV);
 }

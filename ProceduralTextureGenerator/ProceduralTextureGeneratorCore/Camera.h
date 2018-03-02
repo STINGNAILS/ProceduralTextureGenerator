@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DirectXDevice.h"
+#include "DirectXObjectPool.h"
 
 
 enum CameraType
@@ -24,6 +25,10 @@ class Camera
 {
 	protected:
 
+	bool isInitialized;
+
+	shared_ptr<ConstantBuffer> constantBuffer;
+
 	XMFLOAT3 position;
 	float velocity;
 
@@ -34,10 +39,6 @@ class Camera
 	XMFLOAT4X4 viewCentered;
 	XMFLOAT4X4 proj;
 
-	shared_ptr<DirectXDevice> device;
-
-	ID3D11Buffer *cameraConstantBuffer;
-
 	virtual void CalculateView() = 0;
 
 	public:
@@ -45,7 +46,7 @@ class Camera
 	Camera();
 	~Camera();
 
-	HRESULT Init(shared_ptr<DirectXDevice> device_);
+	HRESULT Init();
 
 	virtual void Resize(float width, float height) = 0;
 
@@ -65,8 +66,6 @@ class Camera
 	virtual void Navigate(float dx, float dy, float dt) = 0;
 	virtual void Zoom(float dz) = 0;
 
-	void Prepare();
-	
-	void Release();
+	void Set();
 };
 

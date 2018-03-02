@@ -4,7 +4,6 @@
 
 DirectXView::DirectXView()
 {
-	//swapChain = NULL;
 	renderTargetView = nullptr;
 	depthStencilView = nullptr;
 	viewBuffer = nullptr;
@@ -17,16 +16,33 @@ DirectXView::DirectXView()
 
 DirectXView::~DirectXView()
 {
-	Release();
+	if(depthStencilState) depthStencilState->Release();
+	if(viewBuffer) viewBuffer->Release();
+	if(depthStencilBuffer) depthStencilBuffer->Release();
+	if(renderTargetView) renderTargetView->Release();
+	if(depthStencilView) depthStencilView->Release();
 }
 
 
-HRESULT DirectXView::Init(shared_ptr<DirectXDevice> device_, void *viewResource)
+HRESULT DirectXView::Init(void *viewResource)
 {
 	HRESULT hr = S_OK;
 
-	Release();
-	device = device_;
+	isInitialized = false;
+
+	if(depthStencilState) depthStencilState->Release();
+	if(viewBuffer) viewBuffer->Release();
+	if(depthStencilBuffer) depthStencilBuffer->Release();
+	if(renderTargetView) renderTargetView->Release();
+	if(depthStencilView) depthStencilView->Release();
+	
+	if(!DirectXDevice::IsInitialized())
+	{
+		return E_FAIL;
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
 
 	IUnknown *unknownResource = (IUnknown*) viewResource;
 
@@ -47,7 +63,7 @@ HRESULT DirectXView::Init(shared_ptr<DirectXDevice> device_, void *viewResource)
 	dxgiResource->Release();
 
 	IUnknown *tempResource;
-	hr = device->GetDevice()->OpenSharedResource(sharedHandle, __uuidof(ID3D11Resource), (void**) (&tempResource));
+	hr = device->OpenSharedResource(sharedHandle, __uuidof(ID3D11Resource), (void**) (&tempResource));
 	if(FAILED(hr))
 	{
 		return hr;
@@ -66,7 +82,7 @@ HRESULT DirectXView::Init(shared_ptr<DirectXDevice> device_, void *viewResource)
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	rtvDesc.Texture2D.MipSlice = 0;
 
-	hr = device->GetDevice()->CreateRenderTargetView(viewBuffer, &rtvDesc, &renderTargetView);
+	hr = device->CreateRenderTargetView(viewBuffer, &rtvDesc, &renderTargetView);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -76,6 +92,7 @@ HRESULT DirectXView::Init(shared_ptr<DirectXDevice> device_, void *viewResource)
 	viewBuffer->GetDesc(&viewDesc);
 
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
 	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
 	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	depthStencilDesc.CPUAccessFlags = 0;
@@ -88,13 +105,13 @@ HRESULT DirectXView::Init(shared_ptr<DirectXDevice> device_, void *viewResource)
 	depthStencilDesc.SampleDesc.Count = 1;
 	depthStencilDesc.SampleDesc.Quality = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&depthStencilDesc, 0, &depthStencilBuffer);
+	hr = device->CreateTexture2D(&depthStencilDesc, 0, &depthStencilBuffer);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
-	hr = device->GetDevice()->CreateDepthStencilView(depthStencilBuffer, 0, &depthStencilView);
+	hr = device->CreateDepthStencilView(depthStencilBuffer, 0, &depthStencilView);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -106,7 +123,7 @@ HRESULT DirectXView::Init(shared_ptr<DirectXDevice> device_, void *viewResource)
 	depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	hr = device->GetDevice()->CreateDepthStencilState(&depthStencilStateDesc, &depthStencilState);
+	hr = device->CreateDepthStencilState(&depthStencilStateDesc, &depthStencilState);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -142,12 +159,12 @@ void DirectXView::BeginRender()
 	if(isInitialized)
 	{
 		const float clearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
-		device->GetPainter()->ClearRenderTargetView(renderTargetView, clearColor);
-		device->GetPainter()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		painter->ClearRenderTargetView(renderTargetView, clearColor);
+		painter->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-		device->GetPainter()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
-		device->GetPainter()->OMSetDepthStencilState(depthStencilState, 1);
-		device->GetPainter()->RSSetViewports(1, &viewport);
+		painter->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+		painter->OMSetDepthStencilState(depthStencilState, 1);
+		painter->RSSetViewports(1, &viewport);
 	}
 }
 
@@ -156,18 +173,6 @@ void DirectXView::FinishRender()
 {
 	if(isInitialized)
 	{
-		device->GetPainter()->Flush();
+		painter->Flush();
 	}
-}
-
-
-void DirectXView::Release()
-{
-	device = nullptr;
-
-	if(depthStencilState) depthStencilState->Release();
-	if(viewBuffer) viewBuffer->Release();
-	if(depthStencilBuffer) depthStencilBuffer->Release();
-	if(renderTargetView) renderTargetView->Release();
-	if(depthStencilView) depthStencilView->Release();
 }

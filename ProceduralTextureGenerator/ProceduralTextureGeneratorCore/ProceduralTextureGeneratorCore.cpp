@@ -19,8 +19,6 @@
 #endif
 
 
-shared_ptr<DirectXDevice> device;
-
 map<int, shared_ptr<Scene>> scenes;
 
 shared_ptr<FunctionGraph> functionGraph;
@@ -30,13 +28,7 @@ shared_ptr<Cube> cube1;
 
 CPP_API void Init()
 {
-	if(device.get() != nullptr)
-	{
-		return;
-	}
-
-	device = make_shared<DirectXDevice>();
-	device->Init();
+	DirectXDevice::Init();
 
 	scenes[1] = make_shared<Scene>();
 	scenes[2] = make_shared<Scene>();
@@ -44,7 +36,7 @@ CPP_API void Init()
 
 
 	shared_ptr<Camera3D> camera1 = make_shared<Camera3D>();
-	camera1->Init(device);
+	camera1->Init();
 	camera1->SetYFOV(0.785398f);
 	camera1->SetZNEAR(0.1f);
 	camera1->SetZFAR(1000.0f);
@@ -55,46 +47,25 @@ CPP_API void Init()
 	scenes[1]->SetCamera(camera1);
 
 
-	shared_ptr<Environment> environment1 = make_shared<Environment>(device);
+	shared_ptr<Environment> environment1 = make_shared<Environment>();
+	environment1->Init();
+	environment1->InitEnvironment(L"Cubemap.dds");
 
 	DirectionalLight dirLight1;
 	dirLight1.intensity = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	dirLight1.direction = XMFLOAT4(0.4f, -0.824621f, -0.4f, 0.0f);
 	environment1->AddDirectionalLight(dirLight1);
 
-	environment1->Init(L"Cubemap.dds");
-
 	scenes[1]->SetEnvironment(environment1);
 
 
-	cube1 = make_shared<Cube>(device);
+	functionGraph = make_shared<FunctionGraph>();
+
+	scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
+
+
+	cube1 = make_shared<Cube>();
 	cube1->Init();
-
-	functionGraph = make_shared<FunctionGraph>(device);
-
-	/*TextureMemoryPtr baseColorMapPtr;
-	TextureMemoryPtr metallicMapPtr;
-	TextureMemoryPtr roughnessMapPtr;
-	TextureMemoryPtr normalMapPtr;
-
-	mapGenerator.GenerateRustyIronMaps(2048, baseColorMapPtr, metallicMapPtr, roughnessMapPtr);
-	normalMapPtr = mapGenerator.GenerateNormalMap(2048, XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f));
-
-	shared_ptr<DirectXTexture> baseColorMapTexture = make_shared<DirectXTexture>(device);
-	shared_ptr<DirectXTexture> metallicMapTexture = make_shared<DirectXTexture>(device);
-	shared_ptr<DirectXTexture> roughnessMapTexture = make_shared<DirectXTexture>(device);
-	shared_ptr<DirectXTexture> normalMapTexture = make_shared<DirectXTexture>(device);
-
-	baseColorMapTexture->InitFromMemory(baseColorMapPtr, BPC16);
-	metallicMapTexture->InitFromMemory(metallicMapPtr, BPC16);
-	roughnessMapTexture->InitFromMemory(roughnessMapPtr, BPC16);
-	normalMapTexture->InitFromMemory(normalMapPtr, BPC16);
-
-	cube1->SetBaseColorMap(baseColorMapTexture);
-	cube1->SetMetallicMap(metallicMapTexture);
-	cube1->SetRoughnessMap(roughnessMapTexture);
-	cube1->SetNormalMap(normalMapTexture);*/
-
 	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
 	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
 	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
@@ -104,13 +75,11 @@ CPP_API void Init()
 
 
 	shared_ptr<Camera2D> camera2 = make_shared<Camera2D>();
-	camera2->Init(device);
+	camera2->Init();
 	camera2->SetPosition(XMFLOAT2(0.0f, 0.0f));
 	camera2->SetVelocity(5.0f);
 
 	scenes[2]->SetCamera(camera2);
-
-	scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
 }
 
 
@@ -127,7 +96,7 @@ CPP_API void OverrideView(int viewIndex, void *viewResource)
 	shared_ptr<DirectXView> view = scenes[viewIndex]->GetView();
 	shared_ptr<Camera> camera = scenes[viewIndex]->GetCamera();
 
-	view->Init(device, viewResource);
+	view->Init(viewResource);
 	camera->Resize(view->GetWidth(), view->GetHeight());
 }
 
@@ -156,7 +125,7 @@ CPP_API void Release()
 
 	/*ID3D11Debug* debug = 0;
 	device->GetDevice()->QueryInterface(IID_ID3D11Debug, (void**) &debug);*/
-	device = nullptr;
+	DirectXDevice::Release();
 	/*debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);*/
 }
 

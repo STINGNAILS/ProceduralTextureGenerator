@@ -1,7 +1,6 @@
 #pragma once
 
 #include "RenderableObject.h"
-#include "ShaderCompiler.h"
 
 
 #define OutputPinPtr shared_ptr<OutputPin>
@@ -23,6 +22,12 @@ class OutputPin : public RenderableObject
 
 	bool isInitialized;
 
+	shared_ptr<PolygonMesh> polygonMesh;
+	shared_ptr<VertexShader> vertexShader;
+	shared_ptr<PixelShader> pixelShader;
+	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<ConstantBuffer> constantBuffer;
+
 	bool isHovered;
 
 	float xLocal;
@@ -31,19 +36,12 @@ class OutputPin : public RenderableObject
 	float xGlobal;
 	float yGlobal;
 
-	ID3D11InputLayout *inputLayout;
-	ID3D11Buffer *vertexBuffer;
-	ID3D11Buffer *constantBuffer;
-	ID3D11RasterizerState *basicRasterizerState;
-	ID3D11VertexShader *vertexShader;
-	ID3D11PixelShader *pixelShader;
-
 	const float r0 = 12.0f;
 	const float r1 = 1.732051f * 4.0f;
 
 	public:
 
-	OutputPin(shared_ptr<DirectXDevice> device_);
+	OutputPin();
 	~OutputPin();
 
 	HRESULT Init();
@@ -56,9 +54,5 @@ class OutputPin : public RenderableObject
 	void OnMouseHover(int xMouse, int yMouse);
 
 	void Render();
-
-	void ReleaseFX();
-	void ReleaseGeometry();
-	void Release();
 };
 

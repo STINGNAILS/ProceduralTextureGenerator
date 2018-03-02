@@ -36,7 +36,7 @@ class FunctionGraph : public RenderableObject
 
 	public:
 
-	FunctionGraph(shared_ptr<DirectXDevice> device_);
+	FunctionGraph();
 	~FunctionGraph();
 
 	DirectXTexturePtr GetBaseColorTexture();

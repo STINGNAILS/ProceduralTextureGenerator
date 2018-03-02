@@ -2,15 +2,24 @@
 #include "RadianceMapRenderer.h"
 
 
-RadianceMapRenderer::RadianceMapRenderer(shared_ptr<DirectXDevice> device_)
+struct RadianceMapVertex
 {
-	device = device_;
+	XMFLOAT3 pos;
+	XMFLOAT2 tex;
+};
+
+
+RadianceMapRenderer::RadianceMapRenderer()
+{
+	isInitialized = false;
+
+	size = 0;
 }
 
 
 RadianceMapRenderer::~RadianceMapRenderer()
 {
-	Release();
+
 }
 
 
@@ -50,116 +59,116 @@ int RadianceMapRenderer::MipLevelsNum(int size)
 }
 
 
-struct RadianceMapVertex
-{
-	XMFLOAT3 pos;
-	XMFLOAT2 tex;
-};
-
-
 HRESULT RadianceMapRenderer::Init(shared_ptr<DirectXTexture> environmentMap_, int size_)
 {
 	HRESULT hr;
 
+	isInitialized = false;
+
+	if(!DirectXDevice::IsInitialized())
+	{
+		return E_FAIL;
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
+
 	environmentMap = environmentMap_;
 	size = size_;
 
-	ID3DBlob *shaderBlob = 0;
-
-	hr = CompileShaderFromFile(L"RadianceMapShader.fx", "VS", "vs_5_0", &shaderBlob);
-	if(FAILED(hr))
+	vertexShader = DirectXObjectPool::GetVertexShader("RadianceMap");
+	if(vertexShader.get() == nullptr)
 	{
-		return hr;
+		vertexShader = make_shared<VertexShader>();
+
+		D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		hr = vertexShader->Init(L"RadianceMapShader.fx", layout, ARRAYSIZE(layout));
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetVertexShader("RadianceMap", vertexShader);
 	}
 
-	hr = device->GetDevice()->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &vertexShader);
-	if(FAILED(hr))
+	pixelShader = DirectXObjectPool::GetPixelShader("RadianceMap");
+	if(pixelShader.get() == nullptr)
 	{
-		shaderBlob->Release();
-		return hr;
+		pixelShader = make_shared<PixelShader>();
+
+		hr = pixelShader->Init(L"RadianceMapShader.fx");
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetPixelShader("RadianceMap", pixelShader);
 	}
 
-	D3D11_INPUT_ELEMENT_DESC layout[] =
+	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
+	if(rasterizerState.get() == nullptr)
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
+		rasterizerState = make_shared<RasterizerState>();
 
-	hr = device->GetDevice()->CreateInputLayout(layout, ARRAYSIZE(layout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &inputLayout);
-	shaderBlob->Release();
-	if(FAILED(hr))
-	{
-		return hr;
+		hr = rasterizerState->Init(D3D11_FILL_SOLID, D3D11_CULL_BACK);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
 	}
 
-	hr = CompileShaderFromFile(L"RadianceMapShader.fx", "PS", "ps_5_0", &shaderBlob);
-	if(FAILED(hr))
+	constantBuffer = DirectXObjectPool::GetConstantBuffer("RadianceMap");
+	if(constantBuffer.get() == nullptr)
 	{
-		return hr;
+		constantBuffer = make_shared<ConstantBuffer>();
+
+		hr = constantBuffer->Init(sizeof(RadianceMapCB));
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetConstantBuffer("RadianceMap", constantBuffer);
 	}
 
-	hr = device->GetDevice()->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &pixelShader);
-	shaderBlob->Release();
-	if(FAILED(hr))
+	polygonMesh = DirectXObjectPool::GetPolygonMesh("RadianceMap");
+	if(polygonMesh.get() == nullptr)
 	{
-		return hr;
+		polygonMesh = make_shared<PolygonMesh>();
+
+		vector<RadianceMapVertex> radianceMapVertices(4);
+
+		radianceMapVertices[0] = { XMFLOAT3(-1.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) };
+		radianceMapVertices[1] = { XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) };
+		radianceMapVertices[2] = { XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) };
+		radianceMapVertices[3] = { XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) };
+
+		vector<UINT> radianceMapIndices(6);
+
+		radianceMapIndices[0] = 0;
+		radianceMapIndices[1] = 1;
+		radianceMapIndices[2] = 2;
+		radianceMapIndices[3] = 1;
+		radianceMapIndices[4] = 3;
+		radianceMapIndices[5] = 2;
+
+		hr = polygonMesh->Init((void*) &radianceMapVertices[0], sizeof(RadianceMapVertex), radianceMapVertices.size(), &radianceMapIndices[0], radianceMapIndices.size());
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetPolygonMesh("RadianceMap", polygonMesh);
 	}
 
-	D3D11_BUFFER_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(RadianceMapCB);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = 0;
-
-	hr = device->GetDevice()->CreateBuffer(&bufferDesc, 0, &constantBuffer);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-	rasterizerDesc.FrontCounterClockwise = false;
-	rasterizerDesc.DepthClipEnable = true;
-
-	hr = device->GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-
-	vector<RadianceMapVertex> radianceMapVertices(6);
-
-	radianceMapVertices[0].pos = XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	radianceMapVertices[0].tex = XMFLOAT2(0.0f, 0.0f);
-	radianceMapVertices[1].pos = XMFLOAT3(1.0f, 1.0f, 0.0f);
-	radianceMapVertices[1].tex = XMFLOAT2(1.0f, 0.0f);
-	radianceMapVertices[2].pos = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	radianceMapVertices[2].tex = XMFLOAT2(0.0f, 1.0f);
-
-	radianceMapVertices[3].pos = XMFLOAT3(1.0f, 1.0f, 0.0f);
-	radianceMapVertices[3].tex = XMFLOAT2(1.0f, 0.0f);
-	radianceMapVertices[4].pos = XMFLOAT3(1.0f, -1.0f, 0.0f);
-	radianceMapVertices[4].tex = XMFLOAT2(1.0f, 1.0f);
-	radianceMapVertices[5].pos = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	radianceMapVertices[5].tex = XMFLOAT2(0.0f, 1.0f);
-
-	D3D11_BUFFER_DESC vbDesc;
-	vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vbDesc.ByteWidth = sizeof(RadianceMapVertex) * radianceMapVertices.size();
-	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbDesc.CPUAccessFlags = 0;
-	vbDesc.MiscFlags = 0;
-	vbDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA vbData;
-	vbData.pSysMem = &radianceMapVertices[0];
-
-	hr = device->GetDevice()->CreateBuffer(&vbDesc, &vbData, &vertexBuffer);
+	isInitialized = true;
 
 	return hr;
 }
@@ -168,6 +177,11 @@ HRESULT RadianceMapRenderer::Init(shared_ptr<DirectXTexture> environmentMap_, in
 HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 {
 	HRESULT hr;
+
+	if(!isInitialized)
+	{
+		return E_FAIL;
+	}
 
 	int mipLevelsNum = MipLevelsNum(size);
 
@@ -184,26 +198,18 @@ HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 	radianceMapDesc.SampleDesc.Count = 1;
 	radianceMapDesc.SampleDesc.Quality = 0;
 	
-	hr = device->GetDevice()->CreateTexture2D(&radianceMapDesc, 0, radianceMap);
+	hr = device->CreateTexture2D(&radianceMapDesc, 0, radianceMap);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
 
-	UINT stride = sizeof(RadianceMapVertex);
-	UINT offset = 0;
+	vertexShader->Set();
+	pixelShader->Set();
+	rasterizerState->Set();
 
-	device->GetPainter()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	device->GetPainter()->IASetInputLayout(inputLayout);
-	device->GetPainter()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-
-	device->GetPainter()->RSSetState(rasterizerState);
-
-	device->GetPainter()->VSSetShader(vertexShader, 0, 0);
-
-	device->GetPainter()->PSSetShader(pixelShader, 0, 0);
-	device->GetPainter()->PSSetConstantBuffers(0, 1, &constantBuffer);
+	constantBuffer->Set(0);
 
 	environmentMap->Set(0);
 
@@ -222,26 +228,26 @@ HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 			mipLevelRTVDesc.Texture2DArray.FirstArraySlice = faceIndex;
 
 			ID3D11RenderTargetView *mipLevelRTV;
-			hr = device->GetDevice()->CreateRenderTargetView(*radianceMap, &mipLevelRTVDesc, &mipLevelRTV);
+			hr = device->CreateRenderTargetView(*radianceMap, &mipLevelRTVDesc, &mipLevelRTV);
 			if(FAILED(hr))
 			{
 				return hr;
 			}
 
 			const float clearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			device->GetPainter()->ClearRenderTargetView(mipLevelRTV, clearColor);
-			device->GetPainter()->OMSetRenderTargets(1, &mipLevelRTV, nullptr);
+			painter->ClearRenderTargetView(mipLevelRTV, clearColor);
+			painter->OMSetRenderTargets(1, &mipLevelRTV, nullptr);
 
 			CD3D11_VIEWPORT viewport(0.0f, 0.0f, (float) mipSize, (float) mipSize);
-			device->GetPainter()->RSSetViewports(1, &viewport);
+			painter->RSSetViewports(1, &viewport);
 
 			RadianceMapCB radianceMapCB;
 			radianceMapCB.roughness = (float) mipLevel / (mipLevelsNum - 1);
 			radianceMapCB.faceIndex = faceIndex;
 
-			device->GetPainter()->UpdateSubresource(constantBuffer, 0, 0, &radianceMapCB, 0, 0);
+			constantBuffer->Update(&radianceMapCB);
 
-			device->GetPainter()->Draw(6, 0);
+			polygonMesh->Render();
 
 
 			mipLevelRTV->Release();
@@ -249,21 +255,7 @@ HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 		}
 	}
 
-	device->GetPainter()->RSSetState(0);
+	painter->RSSetState(0);
 
 	return hr;
-}
-
-
-void RadianceMapRenderer::Release()
-{
-	device = nullptr;
-	environmentMap = nullptr;
-
-	if(inputLayout) inputLayout->Release();
-	if(vertexBuffer) vertexBuffer->Release();
-	if(constantBuffer) constantBuffer->Release();
-	if(rasterizerState) rasterizerState->Release();
-	if(vertexShader) vertexShader->Release();
-	if(pixelShader) pixelShader->Release();
 }

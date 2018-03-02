@@ -44,16 +44,7 @@ VertexOut VS(VertexIn vertexIn)
 }
 
 
-float4 PSLines(VertexOut vertexOut) : SV_Target
+float4 PS(VertexOut vertexOut) : SV_Target
 {
-	return vertexOut.color;
-}
-
-
-float4 PSPoints(VertexOut vertexOut) : SV_Target
-{
-	float r2 = vertexOut.uv.x * vertexOut.uv.x + vertexOut.uv.y * vertexOut.uv.y;
-	clip(1.0f - r2);
-
 	return vertexOut.color;
 }

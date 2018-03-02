@@ -22,40 +22,38 @@ class PolyLine : public RenderableObject
 	private:
 
 	bool isInitialized;
+	bool pointsAreSet;
+
+	shared_ptr<PolygonMesh> linesPolygonMesh;
+	shared_ptr<PolygonMesh> pointsPolygonMesh;
+	shared_ptr<VertexShader> vertexShader;
+	shared_ptr<PixelShader> linesPixelShader;
+	shared_ptr<PixelShader> pointsPixelShader;
+	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<ConstantBuffer> constantBuffer;
 
 	bool isSelected;
 
 	vector<XMFLOAT2> points;
-	
-	ID3D11InputLayout *inputLayout;
-	ID3D11Buffer *linesVertexBuffer;
-	ID3D11Buffer *pointsVertexBuffer;
-	ID3D11Buffer *constantBuffer;
-	ID3D11RasterizerState *basicRasterizerState;
-	ID3D11VertexShader *vertexShader;
-	ID3D11PixelShader *linesPixelShader;
-	ID3D11PixelShader *pointsPixelShader;
 
 	const float width = 1.732051f * 4.0f;
 
+	void RenderLines();
+	void RenderPoints();
+
 	public:
 
-	PolyLine(shared_ptr<DirectXDevice> device_);
+	PolyLine();
 	~PolyLine();
 
-	HRESULT Init(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType);
+	HRESULT Init();
+	HRESULT SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType);
 
 	vector<XMFLOAT2> GetVertices();
 
 	void Select();
 	void Unselect();
 
-	void RenderLines();
-	void RenderPoints();
 	void Render();
-
-	void ReleaseFX();
-	void ReleaseGeometry();
-	void Release();
 };
 

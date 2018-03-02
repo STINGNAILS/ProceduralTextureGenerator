@@ -8,22 +8,214 @@ struct CubeMapVertex
 };
 
 
-Environment::Environment(shared_ptr<DirectXDevice> device_)
+Environment::Environment()
 {
-	device = device_;
-
 	lastDirectionalLightNum = 0;
 	lastPunctualLightNum = 0;
 
-	fxIsInitialized = false;
-	geometryIsInitialized = false;
-	cubeMapIsInitialized = false;
+	isInitialized = false;
+	environmentIsInitialized = false;
 }
 
 
 Environment::~Environment()
 {
-	Release();
+
+}
+
+
+HRESULT Environment::Init()
+{
+	HRESULT hr = S_OK;
+
+	isInitialized = false;
+
+	constantBuffer = DirectXObjectPool::GetConstantBuffer("Environment");
+	if(constantBuffer.get() == nullptr)
+	{
+		constantBuffer = make_shared<ConstantBuffer>();
+
+		hr = constantBuffer->Init(sizeof(EnvironmentCB));
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetConstantBuffer("Environment", constantBuffer);
+	}
+
+	isInitialized = true;
+
+	return hr;
+}
+
+
+HRESULT Environment::InitEnvironment(LPCWSTR fileName)
+{
+	HRESULT hr = S_OK;
+
+	environmentIsInitialized = false;
+
+	vertexShader = DirectXObjectPool::GetVertexShader("Environment");
+	if(vertexShader.get() == nullptr)
+	{
+		vertexShader = make_shared<VertexShader>();
+
+		D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		hr = vertexShader->Init(L"EnvironmentShader.fx", layout, ARRAYSIZE(layout));
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetVertexShader("Environment", vertexShader);
+	}
+
+	pixelShader = DirectXObjectPool::GetPixelShader("Environment");
+	if(pixelShader.get() == nullptr)
+	{
+		pixelShader = make_shared<PixelShader>();
+
+		hr = pixelShader->Init(L"EnvironmentShader.fx");
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetPixelShader("Environment", pixelShader);
+	}
+
+	rasterizerState = DirectXObjectPool::GetRasterizerState("CullFront");
+	if(rasterizerState.get() == nullptr)
+	{
+		rasterizerState = make_shared<RasterizerState>();
+
+		hr = rasterizerState->Init(D3D11_FILL_SOLID, D3D11_CULL_FRONT);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetRasterizerState("CullFront", rasterizerState);
+	}
+
+	polygonMesh = DirectXObjectPool::GetPolygonMesh("Environment");
+	if(polygonMesh.get() == nullptr)
+	{
+		polygonMesh = make_shared<PolygonMesh>();
+
+		vector<CubeMapVertex> cubeVertices(8);
+
+		cubeVertices[0].pos = XMFLOAT3(-1.0f, 1.0f, 1.0f);
+		cubeVertices[1].pos = XMFLOAT3(1.0f, 1.0f, 1.0f);
+		cubeVertices[2].pos = XMFLOAT3(-1.0f, -1.0f, 1.0f);
+		cubeVertices[3].pos = XMFLOAT3(1.0f, -1.0f, 1.0f);
+		cubeVertices[4].pos = XMFLOAT3(-1.0f, 1.0f, -1.0f);
+		cubeVertices[5].pos = XMFLOAT3(1.0f, 1.0f, -1.0f);
+		cubeVertices[6].pos = XMFLOAT3(-1.0f, -1.0f, -1.0f);
+		cubeVertices[7].pos = XMFLOAT3(1.0f, -1.0f, -1.0f);
+
+		vector<UINT> cubeIndices(36);
+
+		cubeIndices[0] = 0;
+		cubeIndices[1] = 1;
+		cubeIndices[2] = 2;
+
+		cubeIndices[3] = 1;
+		cubeIndices[4] = 3;
+		cubeIndices[5] = 2;
+
+		cubeIndices[6] = 1;
+		cubeIndices[7] = 5;
+		cubeIndices[8] = 3;
+
+		cubeIndices[9] = 5;
+		cubeIndices[10] = 7;
+		cubeIndices[11] = 3;
+
+		cubeIndices[12] = 5;
+		cubeIndices[13] = 4;
+		cubeIndices[14] = 7;
+
+		cubeIndices[15] = 4;
+		cubeIndices[16] = 6;
+		cubeIndices[17] = 7;
+
+		cubeIndices[18] = 4;
+		cubeIndices[19] = 0;
+		cubeIndices[20] = 6;
+
+		cubeIndices[21] = 0;
+		cubeIndices[22] = 2;
+		cubeIndices[23] = 6;
+
+		cubeIndices[24] = 4;
+		cubeIndices[25] = 5;
+		cubeIndices[26] = 0;
+
+		cubeIndices[27] = 5;
+		cubeIndices[28] = 1;
+		cubeIndices[29] = 0;
+
+		cubeIndices[30] = 2;
+		cubeIndices[31] = 3;
+		cubeIndices[32] = 6;
+
+		cubeIndices[33] = 3;
+		cubeIndices[34] = 7;
+		cubeIndices[35] = 6;
+
+		hr = polygonMesh->Init((void*) &cubeVertices[0], sizeof(CubeMapVertex), cubeVertices.size(), &cubeIndices[0], cubeIndices.size());
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetPolygonMesh("Environment", polygonMesh);
+	}
+
+	environmentMap = make_shared<DirectXTexture>();
+	hr = environmentMap->InitFromFile(fileName);
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	shared_ptr<RadianceMapRenderer> radianceMapRenderer = make_shared<RadianceMapRenderer>();
+	hr = radianceMapRenderer->Init(environmentMap, 2048);
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	radianceMap = make_shared<DirectXTexture>();
+	hr = radianceMap->InitFromRenderer(radianceMapRenderer);
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	shared_ptr<BRDFLUTRenderer> brdfLUTRenderer = make_shared<BRDFLUTRenderer>();
+	hr = brdfLUTRenderer->Init(2048);
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	brdfLUT = make_shared<DirectXTexture>();
+	hr = brdfLUT->InitFromRenderer(brdfLUTRenderer);
+	if(FAILED(hr))
+	{
+		return hr;
+	}
+
+	environmentIsInitialized = true;
+
+	return hr;
 }
 
 
@@ -78,278 +270,43 @@ void Environment::RemovePunctualLight(int punctualLightNum)
 }
 
 
-HRESULT Environment::Init(LPCWSTR fileName)
+void Environment::Set()
 {
-	HRESULT hr = S_OK;
-
-	if(!fxIsInitialized)
+	if(isInitialized)
 	{
-		ID3DBlob *shaderBlob = 0;
+		EnvironmentCB environmentCB;
+		environmentCB.directionalLightsNum = min(directionalLights.size(), 4);
+		environmentCB.radianceMapMipLevelsFactor = 9;
 
-		hr = CompileShaderFromFile(L"EnvironmentShader.fx", "VS", "vs_5_0", &shaderBlob);
-		if(FAILED(hr))
+		int i = 0;
+		for(auto it = directionalLights.begin(); i < 4, it != directionalLights.end(); it++)
 		{
-			return hr;
+			environmentCB.directionalLights[i] = it->second;
+			i++;
 		}
 
-		hr = device->GetDevice()->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &vertexShader);
-		if(FAILED(hr))
+		constantBuffer->Update(&environmentCB);
+		constantBuffer->Set(1);
+
+		if(environmentIsInitialized)
 		{
-			shaderBlob->Release();
-			return hr;
+			radianceMap->Set(0);
+			brdfLUT->Set(1);
 		}
-
-		D3D11_INPUT_ELEMENT_DESC layout[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
-
-		hr = device->GetDevice()->CreateInputLayout(layout, ARRAYSIZE(layout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &inputLayout);
-		shaderBlob->Release();
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		hr = CompileShaderFromFile(L"EnvironmentShader.fx", "PS", "ps_5_0", &shaderBlob);
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		hr = device->GetDevice()->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &pixelShader);
-		shaderBlob->Release();
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		D3D11_BUFFER_DESC bufferDesc;
-		ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(EnvironmentCB);
-		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		bufferDesc.CPUAccessFlags = 0;
-
-		hr = device->GetDevice()->CreateBuffer(&bufferDesc, 0, &environmentConstantBuffer);
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		D3D11_RASTERIZER_DESC rasterizerDesc;
-		ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-		rasterizerDesc.CullMode = D3D11_CULL_BACK;
-		rasterizerDesc.FrontCounterClockwise = false;
-		rasterizerDesc.DepthClipEnable = true;
-
-		hr = device->GetDevice()->CreateRasterizerState(&rasterizerDesc, &basicRasterizerState);
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		fxIsInitialized = true;
 	}
-
-	if(!geometryIsInitialized)
-	{
-		vector<CubeMapVertex> cubeVertices(36);
-
-
-		cubeVertices[0].pos = XMFLOAT3(1.0f, 1.0f, 1.0f);
-		cubeVertices[1].pos = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-		cubeVertices[2].pos = XMFLOAT3(1.0f, -1.0f, 1.0f);
-
-		cubeVertices[3].pos = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-		cubeVertices[4].pos = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-		cubeVertices[5].pos = XMFLOAT3(1.0f, -1.0f, 1.0f);
-
-
-		cubeVertices[6].pos = XMFLOAT3(1.0f, 1.0f, -1.0f);
-		cubeVertices[7].pos = XMFLOAT3(1.0f, 1.0f, 1.0f);
-		cubeVertices[8].pos = XMFLOAT3(1.0f, -1.0f, -1.0f);
-
-		cubeVertices[9].pos = XMFLOAT3(1.0f, 1.0f, 1.0f);
-		cubeVertices[10].pos = XMFLOAT3(1.0f, -1.0f, 1.0f);
-		cubeVertices[11].pos = XMFLOAT3(1.0f, -1.0f, -1.0f);
-
-
-		cubeVertices[12].pos = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-		cubeVertices[13].pos = XMFLOAT3(1.0f, 1.0f, -1.0f);
-		cubeVertices[14].pos = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-
-		cubeVertices[15].pos = XMFLOAT3(1.0f, 1.0f, -1.0f);
-		cubeVertices[16].pos = XMFLOAT3(1.0f, -1.0f, -1.0f);
-		cubeVertices[17].pos = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-
-
-		cubeVertices[18].pos = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-		cubeVertices[19].pos = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-		cubeVertices[20].pos = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-
-		cubeVertices[21].pos = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-		cubeVertices[22].pos = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-		cubeVertices[23].pos = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-
-
-		cubeVertices[24].pos = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-		cubeVertices[25].pos = XMFLOAT3(1.0f, 1.0f, 1.0f);
-		cubeVertices[26].pos = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-
-		cubeVertices[27].pos = XMFLOAT3(1.0f, 1.0f, 1.0f);
-		cubeVertices[28].pos = XMFLOAT3(1.0f, 1.0f, -1.0f);
-		cubeVertices[29].pos = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-
-
-		cubeVertices[30].pos = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-		cubeVertices[31].pos = XMFLOAT3(1.0f, -1.0f, -1.0f);
-		cubeVertices[32].pos = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-
-		cubeVertices[33].pos = XMFLOAT3(1.0f, -1.0f, -1.0f);
-		cubeVertices[34].pos = XMFLOAT3(1.0f, -1.0f, 1.0f);
-		cubeVertices[35].pos = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-
-
-		D3D11_BUFFER_DESC vbDesc;
-		vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
-		vbDesc.ByteWidth = sizeof(CubeMapVertex) * cubeVertices.size();
-		vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vbDesc.CPUAccessFlags = 0;
-		vbDesc.MiscFlags = 0;
-		vbDesc.StructureByteStride = 0;
-
-		D3D11_SUBRESOURCE_DATA vbData;
-		vbData.pSysMem = &cubeVertices[0];
-
-		hr = device->GetDevice()->CreateBuffer(&vbDesc, &vbData, &vertexBuffer);
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		geometryIsInitialized = true;
-	}
-
-	ReleaseCubeMap();
-
-	cubeMap = make_shared<DirectXTexture>(device);
-	hr = cubeMap->InitFromFile(fileName);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	shared_ptr<RadianceMapRenderer> radianceMapRenderer = make_shared<RadianceMapRenderer>(device);
-	hr = radianceMapRenderer->Init(cubeMap, 2048);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	radianceMap = make_shared<DirectXTexture>(device);
-	hr = radianceMap->InitFromRenderer(radianceMapRenderer);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	shared_ptr<BRDFLUTRenderer> brdfLUTRenderer = make_shared<BRDFLUTRenderer>(device);
-	hr = brdfLUTRenderer->Init(2048);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	brdfLUT = make_shared<DirectXTexture>(device);
-	hr = brdfLUT->InitFromRenderer(brdfLUTRenderer);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	cubeMapIsInitialized = true;
-
-	return hr;
-}
-
-
-void Environment::Prepare()
-{
-	EnvironmentCB environmentCB;
-	environmentCB.directionalLightsNum = min(directionalLights.size(), 4);
-	environmentCB.radianceMapMipLevelsFactor = 9;
-
-	int i = 0;
-	for(auto it = directionalLights.begin(); i < 4, it != directionalLights.end(); it++)
-	{
-		environmentCB.directionalLights[i] = it->second;
-		i++;
-	}
-
-	device->GetPainter()->UpdateSubresource(environmentConstantBuffer, 0, 0, &environmentCB, 0, 0);
-
-	device->GetPainter()->VSSetConstantBuffers(1, 1, &environmentConstantBuffer);
-	device->GetPainter()->PSSetConstantBuffers(1, 1, &environmentConstantBuffer);
-
-	radianceMap->Set(0);
-	brdfLUT->Set(1);
 }
 
 
 void Environment::Render()
 {
-	UINT stride = sizeof(CubeMapVertex);
-	UINT offset = 0;
+	if(environmentIsInitialized)
+	{
+		vertexShader->Set();
+		pixelShader->Set();
+		rasterizerState->Set();
 
-	device->GetPainter()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	device->GetPainter()->IASetInputLayout(inputLayout);
-	device->GetPainter()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+		environmentMap->Set(0);
 
-	device->GetPainter()->RSSetState(basicRasterizerState);
-
-	device->GetPainter()->VSSetShader(vertexShader, 0, 0);
-
-	device->GetPainter()->PSSetShader(pixelShader, 0, 0);
-
-	cubeMap->Set(0);
-
-	device->GetPainter()->Draw(36, 0);
-
-	device->GetPainter()->RSSetState(0);
-}
-
-
-void Environment::ReleaseFX()
-{
-	if(inputLayout) inputLayout->Release();
-	if(environmentConstantBuffer) environmentConstantBuffer->Release();
-	if(basicRasterizerState) basicRasterizerState->Release();
-	if(vertexShader) vertexShader->Release();
-	if(pixelShader) pixelShader->Release();
-}
-
-
-void Environment::ReleaseGeometry()
-{
-	if(vertexBuffer) vertexBuffer->Release();
-}
-
-
-void Environment::ReleaseCubeMap()
-{
-	cubeMap = nullptr;
-	radianceMap = nullptr;
-	brdfLUT = nullptr;
-}
-
-
-void Environment::Release()
-{
-	device = nullptr;
-
-	ReleaseCubeMap();
-	ReleaseGeometry();
-	ReleaseFX();
+		polygonMesh->Render();
+	}
 }

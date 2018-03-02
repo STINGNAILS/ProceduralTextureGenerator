@@ -23,7 +23,6 @@ class FunctionLink
 	public:
 
 	FunctionLink();
-	FunctionLink(shared_ptr<DirectXDevice> device_);
 	~FunctionLink();
 
 	int GetInputNodeIndex();

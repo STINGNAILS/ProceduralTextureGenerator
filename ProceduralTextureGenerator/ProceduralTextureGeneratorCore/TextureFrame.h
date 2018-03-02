@@ -23,6 +23,15 @@ class TextureFrame : public RenderableObject
 	private:
 
 	bool isInitialized;
+
+	shared_ptr<PolygonMesh> polygonMesh;
+	shared_ptr<VertexShader> vertexShader;
+	shared_ptr<PixelShader> pixelShader;
+	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<ConstantBuffer> constantBuffer;
+
+	DirectXTexturePtr texture;
+
 	bool isSelected;
 
 	float xLocal;
@@ -31,18 +40,9 @@ class TextureFrame : public RenderableObject
 	float xGlobal;
 	float yGlobal;
 
-	ID3D11InputLayout *inputLayout;
-	ID3D11Buffer *vertexBuffer;
-	ID3D11Buffer *constantBuffer;
-	ID3D11RasterizerState *basicRasterizerState;
-	ID3D11VertexShader *vertexShader;
-	ID3D11PixelShader *pixelShader;
-
-	DirectXTexturePtr texture;
-
 	public:
 
-	TextureFrame(shared_ptr<DirectXDevice> device_);
+	TextureFrame();
 	~TextureFrame();
 
 	HRESULT Init();
@@ -55,9 +55,5 @@ class TextureFrame : public RenderableObject
 	void Unselect();
 
 	void Render();
-
-	void ReleaseFX();
-	void ReleaseGeometry();
-	void Release();
 };
 

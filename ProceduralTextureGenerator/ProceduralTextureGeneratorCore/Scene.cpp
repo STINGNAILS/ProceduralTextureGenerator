@@ -14,7 +14,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	Release();
+	
 }
 
 
@@ -47,6 +47,12 @@ void Scene::SetEnvironment(shared_ptr<Environment> environment_)
 }
 
 
+void Scene::AddRenderableObject(shared_ptr<RenderableObject> renderableObject, string name)
+{
+	renderableObjects[name] = renderableObject;
+}
+
+
 shared_ptr<DirectXView> Scene::GetView()
 {
 	return view;
@@ -71,20 +77,14 @@ shared_ptr<RenderableObject> Scene::GetRenderableObject(string name)
 }
 
 
-void Scene::AddRenderableObject(shared_ptr<RenderableObject> renderableObject, string name)
-{
-	renderableObjects[name] = renderableObject;
-}
-
-
 void Scene::Render()
 {
 	if(isInitialized)
 	{
 		view->BeginRender();
 
-		camera->Prepare();
-		if(environment) environment->Prepare();
+		camera->Set();
+		if(environment) environment->Set();
 
 		for(auto it = renderableObjects.begin(); it != renderableObjects.end(); it++)
 		{
@@ -95,14 +95,4 @@ void Scene::Render()
 
 		view->FinishRender();
 	}
-}
-
-
-void Scene::Release()
-{
-	view = nullptr;
-	camera = nullptr;
-	environment = nullptr;
-
-	renderableObjects.clear();
 }

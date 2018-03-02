@@ -13,7 +13,8 @@ class DirectXView
 
 	bool isInitialized;
 
-	shared_ptr<DirectXDevice> device;
+	ID3D11Device *device;
+	ID3D11DeviceContext *painter;
 
 	ID3D11Texture2D *viewBuffer;
 	ID3D11Texture2D *depthStencilBuffer;
@@ -28,13 +29,11 @@ class DirectXView
 	DirectXView();
 	~DirectXView();
 
-	HRESULT Init(shared_ptr<DirectXDevice> device_, void *viewResource);
+	HRESULT Init(void *viewResource);
 
 	UINT GetWidth();
 	UINT GetHeight();
 
 	void BeginRender();
 	void FinishRender();
-
-	void Release();
 };

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include "DirectXDevice.h"
 #include "TextureMemory.h"
 #include "DirectXRenderer.h"
@@ -22,7 +21,10 @@ class DirectXTexture
 {
 	private:
 
-	shared_ptr<DirectXDevice> device;
+	bool isInitialized;
+
+	ID3D11Device *device;
+	ID3D11DeviceContext *painter;
 
 	ID3D11ShaderResourceView *textureSRV;
 
@@ -35,7 +37,7 @@ class DirectXTexture
 
 	public:
 
-	DirectXTexture(shared_ptr<DirectXDevice> device_);
+	DirectXTexture();
 	~DirectXTexture();
 
 	HRESULT InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPerChannel bpc);
@@ -43,7 +45,5 @@ class DirectXTexture
 	HRESULT InitFromRenderer(shared_ptr<DirectXRenderer> renderer);
 
 	void Set(int slot);
-
-	void Release();
 };
 

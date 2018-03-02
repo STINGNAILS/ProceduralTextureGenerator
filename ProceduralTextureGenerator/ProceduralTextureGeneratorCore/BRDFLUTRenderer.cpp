@@ -2,19 +2,6 @@
 #include "BRDFLUTRenderer.h"
 
 
-
-BRDFLUTRenderer::BRDFLUTRenderer(shared_ptr<DirectXDevice> device_)
-{
-	device = device_;
-}
-
-
-BRDFLUTRenderer::~BRDFLUTRenderer()
-{
-	Release();
-}
-
-
 struct BRDFLUTVertex
 {
 	XMFLOAT3 pos;
@@ -22,95 +9,116 @@ struct BRDFLUTVertex
 };
 
 
+
+BRDFLUTRenderer::BRDFLUTRenderer()
+{
+	isInitialized = false;
+
+	size = 0;
+}
+
+
+BRDFLUTRenderer::~BRDFLUTRenderer()
+{
+
+}
+
+
 HRESULT BRDFLUTRenderer::Init(int size_)
 {
 	HRESULT hr;
 
+	isInitialized = false;
+
+	if(!DirectXDevice::IsInitialized())
+	{
+		return E_FAIL;
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
+
 	size = size_;
 
-	ID3DBlob *shaderBlob = 0;
-
-	hr = CompileShaderFromFile(L"BRDFLUTShader.fx", "VS", "vs_5_0", &shaderBlob);
-	if(FAILED(hr))
+	vertexShader = DirectXObjectPool::GetVertexShader("BRDFLUT");
+	if(vertexShader.get() == nullptr)
 	{
-		return hr;
+		vertexShader = make_shared<VertexShader>();
+
+		D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		hr = vertexShader->Init(L"BRDFLUTShader.fx", layout, ARRAYSIZE(layout));
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetVertexShader("BRDFLUT", vertexShader);
 	}
 
-	hr = device->GetDevice()->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &vertexShader);
-	if(FAILED(hr))
+	pixelShader = DirectXObjectPool::GetPixelShader("BRDFLUT");
+	if(pixelShader.get() == nullptr)
 	{
-		shaderBlob->Release();
-		return hr;
+		pixelShader = make_shared<PixelShader>();
+
+		hr = pixelShader->Init(L"BRDFLUTShader.fx");
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetPixelShader("BRDFLUT", pixelShader);
 	}
 
-	D3D11_INPUT_ELEMENT_DESC layout[] =
+	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
+	if(rasterizerState.get() == nullptr)
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
+		rasterizerState = make_shared<RasterizerState>();
 
-	hr = device->GetDevice()->CreateInputLayout(layout, ARRAYSIZE(layout), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &inputLayout);
-	shaderBlob->Release();
-	if(FAILED(hr))
+		hr = rasterizerState->Init(D3D11_FILL_SOLID, D3D11_CULL_BACK);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
+	}
+	
+	polygonMesh = DirectXObjectPool::GetPolygonMesh("BRDFLUT");
+	if(polygonMesh.get() == nullptr)
 	{
-		return hr;
+		polygonMesh = make_shared<PolygonMesh>();
+
+		vector<BRDFLUTVertex> brdfLUTVertices(4);
+
+		brdfLUTVertices[0] = { XMFLOAT3(-1.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) };
+		brdfLUTVertices[1] = { XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) };
+		brdfLUTVertices[2] = { XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) };
+		brdfLUTVertices[3] = { XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) };
+
+		vector<UINT> brdfLUTIndices(6);
+
+		brdfLUTIndices[0] = 0;
+		brdfLUTIndices[1] = 1;
+		brdfLUTIndices[2] = 2;
+		brdfLUTIndices[3] = 1;
+		brdfLUTIndices[4] = 3;
+		brdfLUTIndices[5] = 2;
+
+		hr = polygonMesh->Init((void*) &brdfLUTVertices[0], sizeof(BRDFLUTVertex), brdfLUTVertices.size(), &brdfLUTIndices[0], brdfLUTIndices.size());
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetPolygonMesh("BRDFLUT", polygonMesh);
 	}
 
-	hr = CompileShaderFromFile(L"BRDFLUTShader.fx", "PS", "ps_5_0", &shaderBlob);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	hr = device->GetDevice()->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &pixelShader);
-	shaderBlob->Release();
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-	rasterizerDesc.FrontCounterClockwise = false;
-	rasterizerDesc.DepthClipEnable = true;
-
-	hr = device->GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-
-	vector<BRDFLUTVertex> brdfLUTVertexVertices(6);
-
-	brdfLUTVertexVertices[0].pos = XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	brdfLUTVertexVertices[0].tex = XMFLOAT2(0.0f, 0.0f);
-	brdfLUTVertexVertices[1].pos = XMFLOAT3(1.0f, 1.0f, 0.0f);
-	brdfLUTVertexVertices[1].tex = XMFLOAT2(1.0f, 0.0f);
-	brdfLUTVertexVertices[2].pos = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	brdfLUTVertexVertices[2].tex = XMFLOAT2(0.0f, 1.0f);
-
-	brdfLUTVertexVertices[3].pos = XMFLOAT3(1.0f, 1.0f, 0.0f);
-	brdfLUTVertexVertices[3].tex = XMFLOAT2(1.0f, 0.0f);
-	brdfLUTVertexVertices[4].pos = XMFLOAT3(1.0f, -1.0f, 0.0f);
-	brdfLUTVertexVertices[4].tex = XMFLOAT2(1.0f, 1.0f);
-	brdfLUTVertexVertices[5].pos = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	brdfLUTVertexVertices[5].tex = XMFLOAT2(0.0f, 1.0f);
-
-	D3D11_BUFFER_DESC vbDesc;
-	vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vbDesc.ByteWidth = sizeof(BRDFLUTVertex) * brdfLUTVertexVertices.size();
-	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbDesc.CPUAccessFlags = 0;
-	vbDesc.MiscFlags = 0;
-	vbDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA vbData;
-	vbData.pSysMem = &brdfLUTVertexVertices[0];
-
-	hr = device->GetDevice()->CreateBuffer(&vbDesc, &vbData, &vertexBuffer);
+	isInitialized = true;
 
 	return hr;
 }
@@ -119,6 +127,11 @@ HRESULT BRDFLUTRenderer::Init(int size_)
 HRESULT BRDFLUTRenderer::Render(ID3D11Texture2D **brdfLUT)
 {
 	HRESULT hr;
+
+	if(!isInitialized)
+	{
+		return E_FAIL;
+	}
 
 	D3D11_TEXTURE2D_DESC brdfLUTDesc;
 	brdfLUTDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -133,7 +146,7 @@ HRESULT BRDFLUTRenderer::Render(ID3D11Texture2D **brdfLUT)
 	brdfLUTDesc.SampleDesc.Count = 1;
 	brdfLUTDesc.SampleDesc.Quality = 0;
 
-	hr = device->GetDevice()->CreateTexture2D(&brdfLUTDesc, 0, brdfLUT);
+	hr = device->CreateTexture2D(&brdfLUTDesc, 0, brdfLUT);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -147,50 +160,26 @@ HRESULT BRDFLUTRenderer::Render(ID3D11Texture2D **brdfLUT)
 	brdfLUTRTVDesc.Texture2DArray.MipSlice = 0;
 
 	ID3D11RenderTargetView *mipLevelRTV;
-	hr = device->GetDevice()->CreateRenderTargetView(*brdfLUT, &brdfLUTRTVDesc, &mipLevelRTV);
+	hr = device->CreateRenderTargetView(*brdfLUT, &brdfLUTRTVDesc, &mipLevelRTV);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
-
-	UINT stride = sizeof(BRDFLUTVertex);
-	UINT offset = 0;
-
 	const float clearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	device->GetPainter()->ClearRenderTargetView(mipLevelRTV, clearColor);
-	device->GetPainter()->OMSetRenderTargets(1, &mipLevelRTV, nullptr);
+	painter->ClearRenderTargetView(mipLevelRTV, clearColor);
+	painter->OMSetRenderTargets(1, &mipLevelRTV, nullptr);
 
-	CD3D11_VIEWPORT viewport(0.0f, 0.0f, (float)size, (float)size);
-	device->GetPainter()->RSSetViewports(1, &viewport);
+	CD3D11_VIEWPORT viewport(0.0f, 0.0f, (float) size, (float) size);
+	painter->RSSetViewports(1, &viewport);
 
-	device->GetPainter()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	device->GetPainter()->IASetInputLayout(inputLayout);
-	device->GetPainter()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	vertexShader->Set();
+	pixelShader->Set();
+	rasterizerState->Set();
 
-	device->GetPainter()->RSSetState(rasterizerState);
-
-	device->GetPainter()->VSSetShader(vertexShader, 0, 0);
-
-	device->GetPainter()->PSSetShader(pixelShader, 0, 0);
-
-	device->GetPainter()->Draw(6, 0);
-
-	device->GetPainter()->RSSetState(0);
+	polygonMesh->Render();
 
 	mipLevelRTV->Release();
 
 	return hr;
-}
-
-
-void BRDFLUTRenderer::Release()
-{
-	device = nullptr;
-
-	if(inputLayout) inputLayout->Release();
-	if(vertexBuffer) vertexBuffer->Release();
-	if(rasterizerState) rasterizerState->Release();
-	if(vertexShader) vertexShader->Release();
-	if(pixelShader) pixelShader->Release();
 }

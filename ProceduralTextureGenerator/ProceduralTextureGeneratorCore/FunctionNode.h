@@ -6,7 +6,6 @@
 #include "FunctionLink.h"
 #include "Function.h"
 #include "TextureFrame.h"
-#include "InputPin.h"
 #include "OutputPin.h"
 
 
@@ -34,16 +33,14 @@ class FunctionNode
 	float xGlobal;
 	float yGlobal;
 
-	shared_ptr<DirectXDevice> device;
-
 	TextureFramePtr textureFramePtr;
-	vector<InputPinPtr> inputPinPtrs;
+	vector<OutputPinPtr> inputPinPtrs;
 	OutputPinPtr outputPinPtr;
 
 	public:
 
 	FunctionNode();
-	FunctionNode(shared_ptr<DirectXDevice> device_, int functionIndex_);
+	FunctionNode(int functionIndex_);
 	~FunctionNode();
 
 	vector<int> GetInputLinkIndices();

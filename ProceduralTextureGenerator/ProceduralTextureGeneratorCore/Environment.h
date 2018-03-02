@@ -37,33 +37,33 @@ class Environment
 {
 	private:
 
+	bool isInitialized;
+
+	shared_ptr<PolygonMesh> polygonMesh;
+	shared_ptr<VertexShader> vertexShader;
+	shared_ptr<PixelShader> pixelShader;
+	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<ConstantBuffer> constantBuffer;
+
+	bool environmentIsInitialized;
+
+	shared_ptr<DirectXTexture> environmentMap;
+	shared_ptr<DirectXTexture> radianceMap;
+	shared_ptr<DirectXTexture> brdfLUT;
+
 	int lastDirectionalLightNum;
 	int lastPunctualLightNum;
 
 	map<int, DirectionalLight> directionalLights;
 	map<int, PunctualLight> punctualLights;
 
-	bool fxIsInitialized;
-	bool geometryIsInitialized;
-	bool cubeMapIsInitialized;
-
-	shared_ptr<DirectXDevice> device;
-
-	shared_ptr<DirectXTexture> cubeMap;
-	shared_ptr<DirectXTexture> radianceMap;
-	shared_ptr<DirectXTexture> brdfLUT;
-
-	ID3D11InputLayout *inputLayout;
-	ID3D11Buffer *vertexBuffer;
-	ID3D11Buffer *environmentConstantBuffer;
-	ID3D11RasterizerState *basicRasterizerState;
-	ID3D11VertexShader *vertexShader;
-	ID3D11PixelShader *pixelShader;
-
 	public:
 
-	Environment(shared_ptr<DirectXDevice> device_);
+	Environment();
 	~Environment();
+
+	HRESULT Init();
+	HRESULT InitEnvironment(LPCWSTR fileName);
 
 	int AddDirectionalLight(DirectionalLight dirLight);
 	int AddPunctualLight(PunctualLight punctualLight);
@@ -74,15 +74,8 @@ class Environment
 	void RemoveDirectionalLight(int directionalLightNum);
 	void RemovePunctualLight(int punctualLightNum);
 
-	HRESULT Init(LPCWSTR fileName);
-
-	void Prepare();
+	void Set();
 
 	void Render();
-
-	void ReleaseFX();
-	void ReleaseGeometry();
-	void ReleaseCubeMap();
-	void Release();
 };
 

@@ -8,9 +8,8 @@ FunctionNode::FunctionNode()
 }
 
 
-FunctionNode::FunctionNode(shared_ptr<DirectXDevice> device_, int functionIndex_)
+FunctionNode::FunctionNode(int functionIndex_)
 {
-	device = device_;
 	functionIndex = functionIndex_;
 
 	isSelected = false;
@@ -19,7 +18,7 @@ FunctionNode::FunctionNode(shared_ptr<DirectXDevice> device_, int functionIndex_
 	intParameters = FunctionIntParametersBase(functionIndex);
 	floatParameters = FunctionFloatParametersBase(functionIndex);
 
-	textureFramePtr = make_shared<TextureFrame>(device);
+	textureFramePtr = make_shared<TextureFrame>();
 	textureFramePtr->Init();
 	textureFramePtr->SetLocalPosition(0.0f, 0.0f);
 
@@ -31,14 +30,14 @@ FunctionNode::FunctionNode(shared_ptr<DirectXDevice> device_, int functionIndex_
 	{
 		inputLinkIndices[i] = -1;
 
-		inputPinPtrs[i] = make_shared<InputPin>(device);
+		inputPinPtrs[i] = make_shared<OutputPin>();
 		inputPinPtrs[i]->Init();
 		inputPinPtrs[i]->SetLocalPosition(-64.0f + 128 * ((i + 1.0f) / (functionInputNodesNum + 1.0f)), 64.0f);
 	}
 
 	if(functionIndex > 1)
 	{
-		outputPinPtr = make_shared<OutputPin>(device);
+		outputPinPtr = make_shared<OutputPin>();
 		outputPinPtr->Init();
 		outputPinPtr->SetLocalPosition(0.0f, -64.0f);
 	}
@@ -129,7 +128,7 @@ void FunctionNode::SetTextureMemory(TextureMemoryPtr textureMemoryPtr_)
 {
 	textureMemoryPtr = textureMemoryPtr_;
 
-	directXTexturePtr = make_shared<DirectXTexture>(device);
+	directXTexturePtr = make_shared<DirectXTexture>();
 	directXTexturePtr->InitFromMemory(textureMemoryPtr, BPC16);
 
 	textureFramePtr->SetTexture(directXTexturePtr);

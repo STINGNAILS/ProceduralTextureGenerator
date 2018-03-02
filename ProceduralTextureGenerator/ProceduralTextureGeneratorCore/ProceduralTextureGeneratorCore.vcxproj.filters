@@ -35,6 +35,9 @@
     <Filter Include="Graphics\Scene">
       <UniqueIdentifier>{9aef903a-e5fd-4a6f-b05c-ddf958fbd211}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graph">
+      <UniqueIdentifier>{09bd4c66-c37d-4441-a011-373907661ed8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -101,9 +104,6 @@
     <ClInclude Include="DirectXRenderer.h">
       <Filter>Graphics\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="FunctionNode.h" />
-    <ClInclude Include="FunctionGraph.h" />
-    <ClInclude Include="FunctionLink.h" />
     <ClInclude Include="Function.h">
       <Filter>MapGeneration</Filter>
     </ClInclude>
@@ -111,9 +111,6 @@
       <Filter>MapGeneration</Filter>
     </ClInclude>
     <ClInclude Include="TextureFrame.h">
-      <Filter>Graphics\Renderable</Filter>
-    </ClInclude>
-    <ClInclude Include="InputPin.h">
       <Filter>Graphics\Renderable</Filter>
     </ClInclude>
     <ClInclude Include="OutputPin.h">
@@ -127,6 +124,33 @@
     </ClInclude>
     <ClInclude Include="MathHelper.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionNode.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionLink.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionGraph.h">
+      <Filter>Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizerState.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="PolygonMesh.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelShader.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXObjectPool.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Graphics\DirectX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -191,9 +215,6 @@
     <ClCompile Include="DirectXRenderer.cpp">
       <Filter>Graphics\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="FunctionNode.cpp" />
-    <ClCompile Include="FunctionGraph.cpp" />
-    <ClCompile Include="FunctionLink.cpp" />
     <ClCompile Include="Function.cpp">
       <Filter>MapGeneration</Filter>
     </ClCompile>
@@ -201,9 +222,6 @@
       <Filter>MapGeneration</Filter>
     </ClCompile>
     <ClCompile Include="TextureFrame.cpp">
-      <Filter>Graphics\Renderable</Filter>
-    </ClCompile>
-    <ClCompile Include="InputPin.cpp">
       <Filter>Graphics\Renderable</Filter>
     </ClCompile>
     <ClCompile Include="OutputPin.cpp">
@@ -217,6 +235,33 @@
     </ClCompile>
     <ClCompile Include="MathHelper.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionNode.cpp">
+      <Filter>Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionLink.cpp">
+      <Filter>Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionGraph.cpp">
+      <Filter>Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexShader.cpp">
+      <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="RasterizerState.cpp">
+      <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="PolygonMesh.cpp">
+      <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShader.cpp">
+      <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXObjectPool.cpp">
+      <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBuffer.cpp">
+      <Filter>Graphics\DirectX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

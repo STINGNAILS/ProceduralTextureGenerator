@@ -6,22 +6,22 @@ class DirectXDevice
 {
 	private:
 
-	D3D_DRIVER_TYPE driverType;
-	D3D_FEATURE_LEVEL featureLevel;
+	static bool isInitialized;
 
-	ID3D11Device *device;
-	ID3D11DeviceContext *painter;
-
-	public:
+	static ID3D11Device *device;
+	static ID3D11DeviceContext *painter;
 
 	DirectXDevice();
 	~DirectXDevice();
 
-	ID3D11Device *GetDevice();
-	ID3D11DeviceContext *GetPainter();
+	public:
 
-	HRESULT Init();
+	static HRESULT Init();
+	static void Release();
 
-	void Release();
+	static bool IsInitialized();
+
+	static ID3D11Device *GetDevice();
+	static ID3D11DeviceContext *GetPainter();
 };
 

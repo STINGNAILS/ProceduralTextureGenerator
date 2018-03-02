@@ -159,9 +159,11 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="Camera3D.h" />
+    <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DirectXDependencies.h" />
     <ClInclude Include="DirectXDevice.h" />
+    <ClInclude Include="DirectXObjectPool.h" />
     <ClInclude Include="DirectXRenderer.h" />
     <ClInclude Include="DirectXTexture.h" />
     <ClInclude Include="DirectXView.h" />
@@ -171,13 +173,15 @@
     <ClInclude Include="FunctionLink.h" />
     <ClInclude Include="FunctionNode.h" />
     <ClInclude Include="GeometryHelper.h" />
-    <ClInclude Include="InputPin.h" />
     <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="NoiseFunctions.h" />
     <ClInclude Include="OutputPin.h" />
+    <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="PolygonMesh.h" />
     <ClInclude Include="Polyline.h" />
     <ClInclude Include="RadianceMapRenderer.h" />
+    <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderableObject.h" />
     <ClInclude Include="RNG.h" />
     <ClInclude Include="Scene.h" />
@@ -186,6 +190,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextureFrame.h" />
     <ClInclude Include="TextureMemory.h" />
+    <ClInclude Include="VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AtomicFunctions.cpp" />
@@ -193,8 +198,10 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="Camera3D.cpp" />
+    <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DirectXDevice.cpp" />
+    <ClCompile Include="DirectXObjectPool.cpp" />
     <ClCompile Include="DirectXRenderer.cpp" />
     <ClCompile Include="DirectXTexture.cpp" />
     <ClCompile Include="DirectXView.cpp" />
@@ -218,14 +225,16 @@
     <ClCompile Include="FunctionLink.cpp" />
     <ClCompile Include="FunctionNode.cpp" />
     <ClCompile Include="GeometryHelper.cpp" />
-    <ClCompile Include="InputPin.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="NoiseFunctions.cpp" />
     <ClCompile Include="OutputPin.cpp" />
+    <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="PolygonMesh.cpp" />
     <ClCompile Include="Polyline.cpp" />
     <ClCompile Include="ProceduralTextureGeneratorCore.cpp" />
     <ClCompile Include="RadianceMapRenderer.cpp" />
+    <ClCompile Include="RasterizerState.cpp" />
     <ClCompile Include="RenderableObject.cpp" />
     <ClCompile Include="RNG.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -238,6 +247,7 @@
     </ClCompile>
     <ClCompile Include="TextureFrame.cpp" />
     <ClCompile Include="TextureMemory.cpp" />
+    <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
