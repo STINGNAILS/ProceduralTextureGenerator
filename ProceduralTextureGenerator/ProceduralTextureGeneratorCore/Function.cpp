@@ -10,25 +10,55 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 		{
 			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
 
-			int size = intParameters[0];
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
 
-			return BaseColor(inputTexturePtr, size);
+			return BaseColor(inputTexturePtr, resolution, bpc);
 		}
-		case BASE_GRAYSCALE:
+		case METALLIC:
 		{
 			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
 
-			int size = intParameters[0];
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
 
-			return BaseGrayscale(inputTexturePtr, size);
+			return Metallic(inputTexturePtr, resolution, bpc);
+		}
+		case ROUGHNESS:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+
+			return Roughness(inputTexturePtr, resolution, bpc);
+		}
+		case NORMAL:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+
+			return Normal(inputTexturePtr, resolution, bpc);
+		}
+		case HEIGHT:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+
+			return Height(inputTexturePtr, resolution, bpc);
 		}
 		case UNIFORM_COLOR:
 		{
-			int size = intParameters[0];
-			TextureType textureType = intParameters[1] == 0 ? GRAYSCALE : COLOR;
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			TextureType textureType = (TextureType) intParameters[2];
 			XMFLOAT4 color = XMFLOAT4(floatParameters[0], floatParameters[1], floatParameters[2], floatParameters[3]);
 
-			return UniformColor(size, textureType, color);
+			return UniformColor(resolution, bpc, textureType, color);
 		}
 		case BLEND:
 		{
@@ -36,47 +66,52 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 			TextureMemoryPtr backgroundTexturePtr = inputTexturePtrs[1];
 			TextureMemoryPtr blendCoefficientTexturePtr = inputTexturePtrs[2];
 
-			int size = intParameters[0];
-			int blendMode = intParameters[1];
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			UINT blendMode = intParameters[2];
 			float k = floatParameters[0];
 
-			return Blend(foregroundTexturePtr, backgroundTexturePtr, blendCoefficientTexturePtr, size, blendMode, k);
+			return Blend(foregroundTexturePtr, backgroundTexturePtr, blendCoefficientTexturePtr, resolution, bpc, blendMode, k);
 		}
 		case LEVELS:
 		{
 			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
 
-			int size = intParameters[0];
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
 			float x1 = floatParameters[0];
 			float x2 = floatParameters[1];
 			float x3 = floatParameters[2];
 			float x4 = floatParameters[3];
 			float x5 = floatParameters[4];
 
-			return Levels(inputTexturePtr, size, x1, x2, x3, x4, x5);
+			return Levels(inputTexturePtr, resolution, bpc, x1, x2, x3, x4, x5);
 		}
 		case GRADIENT:
 		{
 			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
 
-			int size = intParameters[0];
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
 
-			return Gradient(inputTexturePtr, size);
+			return Gradient(inputTexturePtr, resolution, bpc);
 		}
 		case PERLIN_NOISE:
 		{
-			int size = intParameters[0];
-			int octaves = intParameters[1];
-			int gridStartingSize = intParameters[2];
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			UINT octaves = intParameters[2];
+			UINT gridStartingSize = intParameters[3];
 			float persistence = floatParameters[0];
 
-			return PerlinNoise(size, octaves, gridStartingSize, persistence);
+			return PerlinNoise(resolution, bpc, octaves, gridStartingSize, persistence);
 		}
 		case NORMAL_COLOR:
 		{
-			int size = intParameters[0];
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
 
-			return NormalColor(size);
+			return NormalColor(resolution, bpc);
 		}
 		default:
 		{
@@ -94,7 +129,19 @@ int FunctionInputNodesNum(int functionIndex)
 		{
 			return 1;
 		}
-		case BASE_GRAYSCALE:
+		case METALLIC:
+		{
+			return 1;
+		}
+		case ROUGHNESS:
+		{
+			return 1;
+		}
+		case NORMAL:
+		{
+			return 1;
+		}
+		case HEIGHT:
 		{
 			return 1;
 		}
@@ -136,68 +183,101 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 	{
 		case BASE_COLOR:
 		{
-			vector<int> intParameters(1);
-			intParameters[0] = 2048;
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
 
 			return intParameters;
 		}
-		case BASE_GRAYSCALE:
+		case METALLIC:
 		{
-			vector<int> intParameters(1);
-			intParameters[0] = 2048;
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
+		case ROUGHNESS:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
+		case NORMAL:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
+		case HEIGHT:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
 
 			return intParameters;
 		}
 		case UNIFORM_COLOR:
 		{
-			vector<int> intParameters(2);
-			intParameters[0] = 2048;
-			intParameters[1] = 1;
+			vector<int> intParameters(3);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+			intParameters[2] = 1;
 
 			return intParameters;
 		}
 		case BLEND:
 		{
-			vector<int> intParameters(2);
-			intParameters[0] = 2048;
-			intParameters[1] = 0;
+			vector<int> intParameters(3);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+			intParameters[2] = 0;
 
 			return intParameters;
 		}
 		case LEVELS:
 		{
-			vector<int> intParameters(1);
-			intParameters[0] = 2048;
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
 
 			return intParameters;
 		}
 		case GRADIENT:
 		{
-			vector<int> intParameters(1);
-			intParameters[0] = 2048;
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 16;
 
 			return intParameters;
 		}
 		case PERLIN_NOISE:
 		{
-			vector<int> intParameters(3);
-			intParameters[0] = 2048;
-			intParameters[1] = 8;
-			intParameters[2] = 2;
+			vector<int> intParameters(4);
+			intParameters[0] = 1024;
+			intParameters[1] = 16;
+			intParameters[2] = 8;
+			intParameters[3] = 2;
 
 			return intParameters;
 		}
 		case NORMAL_COLOR:
 		{
-			vector<int> intParameters(1);
-			intParameters[0] = 2048;
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
 
 			return intParameters;
 		}
 		default:
 		{
-			vector<int> intParameters(1);
-			intParameters[0] = 2048;
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
 
 			return intParameters;
 		}
@@ -215,7 +295,25 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 
 			return floatParameters;
 		}
-		case BASE_GRAYSCALE:
+		case METALLIC:
+		{
+			vector<float> floatParameters(0);
+
+			return floatParameters;
+		}
+		case ROUGHNESS:
+		{
+			vector<float> floatParameters(0);
+
+			return floatParameters;
+		}
+		case NORMAL:
+		{
+			vector<float> floatParameters(0);
+
+			return floatParameters;
+		}
+		case HEIGHT:
 		{
 			vector<float> floatParameters(0);
 

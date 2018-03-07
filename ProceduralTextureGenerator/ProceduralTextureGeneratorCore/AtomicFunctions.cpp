@@ -2,44 +2,132 @@
 #include "AtomicFunctions.h"
 
 
-TextureMemoryPtr BaseColor(TextureMemoryPtr inputTexturePtr, int size)
+TextureMemoryPtr BaseColor(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel)
 {
 	if(inputTexturePtr.get() == nullptr)
 	{
-		return UniformColor(size, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	return inputTexturePtr;
+	TextureMemoryPtr baseColorTexturePtr = make_shared<TextureMemory>(COLOR, resolution, bitsPerChannel);
+	
+	#pragma omp parallel for
+	for(int i = 0; i < resolution; i++)
+	{
+		for(int j = 0; j < resolution; j++)
+		{
+			baseColorTexturePtr->SetValue(i, j, inputTexturePtr->SampleColor(i, j, resolution));
+		}
+	}
+
+	return baseColorTexturePtr;
 }
 
 
-TextureMemoryPtr BaseGrayscale(TextureMemoryPtr inputTexturePtr, int size)
+TextureMemoryPtr Metallic(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel)
 {
 	if(inputTexturePtr.get() == nullptr)
 	{
-		return UniformColor(size, GRAYSCALE, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		return UniformColor(resolution, bitsPerChannel, GRAYSCALE, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	return inputTexturePtr;
+	TextureMemoryPtr metallicTexturePtr = make_shared<TextureMemory>(GRAYSCALE, resolution, bitsPerChannel);
+
+	#pragma omp parallel for
+	for(int i = 0; i < resolution; i++)
+	{
+		for(int j = 0; j < resolution; j++)
+		{
+			metallicTexturePtr->SetValue(i, j, inputTexturePtr->SampleGrayscale(i, j, resolution));
+		}
+	}
+
+	return metallicTexturePtr;
 }
 
 
-TextureMemoryPtr UniformColor(int size, TextureType textureType, XMFLOAT4 color)
+TextureMemoryPtr Roughness(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel)
 {
-	TextureMemoryPtr uniformColorTexturePtr = make_shared<TextureMemory>(textureType, size);
-	TextureMemory &uniformColorTexture = *uniformColorTexturePtr.get();
+	if(inputTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, GRAYSCALE, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	TextureMemoryPtr roughnessTexturePtr = make_shared<TextureMemory>(GRAYSCALE, resolution, bitsPerChannel);
+
+	#pragma omp parallel for
+	for(int i = 0; i < resolution; i++)
+	{
+		for(int j = 0; j < resolution; j++)
+		{
+			roughnessTexturePtr->SetValue(i, j, inputTexturePtr->SampleGrayscale(i, j, resolution));
+		}
+	}
+
+	return roughnessTexturePtr;
+}
+
+
+TextureMemoryPtr Normal(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel)
+{
+	if(inputTexturePtr.get() == nullptr)
+	{
+		return NormalColor(resolution, bitsPerChannel);
+	}
+
+	TextureMemoryPtr normalTexturePtr = make_shared<TextureMemory>(COLOR, resolution, bitsPerChannel);
+
+	#pragma omp parallel for
+	for(int i = 0; i < resolution; i++)
+	{
+		for(int j = 0; j < resolution; j++)
+		{
+			normalTexturePtr->SetValue(i, j, inputTexturePtr->SampleColor(i, j, resolution));
+		}
+	}
+
+	return normalTexturePtr;
+}
+
+
+TextureMemoryPtr Height(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel)
+{
+	if(inputTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, GRAYSCALE, XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+	}
+
+	TextureMemoryPtr heightTexturePtr = make_shared<TextureMemory>(GRAYSCALE, resolution, bitsPerChannel);
+
+	#pragma omp parallel for
+	for(int i = 0; i < resolution; i++)
+	{
+		for(int j = 0; j < resolution; j++)
+		{
+			heightTexturePtr->SetValue(i, j, inputTexturePtr->SampleGrayscale(i, j, resolution));
+		}
+	}
+
+	return heightTexturePtr;
+}
+
+
+TextureMemoryPtr UniformColor(TextureResolution resolution, BitsPerChannel bitsPerChannel, TextureType textureType, XMFLOAT4 color)
+{
+	TextureMemoryPtr uniformColorTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
 
 	switch(textureType)
 	{
 		case GRAYSCALE:
 		{
+			XMFLOAT2 color_ = XMFLOAT2(color.x, color.w);
+
 			#pragma omp parallel for
-			for(int i = 0; i < size; i++)
+			for(int i = 0; i < resolution; i++)
 			{
-				for(int j = 0; j < size; j++)
+				for(int j = 0; j < resolution; j++)
 				{
-					uniformColorTexture(i, j, 0) = color.x;
-					uniformColorTexture(i, j, 1) = color.w;
+					uniformColorTexturePtr->SetValue(i, j, color_);
 				}
 			}
 			break;
@@ -47,14 +135,11 @@ TextureMemoryPtr UniformColor(int size, TextureType textureType, XMFLOAT4 color)
 		case COLOR:
 		{
 			#pragma omp parallel for
-			for(int i = 0; i < size; i++)
+			for(int i = 0; i < resolution; i++)
 			{
-				for(int j = 0; j < size; j++)
+				for(int j = 0; j < resolution; j++)
 				{
-					uniformColorTexture(i, j, 0) = color.x;
-					uniformColorTexture(i, j, 1) = color.y;
-					uniformColorTexture(i, j, 2) = color.z;
-					uniformColorTexture(i, j, 3) = color.w;
+					uniformColorTexturePtr->SetValue(i, j, color);
 				}
 			}
 			break;
@@ -65,20 +150,16 @@ TextureMemoryPtr UniformColor(int size, TextureType textureType, XMFLOAT4 color)
 }
 
 
-TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr backgroundTexturePtr, TextureMemoryPtr blendCoefficientTexturePtr, int size, int blendMode, float k)
+TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr backgroundTexturePtr, TextureMemoryPtr blendCoefficientTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, UINT blendMode, float k)
 {
 	if(foregroundTexturePtr.get() == nullptr || backgroundTexturePtr.get() == nullptr)
 	{
-		return UniformColor(size, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	TextureType textureType = (foregroundTexturePtr->GetTextureType() == GRAYSCALE && backgroundTexturePtr->GetTextureType() == GRAYSCALE) ? GRAYSCALE : COLOR;
 
-	TextureMemoryPtr blendedTexturePtr = make_shared<TextureMemory>(textureType, size);
-	TextureMemory &blendedTexture = *blendedTexturePtr.get();
-
-	TextureMemory &foregroundTexture = *foregroundTexturePtr.get();
-	TextureMemory &backgroundTexture = *backgroundTexturePtr.get();
+	TextureMemoryPtr blendedTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
 
 	if(blendCoefficientTexturePtr.get() == nullptr)
 	{
@@ -92,12 +173,15 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 0:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * foregroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k) * backgroundSample.x + k * foregroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -106,12 +190,15 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 1:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = min(backgroundTexture(i, j, 0) + k * foregroundTexture(i, j, 0), 1.0f);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2(backgroundSample.x + k * foregroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -120,12 +207,15 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 2:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = max(backgroundTexture(i, j, 0) - k * foregroundTexture(i, j, 0), 0.0f);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2(backgroundSample.x - k * foregroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -134,12 +224,15 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 3:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * foregroundTexture(i, j, 0) * backgroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k) * backgroundSample.x + k * foregroundSample.x * backgroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -148,12 +241,15 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 4:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * min(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k) * backgroundSample.x + k * min(foregroundSample.x, backgroundSample.x), 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -162,12 +258,15 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 5:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * max(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k) * backgroundSample.x + k * max(foregroundSample.x, backgroundSample.x), 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -183,14 +282,18 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 0:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * foregroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = (1 - k) * backgroundTexture(i, j, 1) + k * foregroundTexture(i, j, 1);
-								blendedTexture(i, j, 2) = (1 - k) * backgroundTexture(i, j, 2) + k * foregroundTexture(i, j, 2);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 3);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerp(backgroundSampleV, foregroundSampleV, k);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -199,14 +302,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 1:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = min(backgroundTexture(i, j, 0) + k * foregroundTexture(i, j, 0), 1.0f);
-								blendedTexture(i, j, 1) = min(backgroundTexture(i, j, 1) + k * foregroundTexture(i, j, 1), 1.0f);
-								blendedTexture(i, j, 2) = min(backgroundTexture(i, j, 2) + k * foregroundTexture(i, j, 2), 1.0f);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 3);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR kV = XMVectorReplicate(k);
+								XMVECTOR valueV = XMVectorMultiplyAdd(foregroundSampleV, kV, backgroundSampleV);
+								
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -215,14 +323,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 2:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = max(backgroundTexture(i, j, 0) - k * foregroundTexture(i, j, 0), 0.0f);
-								blendedTexture(i, j, 1) = max(backgroundTexture(i, j, 1) - k * foregroundTexture(i, j, 1), 0.0f);
-								blendedTexture(i, j, 2) = max(backgroundTexture(i, j, 2) - k * foregroundTexture(i, j, 2), 0.0f);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 3);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR kV = XMVectorReplicate(-k);
+								XMVECTOR valueV = XMVectorMultiplyAdd(foregroundSampleV, kV, backgroundSampleV);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -231,14 +344,18 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 3:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * foregroundTexture(i, j, 0) * backgroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = (1 - k) * backgroundTexture(i, j, 1) + k * foregroundTexture(i, j, 1) * backgroundTexture(i, j, 1);
-								blendedTexture(i, j, 2) = (1 - k) * backgroundTexture(i, j, 2) + k * foregroundTexture(i, j, 2) * backgroundTexture(i, j, 2);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 1);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerp(backgroundSampleV, XMVectorMultiply(foregroundSampleV, backgroundSampleV), k);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -247,14 +364,18 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 4:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * min(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = (1 - k) * backgroundTexture(i, j, 1) + k * min(foregroundTexture(i, j, 1), backgroundTexture(i, j, 1));
-								blendedTexture(i, j, 2) = (1 - k) * backgroundTexture(i, j, 2) + k * min(foregroundTexture(i, j, 2), backgroundTexture(i, j, 2));
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 1);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerp(backgroundSampleV, XMVectorMin(foregroundSampleV, backgroundSampleV), k);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -263,14 +384,18 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 5:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								blendedTexture(i, j, 0) = (1 - k) * backgroundTexture(i, j, 0) + k * max(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = (1 - k) * backgroundTexture(i, j, 1) + k * max(foregroundTexture(i, j, 1), backgroundTexture(i, j, 1));
-								blendedTexture(i, j, 2) = (1 - k) * backgroundTexture(i, j, 2) + k * max(foregroundTexture(i, j, 2), backgroundTexture(i, j, 2));
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 1);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerp(backgroundSampleV, XMVectorMax(foregroundSampleV, backgroundSampleV), k);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -282,8 +407,6 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 	}
 	else
 	{
-		TextureMemory &blendCoefficientTexture = *blendCoefficientTexturePtr.get();
-
 		switch(textureType)
 		{
 			case GRAYSCALE:
@@ -294,13 +417,17 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 0:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * foregroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								float k_ = blendCoefficientTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k_) * backgroundSample.x + k_ * foregroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -309,13 +436,17 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 1:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = min(backgroundTexture(i, j, 0) + k_ * foregroundTexture(i, j, 0), 1.0f);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								float k_ = blendCoefficientTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2(backgroundSample.x + k_ * foregroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -324,13 +455,17 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 2:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = max(backgroundTexture(i, j, 0) - k_ * foregroundTexture(i, j, 0), 0.0f);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								float k_ = blendCoefficientTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2(backgroundSample.x - k_ * foregroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -339,13 +474,17 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 3:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * foregroundTexture(i, j, 0) * backgroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								float k_ = blendCoefficientTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k_) * backgroundSample.x + k_ * foregroundSample.x * backgroundSample.x, 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -354,13 +493,17 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 4:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * min(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								float k_ = blendCoefficientTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k_) * backgroundSample.x + k_ * min(foregroundSample.x, backgroundSample.x), 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -369,13 +512,17 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 5:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * max(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = backgroundTexture(i, j, 1);
+								float k_ = blendCoefficientTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+								XMFLOAT2 backgroundSample = backgroundTexturePtr->SampleGrayscale(i, j, resolution);
+								XMFLOAT2 foregroundSample = foregroundTexturePtr->SampleGrayscale(i, j, resolution);
+
+								XMFLOAT2 value = XMFLOAT2((1.0f - k_) * backgroundSample.x + k_ * max(foregroundSample.x, backgroundSample.x), 1.0f);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -391,15 +538,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 0:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * foregroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = (1 - k_) * backgroundTexture(i, j, 1) + k_ * foregroundTexture(i, j, 1);
-								blendedTexture(i, j, 2) = (1 - k_) * backgroundTexture(i, j, 2) + k_ * foregroundTexture(i, j, 2);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 3);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR blendCoefficientSampleV = XMLoadFloat4(&blendCoefficientTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerpV(backgroundSampleV, foregroundSampleV, blendCoefficientSampleV);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -408,15 +559,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 1:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = min(backgroundTexture(i, j, 0) + k_ * foregroundTexture(i, j, 0), 1.0f);
-								blendedTexture(i, j, 1) = min(backgroundTexture(i, j, 1) + k_ * foregroundTexture(i, j, 1), 1.0f);
-								blendedTexture(i, j, 2) = min(backgroundTexture(i, j, 2) + k_ * foregroundTexture(i, j, 2), 1.0f);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 3);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR blendCoefficientSampleV = XMLoadFloat4(&blendCoefficientTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorMultiplyAdd(foregroundSampleV, blendCoefficientSampleV, backgroundSampleV);
+								
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -425,15 +580,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 2:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = max(backgroundTexture(i, j, 0) - k_ * foregroundTexture(i, j, 0), 0.0f);
-								blendedTexture(i, j, 1) = max(backgroundTexture(i, j, 1) - k_ * foregroundTexture(i, j, 1), 0.0f);
-								blendedTexture(i, j, 2) = max(backgroundTexture(i, j, 2) - k_ * foregroundTexture(i, j, 2), 0.0f);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 3);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR blendCoefficientSampleV = XMLoadFloat4(&blendCoefficientTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorMultiplyAdd(foregroundSampleV, XMVectorNegate(blendCoefficientSampleV), backgroundSampleV);
+								
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -442,15 +601,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 3:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * foregroundTexture(i, j, 0) * backgroundTexture(i, j, 0);
-								blendedTexture(i, j, 1) = (1 - k_) * backgroundTexture(i, j, 1) + k_ * foregroundTexture(i, j, 1) * backgroundTexture(i, j, 1);
-								blendedTexture(i, j, 2) = (1 - k_) * backgroundTexture(i, j, 2) + k_ * foregroundTexture(i, j, 2) * backgroundTexture(i, j, 2);
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 1);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR blendCoefficientSampleV = XMLoadFloat4(&blendCoefficientTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerpV(backgroundSampleV, XMVectorMultiply(foregroundSampleV, backgroundSampleV), blendCoefficientSampleV);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -459,15 +622,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 4:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * min(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = (1 - k_) * backgroundTexture(i, j, 1) + k_ * min(foregroundTexture(i, j, 1), backgroundTexture(i, j, 1));
-								blendedTexture(i, j, 2) = (1 - k_) * backgroundTexture(i, j, 2) + k_ * min(foregroundTexture(i, j, 2), backgroundTexture(i, j, 2));
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 1);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR blendCoefficientSampleV = XMLoadFloat4(&blendCoefficientTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerpV(backgroundSampleV, XMVectorMin(foregroundSampleV, backgroundSampleV), blendCoefficientSampleV);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -476,15 +643,19 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 					case 5:
 					{
 						#pragma omp parallel for
-						for(int i = 0; i < size; i++)
+						for(int i = 0; i < resolution; i++)
 						{
-							for(int j = 0; j < size; j++)
+							for(int j = 0; j < resolution; j++)
 							{
-								float k_ = blendCoefficientTexture(i, j, 0);
-								blendedTexture(i, j, 0) = (1 - k_) * backgroundTexture(i, j, 0) + k_ * max(foregroundTexture(i, j, 0), backgroundTexture(i, j, 0));
-								blendedTexture(i, j, 1) = (1 - k_) * backgroundTexture(i, j, 1) + k_ * max(foregroundTexture(i, j, 1), backgroundTexture(i, j, 1));
-								blendedTexture(i, j, 2) = (1 - k_) * backgroundTexture(i, j, 2) + k_ * max(foregroundTexture(i, j, 2), backgroundTexture(i, j, 2));
-								blendedTexture(i, j, 3) = backgroundTexture(i, j, 1);
+								XMVECTOR backgroundSampleV = XMLoadFloat4(&backgroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR foregroundSampleV = XMLoadFloat4(&foregroundTexturePtr->SampleColor(i, j, resolution));
+								XMVECTOR blendCoefficientSampleV = XMLoadFloat4(&blendCoefficientTexturePtr->SampleColor(i, j, resolution));
+
+								XMVECTOR valueV = XMVectorLerpV(backgroundSampleV, XMVectorMax(foregroundSampleV, backgroundSampleV), blendCoefficientSampleV);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								blendedTexturePtr->SetValue(i, j, value);
 							}
 						}
 						break;
@@ -494,25 +665,21 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 			}
 		}
 	}
-	
 
 	return blendedTexturePtr;
 }
 
 
-TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, int size, float x1, float x2, float x3, float x4, float x5)
+TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float x1, float x2, float x3, float x4, float x5)
 {
 	if(inputTexturePtr.get() == nullptr)
 	{
-		return UniformColor(size, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	TextureType textureType = inputTexturePtr->GetTextureType();
 
-	TextureMemoryPtr leveledTexturePtr = make_shared<TextureMemory>(textureType, size);
-	TextureMemory &leveledTexture = *leveledTexturePtr.get();
-
-	TextureMemory &inputTexture = *inputTexturePtr.get();
+	TextureMemoryPtr leveledTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
 
 	float a1 = (-0.5f * x1 + x2 - 0.5f * x3) / ((x2 - x1) * (x3 - x1) * (x3 - x2));
 	float b1 = (1 - a1 * (x3 * x3 - x1 * x1)) / (x3 - x1);
@@ -526,32 +693,39 @@ TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, int size, float x1, fl
 		case GRAYSCALE:
 		{
 			#pragma omp parallel for
-			for(int i = 0; i < size; i++)
+			for(int i = 0; i < resolution; i++)
 			{
-				for(int j = 0; j < size; j++)
+				for(int j = 0; j < resolution; j++)
 				{
-					float x = inputTexture(i, j, 0);
-					leveledTexture(i, j, 0) = a2 * min(max(a1 * x * x + b1 * x + c1, 0.0f), 1.0f) + b2;
-					leveledTexture(i, j, 1) = inputTexture(i, j, 1);
+					float x = inputTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+					XMFLOAT2 value = XMFLOAT2(a2 * min(max(a1 * x * x + b1 * x + c1, 0.0f), 1.0f) + b2, 1.0f);
+					leveledTexturePtr->SetValue(i, j, value);
 				}
 			}
 			break;
 		}
 		case COLOR:
 		{
-			#pragma omp parallel for
-			for(int i = 0; i < size; i++)
-			{
-				for(int j = 0; j < size; j++)
-				{
-					float r = inputTexture(i, j, 0);
-					float g = inputTexture(i, j, 1);
-					float b = inputTexture(i, j, 2);
+			XMVECTOR a1V = XMVectorReplicate(a1);
+			XMVECTOR b1V = XMVectorReplicate(b1);
+			XMVECTOR c1V = XMVectorReplicate(c1);
 
-					leveledTexture(i, j, 0) = a2 * min(max(a1 * r * r + b1 * r + c1, 0.0f), 1.0f) + b2;
-					leveledTexture(i, j, 1) = a2 * min(max(a1 * g * g + b1 * g + c1, 0.0f), 1.0f) + b2;
-					leveledTexture(i, j, 2) = a2 * min(max(a1 * b * b + b1 * b + c1, 0.0f), 1.0f) + b2;
-					leveledTexture(i, j, 3) = inputTexture(i, j, 3);
+			XMVECTOR a2V = XMVectorReplicate(a2);
+			XMVECTOR b2V = XMVectorReplicate(b2);
+
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					XMVECTOR inputSampleV = XMLoadFloat4(&inputTexturePtr->SampleColor(i, j, resolution));
+
+					XMVECTOR valueV = XMVectorMultiplyAdd(a2V, XMVectorSaturate(XMVectorMultiplyAdd(XMVectorMultiplyAdd(a1V, inputSampleV, b1V), inputSampleV, c1V)), b2V);
+
+					XMFLOAT4 value;
+					XMStoreFloat4(&value, valueV);
+					leveledTexturePtr->SetValue(i, j, value);
 				}
 			}
 			break;
@@ -562,17 +736,14 @@ TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, int size, float x1, fl
 }
 
 
-TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, int size)
+TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel)
 {
 	if(inputTexturePtr.get() == nullptr)
 	{
-		return UniformColor(size, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	TextureMemoryPtr gradientTexturePtr = make_shared<TextureMemory>(COLOR, size);
-	TextureMemory &gradientTexture = *gradientTexturePtr.get();
-
-	TextureMemory &inputTexture = *inputTexturePtr.get();
+	TextureMemoryPtr gradientTexturePtr = make_shared<TextureMemory>(COLOR, resolution, bitsPerChannel);
 
 	Grad gradient[72] =
 	{
@@ -651,38 +822,38 @@ TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, int size)
 	};
 
 	#pragma omp parallel for
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < resolution; i++)
 	{
-		for(int j = 0; j < size; j++)
+		for(int j = 0; j < resolution; j++)
 		{
+			float inputSample = inputTexturePtr->SampleGrayscale(i, j, resolution).x;
+
 			int gradientIndex = 0;
-			while(gradient[gradientIndex].value < inputTexture(i, j, 0))
+			while(gradient[gradientIndex].value < inputSample)
 			{
 				gradientIndex++;
 			}
 
 			if(gradientIndex == 0)
 			{
-				gradientTexture(i, j, 0) = gradient[0].color.x;
-				gradientTexture(i, j, 1) = gradient[0].color.y;
-				gradientTexture(i, j, 2) = gradient[0].color.z;
-				gradientTexture(i, j, 3) = gradient[0].color.w;
+				gradientTexturePtr->SetValue(i, j, gradient[0].color);
 			}
 			else if(gradientIndex > 71)
 			{
-				gradientTexture(i, j, 0) = gradient[71].color.x;
-				gradientTexture(i, j, 1) = gradient[71].color.y;
-				gradientTexture(i, j, 2) = gradient[71].color.z;
-				gradientTexture(i, j, 3) = gradient[71].color.w;
+				gradientTexturePtr->SetValue(i, j, gradient[71].color);
 			}
 			else
 			{
-				float k = (gradient[gradientIndex].value - inputTexture(i, j, 0)) / (gradient[gradientIndex].value - gradient[gradientIndex - 1].value);
+				float k = (gradient[gradientIndex].value - inputSample) / (gradient[gradientIndex].value - gradient[gradientIndex - 1].value);
 
-				gradientTexture(i, j, 0) = (1 - k) * gradient[gradientIndex - 1].color.x + k * gradient[gradientIndex].color.x;
-				gradientTexture(i, j, 1) = (1 - k) * gradient[gradientIndex - 1].color.y + k * gradient[gradientIndex].color.y;
-				gradientTexture(i, j, 2) = (1 - k) * gradient[gradientIndex - 1].color.z + k * gradient[gradientIndex].color.z;
-				gradientTexture(i, j, 3) = (1 - k) * gradient[gradientIndex - 1].color.w + k * gradient[gradientIndex].color.w;
+				XMVECTOR gradientColor1V = XMLoadFloat4(&gradient[gradientIndex - 1].color);
+				XMVECTOR gradientColor2V = XMLoadFloat4(&gradient[gradientIndex].color);
+
+				XMVECTOR valueV = XMVectorLerp(gradientColor1V, gradientColor2V, k);
+
+				XMFLOAT4 value;
+				XMStoreFloat4(&value, valueV);
+				gradientTexturePtr->SetValue(i, j, value);
 			}
 		}
 	}
@@ -691,20 +862,16 @@ TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, int size)
 }
 
 
-TextureMemoryPtr NormalColor(int size)
+TextureMemoryPtr NormalColor(TextureResolution resolution, BitsPerChannel bitsPerChannel)
 {
-	TextureMemoryPtr normalColorTexturePtr = make_shared<TextureMemory>(COLOR, size);
-	TextureMemory &normalColorTexture = *normalColorTexturePtr.get();
+	TextureMemoryPtr normalColorTexturePtr = make_shared<TextureMemory>(COLOR, resolution, bitsPerChannel);
 
 	#pragma omp parallel for
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < resolution; i++)
 	{
-		for(int j = 0; j < size; j++)
+		for(int j = 0; j < resolution; j++)
 		{
-			normalColorTexture(i, j, 0) = 0.5f;
-			normalColorTexture(i, j, 1) = 0.5f;
-			normalColorTexture(i, j, 2) = 1.0f;
-			normalColorTexture(i, j, 3) = 1.0f;
+			normalColorTexturePtr->SetValue(i, j, XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f));
 		}
 	}
 

@@ -173,7 +173,6 @@
     <ClInclude Include="FunctionLink.h" />
     <ClInclude Include="FunctionNode.h" />
     <ClInclude Include="GeometryHelper.h" />
-    <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="NoiseFunctions.h" />
     <ClInclude Include="OutputPin.h" />
@@ -225,7 +224,6 @@
     <ClCompile Include="FunctionLink.cpp" />
     <ClCompile Include="FunctionNode.cpp" />
     <ClCompile Include="GeometryHelper.cpp" />
-    <ClCompile Include="MapGenerator.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="NoiseFunctions.cpp" />
     <ClCompile Include="OutputPin.cpp" />

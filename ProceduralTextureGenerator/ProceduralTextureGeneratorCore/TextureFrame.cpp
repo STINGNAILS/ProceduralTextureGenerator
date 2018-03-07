@@ -39,7 +39,7 @@ HRESULT TextureFrame::Init()
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
-		hr = vertexShader->Init(L"TextureFrame.fx", layout, ARRAYSIZE(layout));
+		hr = vertexShader->Init(L"TextureFrameColor.fx", layout, ARRAYSIZE(layout));
 		if(FAILED(hr))
 		{
 			return hr;
@@ -48,18 +48,32 @@ HRESULT TextureFrame::Init()
 		DirectXObjectPool::SetVertexShader("TextureFrame", vertexShader);
 	}
 
-	pixelShader = DirectXObjectPool::GetPixelShader("TextureFrame");
+	pixelShader = DirectXObjectPool::GetPixelShader("TextureFrameGrayscale");
 	if(pixelShader.get() == nullptr)
 	{
 		pixelShader = make_shared<PixelShader>();
 
-		hr = pixelShader->Init(L"TextureFrame.fx");
+		hr = pixelShader->Init(L"TextureFrameGrayscale.fx");
 		if(FAILED(hr))
 		{
 			return hr;
 		}
 
-		DirectXObjectPool::SetPixelShader("TextureFrame", pixelShader);
+		DirectXObjectPool::SetPixelShader("TextureFrameGrayscale", pixelShader);
+	}
+
+	pixelShader = DirectXObjectPool::GetPixelShader("TextureFrameColor");
+	if(pixelShader.get() == nullptr)
+	{
+		pixelShader = make_shared<PixelShader>();
+
+		hr = pixelShader->Init(L"TextureFrameColor.fx");
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetPixelShader("TextureFrameColor", pixelShader);
 	}
 
 	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
@@ -143,6 +157,23 @@ void TextureFrame::SetPosition(float xParent, float yParent)
 void TextureFrame::SetTexture(shared_ptr<DirectXTexture> texture_)
 {
 	texture = texture_;
+
+	if(texture.get() != nullptr)
+	{
+		switch(texture->GetTextureType())
+		{
+			case GRAYSCALE:
+			{
+				pixelShader = DirectXObjectPool::GetPixelShader("TextureFrameGrayscale");
+				break;
+			}
+			case COLOR:
+			{
+				pixelShader = DirectXObjectPool::GetPixelShader("TextureFrameColor");
+				break;
+			}
+		}
+	}
 }
 
 

@@ -35,7 +35,7 @@ FunctionNode::FunctionNode(int functionIndex_)
 		inputPinPtrs[i]->SetLocalPosition(-64.0f + 128 * ((i + 1.0f) / (functionInputNodesNum + 1.0f)), 64.0f);
 	}
 
-	if(functionIndex > 1)
+	if(functionIndex > 4)
 	{
 		outputPinPtr = make_shared<OutputPin>();
 		outputPinPtr->Init();
@@ -113,7 +113,7 @@ vector<XMFLOAT2> FunctionNode::GetInputPinPositions()
 
 XMFLOAT2 FunctionNode::GetOutputPinPosition()
 {
-	if(functionIndex > 1)
+	if(functionIndex > 4)
 	{
 		return outputPinPtr->GetPosition();
 	}
@@ -129,7 +129,7 @@ void FunctionNode::SetTextureMemory(TextureMemoryPtr textureMemoryPtr_)
 	textureMemoryPtr = textureMemoryPtr_;
 
 	directXTexturePtr = make_shared<DirectXTexture>();
-	directXTexturePtr->InitFromMemory(textureMemoryPtr, BPC16);
+	directXTexturePtr->InitFromMemory(textureMemoryPtr);
 
 	textureFramePtr->SetTexture(directXTexturePtr);
 }
@@ -146,7 +146,7 @@ void FunctionNode::SetPosition(float xParent, float yParent)
 		inputPinPtrs[i]->SetPosition(xGlobal, yGlobal);
 	}
 
-	if(functionIndex > 1)
+	if(functionIndex > 4)
 	{
 		outputPinPtr->SetPosition(xGlobal, yGlobal);
 	}
@@ -252,7 +252,7 @@ void FunctionNode::Render()
 		inputPinPtrs[i]->Render();
 	}
 
-	if(functionIndex > 1)
+	if(functionIndex > 4)
 	{
 		outputPinPtr->Render();
 	}

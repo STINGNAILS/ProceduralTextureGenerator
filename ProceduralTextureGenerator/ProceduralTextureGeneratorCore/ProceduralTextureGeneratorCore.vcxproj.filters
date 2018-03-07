@@ -70,9 +70,6 @@
     <ClInclude Include="Cube.h">
       <Filter>Graphics\Renderable</Filter>
     </ClInclude>
-    <ClInclude Include="MapGenerator.h">
-      <Filter>MapGeneration</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Main</Filter>
     </ClInclude>
@@ -180,9 +177,6 @@
     </ClCompile>
     <ClCompile Include="Cube.cpp">
       <Filter>Graphics\Renderable</Filter>
-    </ClCompile>
-    <ClCompile Include="MapGenerator.cpp">
-      <Filter>MapGeneration</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Main</Filter>

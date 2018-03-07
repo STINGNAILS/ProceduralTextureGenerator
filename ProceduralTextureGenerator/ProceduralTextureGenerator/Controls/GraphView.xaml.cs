@@ -58,7 +58,79 @@ namespace ProceduralTextureGenerator
 			parameterStackPanel = stackPanel;
 		}
 
-		
+
+		private int ResolutionToIndex(int size)
+		{
+			switch(size)
+			{
+				case 16:
+				{
+					return 0;
+				}
+				case 32:
+				{
+					return 1;
+				}
+				case 64:
+				{
+					return 2;
+				}
+				case 128:
+				{
+					return 3;
+				}
+				case 256:
+				{
+					return 4;
+				}
+				case 512:
+				{
+					return 5;
+				}
+				case 1024:
+				{
+					return 6;
+				}
+				case 2048:
+				{
+					return 7;
+				}
+				case 4096:
+				{
+					return 8;
+				}
+				default:
+				{
+					return 0;
+				}
+			}
+		}
+
+
+		private int FormatToIndex(int format)
+		{
+			switch(format)
+			{
+				case 8:
+				{
+					return 0;
+				}
+				case 16:
+				{
+					return 1;
+				}
+				case 32:
+				{
+					return 2;
+				}
+				default:
+				{
+					return 0;
+				}
+			}
+		}
+
+
 		public void ModifyStackPanel()
 		{
 			parameterStackPanel.Children.Clear();
@@ -71,20 +143,356 @@ namespace ProceduralTextureGenerator
 				{
 					break;
 				}
-				//Base - Color
+				//Base Color
 				case 0:
 				{
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+
+					Label baseColorLabel = new Label
+					{
+						Content = "Base Color",
+						FontFamily = new FontFamily("Segoe UI Semibold"),
+						FontSize = 16,
+						Height = 32,
+						Foreground = Brushes.White,
+						Background = Brushes.Gray,
+						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(baseColorLabel);
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
 					break;
 				}
-				//Base - Grayscale
+				//Metallic
 				case 1:
 				{
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+
+					Label metallicLabel = new Label
+					{
+						Content = "Metallic",
+						FontFamily = new FontFamily("Segoe UI Semibold"),
+						FontSize = 16,
+						Height = 32,
+						Foreground = Brushes.White,
+						Background = Brushes.Gray,
+						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(metallicLabel);
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
+					break;
+				}
+				//Roughness
+				case 2:
+				{
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+
+					Label roughnessLabel = new Label
+					{
+						Content = "Roughness",
+						FontFamily = new FontFamily("Segoe UI Semibold"),
+						FontSize = 16,
+						Height = 32,
+						Foreground = Brushes.White,
+						Background = Brushes.Gray,
+						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(roughnessLabel);
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
+					break;
+				}
+				//Normal
+				case 3:
+				{
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+
+					Label normalLabel = new Label
+					{
+						Content = "Normal",
+						FontFamily = new FontFamily("Segoe UI Semibold"),
+						FontSize = 16,
+						Height = 32,
+						Foreground = Brushes.White,
+						Background = Brushes.Gray,
+						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(normalLabel);
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
 					break;
 				}
 				//Uniform Color
-				case 2:
+				case 5:
 				{
-					int textureTypeIndex = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+					int textureType = CoreDll.GraphViewGetSelectedNodeIntParameter(2);
 					float r = CoreDll.GraphViewGetSelectedNodeFloatParameter(0);
 					float g = CoreDll.GraphViewGetSelectedNodeFloatParameter(1);
 					float b = CoreDll.GraphViewGetSelectedNodeFloatParameter(2);
@@ -101,7 +509,81 @@ namespace ProceduralTextureGenerator
 						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
 					};
 					parameterStackPanel.Children.Add(uniformColorLabel);
-					
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
+					Separator colorModeSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(colorModeSeparator);
+
 					Label colorModeLabel = new Label
 					{
 						Content = "Color Mode",
@@ -125,7 +607,7 @@ namespace ProceduralTextureGenerator
 					ToggleButton colorModeColorToggleButton = new ToggleButton
 					{
 						Content = "Color",
-						IsChecked = textureTypeIndex == 1 ? true : false,
+						IsChecked = textureType == 1 ? true : false,
 						Width = 90,
 						Foreground = Brushes.Silver,
 						Background = new SolidColorBrush(Color.FromArgb((byte)255, (byte)32, (byte)32, (byte)32)),
@@ -138,7 +620,7 @@ namespace ProceduralTextureGenerator
 					ToggleButton colorModeGrayscaleToggleButton = new ToggleButton
 					{
 						Content = "Grayscale",
-						IsChecked = textureTypeIndex == 0 ? true : false,
+						IsChecked = textureType == 0 ? true : false,
 						Width = 90,
 						Foreground = Brushes.Silver,
 						Background = new SolidColorBrush(Color.FromArgb((byte)255, (byte)32, (byte)32, (byte)32)),
@@ -295,9 +777,11 @@ namespace ProceduralTextureGenerator
 					break;
 				}
 				//Blend
-				case 3:
+				case 6:
 				{
-					int blendModeIndex = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+					int blendModeIndex = CoreDll.GraphViewGetSelectedNodeIntParameter(2);
 					float k = CoreDll.GraphViewGetSelectedNodeFloatParameter(0);
 
 					Label blendLabel = new Label
@@ -311,6 +795,80 @@ namespace ProceduralTextureGenerator
 						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
 					};
 					parameterStackPanel.Children.Add(blendLabel);
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
+					Separator blendModeSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(blendModeSeparator);
 
 					Label blendModeLabel = new Label
 					{
@@ -382,8 +940,10 @@ namespace ProceduralTextureGenerator
 					break;
 				}
 				//Levels
-				case 4:
+				case 7:
 				{
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
 					float x1 = CoreDll.GraphViewGetSelectedNodeFloatParameter(0);
 					float x2 = CoreDll.GraphViewGetSelectedNodeFloatParameter(1);
 					float x3 = CoreDll.GraphViewGetSelectedNodeFloatParameter(2);
@@ -401,6 +961,80 @@ namespace ProceduralTextureGenerator
 						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
 					};
 					parameterStackPanel.Children.Add(levelsLabel);
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
+					Separator quadraticInterpolationSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(quadraticInterpolationSeparator);
 
 					Label quadraticInterpolationLabel = new Label
 					{
@@ -635,8 +1269,11 @@ namespace ProceduralTextureGenerator
 					break;
 				}
 				//Gradient
-				case 5:
+				case 8:
 				{
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+
 					Label gradientLabel = new Label
 					{
 						Content = "Gradient",
@@ -649,13 +1286,81 @@ namespace ProceduralTextureGenerator
 					};
 					parameterStackPanel.Children.Add(gradientLabel);
 
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
 					break;
 				}
 				//Perlin Noise
-				case 6:
+				case 9:
 				{
-					int octaves = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
-					int gridStartingSize = CoreDll.GraphViewGetSelectedNodeIntParameter(2);
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+					int octaves = CoreDll.GraphViewGetSelectedNodeIntParameter(2);
+					int gridStartingSize = CoreDll.GraphViewGetSelectedNodeIntParameter(3);
 					float persistence = CoreDll.GraphViewGetSelectedNodeFloatParameter(0);
 
 					Label perlinNoiseLabel = new Label
@@ -669,6 +1374,80 @@ namespace ProceduralTextureGenerator
 						Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
 					};
 					parameterStackPanel.Children.Add(perlinNoiseLabel);
+
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
+					Separator octavesSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(octavesSeparator);
 
 					Label octavesLabel = new Label
 					{
@@ -779,8 +1558,11 @@ namespace ProceduralTextureGenerator
 					break;
 				}
 				//Normal Color
-				case 7:
+				case 10:
 				{
+					int textureResolution = CoreDll.GraphViewGetSelectedNodeIntParameter(0);
+					int bpc = CoreDll.GraphViewGetSelectedNodeIntParameter(1);
+
 					Label normalColorLabel = new Label
 					{
 						Content = "Normal Color",
@@ -793,6 +1575,72 @@ namespace ProceduralTextureGenerator
 					};
 					parameterStackPanel.Children.Add(normalColorLabel);
 
+					Label resolutionLabel = new Label
+					{
+						Content = "Resolution",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(resolutionLabel);
+
+					ComboBox textureResolutionComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureResolutionComboBox.Items.Add("16x16 px");
+					textureResolutionComboBox.Items.Add("32x32 px");
+					textureResolutionComboBox.Items.Add("64x64 px");
+					textureResolutionComboBox.Items.Add("128x128 px");
+					textureResolutionComboBox.Items.Add("256x256 px");
+					textureResolutionComboBox.Items.Add("512x512 px");
+					textureResolutionComboBox.Items.Add("1024x1024 px");
+					textureResolutionComboBox.Items.Add("2048x2048 px");
+					textureResolutionComboBox.Items.Add("4096x4096 px");
+					textureResolutionComboBox.SelectedIndex = ResolutionToIndex(textureResolution);
+					textureResolutionComboBox.SelectionChanged += TextureResolutionComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureResolutionComboBox);
+
+					Separator formatSeparator = new Separator
+					{
+						Width = 220,
+						HorizontalAlignment = HorizontalAlignment.Center,
+						Margin = new Thickness(0.0, 7.0, 0.0, 0.0f)
+					};
+					parameterStackPanel.Children.Add(formatSeparator);
+
+					Label textureFormatLabel = new Label
+					{
+						Content = "Format",
+						FontFamily = new FontFamily("Segoe UI"),
+						FontSize = 16,
+						Foreground = Brushes.Silver,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(30.0, -2.0, 0.0, 0.0)
+					};
+					parameterStackPanel.Children.Add(textureFormatLabel);
+
+					ComboBox textureFormatComboBox = new ComboBox
+					{
+						HorizontalContentAlignment = HorizontalAlignment.Center,
+						Width = 150,
+						Height = 24,
+						HorizontalAlignment = HorizontalAlignment.Left,
+						Margin = new Thickness(42.0, 0.0, 0.0, 0.0)
+					};
+					textureFormatComboBox.Items.Add("8 bits per channel");
+					textureFormatComboBox.Items.Add("16 bits per channel");
+					textureFormatComboBox.Items.Add("32 bits per channel");
+					textureFormatComboBox.SelectedIndex = FormatToIndex(bpc);
+					textureFormatComboBox.SelectionChanged += TextureFormatComboBoxSelectionChanged;
+					parameterStackPanel.Children.Add(textureFormatComboBox);
+
 					break;
 				}
 			}
@@ -801,37 +1649,37 @@ namespace ProceduralTextureGenerator
 
 		private void AddUniformColorNode(object sender, RoutedEventArgs e)
 		{
-			CoreDll.GraphViewAddNode(2, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+			CoreDll.GraphViewAddNode(5, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
 		}
 
 
 		private void AddBlendNode(object sender, RoutedEventArgs e)
 		{
-			CoreDll.GraphViewAddNode(3, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+			CoreDll.GraphViewAddNode(6, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
 		}
 
 
 		private void AddLevelsNode(object sender, RoutedEventArgs e)
 		{
-			CoreDll.GraphViewAddNode(4, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+			CoreDll.GraphViewAddNode(7, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
 		}
 
 
 		private void AddGradientNode(object sender, RoutedEventArgs e)
 		{
-			CoreDll.GraphViewAddNode(5, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+			CoreDll.GraphViewAddNode(8, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
 		}
 
 
 		private void AddPerlinNoiseNode(object sender, RoutedEventArgs e)
 		{
-			CoreDll.GraphViewAddNode(6, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+			CoreDll.GraphViewAddNode(9, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
 		}
 
 
 		private void AddNormalColorNode(object sender, RoutedEventArgs e)
 		{
-			CoreDll.GraphViewAddNode(7, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+			CoreDll.GraphViewAddNode(10, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
 		}
 
 
@@ -875,22 +1723,108 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void TextureResolutionComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			switch((string)((ComboBox)sender).SelectedItem)
+			{
+				case "16x16 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 16);
+					break;
+				}
+				case "32x32 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 32);
+					break;
+				}
+				case "64x64 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 64);
+					break;
+				}
+				case "128x128 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 128);
+					break;
+				}
+				case "256x256 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 256);
+					break;
+				}
+				case "512x512 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 512);
+					break;
+				}
+				case "1024x1024 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 1024);
+					break;
+				}
+				case "2048x2048 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 2048);
+					break;
+				}
+				case "4096x4096 px":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(0, 4096);
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+			ModifyStackPanel();
+		}
+
+
+		private void TextureFormatComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			switch((string)((ComboBox)sender).SelectedItem)
+			{
+				case "8 bits per channel":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 8);
+					break;
+				}
+				case "16 bits per channel":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 16);
+					break;
+				}
+				case "32 bits per channel":
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 32);
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+			ModifyStackPanel();
+		}
+
+
 		private void ToggleColorModeColor(object sender, RoutedEventArgs e)
 		{
-			((ToggleButton)((StackPanel)parameterStackPanel.Children[2]).Children[0]).IsChecked = true;
-			((ToggleButton)((StackPanel)parameterStackPanel.Children[2]).Children[1]).IsChecked = false;
+			((ToggleButton)((StackPanel)parameterStackPanel.Children[8]).Children[0]).IsChecked = true;
+			((ToggleButton)((StackPanel)parameterStackPanel.Children[8]).Children[1]).IsChecked = false;
 
-			CoreDll.GraphViewSetSelectedNodeIntParameter(1, 1);
+			CoreDll.GraphViewSetSelectedNodeIntParameter(2, 1);
 			ModifyStackPanel();
 		}
 
 
 		private void ToggleColorModeGrayscale(object sender, RoutedEventArgs e)
 		{
-			((ToggleButton)((StackPanel)parameterStackPanel.Children[2]).Children[0]).IsChecked = false;
-			((ToggleButton)((StackPanel)parameterStackPanel.Children[2]).Children[1]).IsChecked = true;
+			((ToggleButton)((StackPanel)parameterStackPanel.Children[8]).Children[0]).IsChecked = false;
+			((ToggleButton)((StackPanel)parameterStackPanel.Children[8]).Children[1]).IsChecked = true;
 
-			CoreDll.GraphViewSetSelectedNodeIntParameter(1, 0);
+			CoreDll.GraphViewSetSelectedNodeIntParameter(2, 0);
 			ModifyStackPanel();
 		}
 
@@ -937,32 +1871,32 @@ namespace ProceduralTextureGenerator
 			{
 				case "Merge":
 				{
-					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 0);
+					CoreDll.GraphViewSetSelectedNodeIntParameter(2, 0);
 					break;
 				}
 				case "Add":
 				{
-					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 1);
+					CoreDll.GraphViewSetSelectedNodeIntParameter(2, 1);
 					break;
 				}
 				case "Sub":
 				{
-					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 2);
+					CoreDll.GraphViewSetSelectedNodeIntParameter(2, 2);
 					break;
 				}
 				case "Multiply":
 				{
-					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 3);
+					CoreDll.GraphViewSetSelectedNodeIntParameter(2, 3);
 					break;
 				}
 				case "Min":
 				{
-					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 4);
+					CoreDll.GraphViewSetSelectedNodeIntParameter(2, 4);
 					break;
 				}
 				case "Max":
 				{
-					CoreDll.GraphViewSetSelectedNodeIntParameter(1, 5);
+					CoreDll.GraphViewSetSelectedNodeIntParameter(2, 5);
 					break;
 				}
 				default:
@@ -1052,7 +1986,7 @@ namespace ProceduralTextureGenerator
 			if(int.TryParse(((TextBox)sender).Text, out value))
 			{
 				value = Math.Min(Math.Max(value, 1), 12);
-				CoreDll.GraphViewSetSelectedNodeIntParameter(1, value);
+				CoreDll.GraphViewSetSelectedNodeIntParameter(2, value);
 			}
 			ModifyStackPanel();
 		}
@@ -1064,7 +1998,7 @@ namespace ProceduralTextureGenerator
 			if(int.TryParse(((TextBox)sender).Text, out value))
 			{
 				value = Math.Min(Math.Max(value, 1), 6);
-				CoreDll.GraphViewSetSelectedNodeIntParameter(2, value);
+				CoreDll.GraphViewSetSelectedNodeIntParameter(3, value);
 			}
 			ModifyStackPanel();
 		}

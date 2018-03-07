@@ -20,48 +20,34 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
-	TextureMemory &textureMemory = *textureMemoryPtr.get();
-
-	int size = textureMemory.GetSize();
+	TextureResolution resolution = textureMemoryPtr->GetResolution();
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = size;
-	textureDesc.Height = size;
+	textureDesc.Width = resolution;
+	textureDesc.Height = resolution;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.Format = DXGI_FORMAT_R8G8_UNORM;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
-
-	XMUBYTEN4 *memory = new XMUBYTEN4[size * size];
-
-	for(int i = 0; i < size; i++)
-	{
-		for(int j = 0; j < size; j++)
-		{
-			float tempGRAYSCALE = textureMemory(i, j, 0);
-			XMFLOAT4 tempFLOAT4 = XMFLOAT4(tempGRAYSCALE, tempGRAYSCALE, tempGRAYSCALE, textureMemory(i, j, 1));
-			XMVECTOR tempVECTOR = XMLoadFloat4(&tempFLOAT4);
-			XMStoreUByteN4(&memory[i * size + j], tempVECTOR);
-		}
-	}
+	
+	XMUBYTEN2 *memory = (XMUBYTEN2*) textureMemoryPtr->GetMemoryPtr();
 
 	D3D11_SUBRESOURCE_DATA textureData;
 	ZeroMemory(&textureData, sizeof(textureData));
 	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = size * sizeof(uint8_t) * 4;
+	textureData.SysMemPitch = resolution * sizeof(XMUBYTEN2);
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
 	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
-		delete[] memory;
 		return hr;
 	}
 
@@ -75,7 +61,6 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
-	delete[] memory;
 
 	return hr;
 }
@@ -85,17 +70,15 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
-	TextureMemory &textureMemory = *textureMemoryPtr.get();
-
-	int size = textureMemory.GetSize();
+	TextureResolution resolution = textureMemoryPtr->GetResolution();
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = size;
-	textureDesc.Height = size;
+	textureDesc.Width = resolution;
+	textureDesc.Height = resolution;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R16G16B16A16_UNORM;
+	textureDesc.Format = DXGI_FORMAT_R16G16_UNORM;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -103,30 +86,18 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMUSHORTN4 *memory = new XMUSHORTN4[size * size];
-
-	for(int i = 0; i < size; i++)
-	{
-		for(int j = 0; j < size; j++)
-		{
-			float tempGRAYSCALE = textureMemory(i, j, 0);
-			XMFLOAT4 tempFLOAT4 = XMFLOAT4(tempGRAYSCALE, tempGRAYSCALE, tempGRAYSCALE, textureMemory(i, j, 1));
-			XMVECTOR tempVECTOR = XMLoadFloat4(&tempFLOAT4);
-			XMStoreUShortN4(&memory[i * size + j], tempVECTOR);
-		}
-	}
+	XMUSHORTN2 *memory = (XMUSHORTN2*) textureMemoryPtr->GetMemoryPtr();
 
 	D3D11_SUBRESOURCE_DATA textureData;
 	ZeroMemory(&textureData, sizeof(textureData));
 	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = size * sizeof(uint16_t) * 4;
+	textureData.SysMemPitch = resolution * sizeof(XMUSHORTN2);
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
 	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
-		delete[] memory;
 		return hr;
 	}
 
@@ -140,7 +111,6 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
-	delete[] memory;
 
 	return hr;
 }
@@ -150,17 +120,15 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
-	TextureMemory &textureMemory = *textureMemoryPtr.get();
-
-	int size = textureMemory.GetSize();
+	TextureResolution resolution = textureMemoryPtr->GetResolution();
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = size;
-	textureDesc.Height = size;
+	textureDesc.Width = resolution;
+	textureDesc.Height = resolution;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -168,28 +136,18 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMFLOAT4 *memory = new XMFLOAT4[size * size];
-
-	for(int i = 0; i < size; i++)
-	{
-		for(int j = 0; j < size; j++)
-		{
-			float tempGRAYSCALE = textureMemory(i, j, 0);
-			memory[i * size + j] = XMFLOAT4(tempGRAYSCALE, tempGRAYSCALE, tempGRAYSCALE, textureMemory(i, j, 1));
-		}
-	}
+	XMFLOAT2 *memory = (XMFLOAT2*) textureMemoryPtr->GetMemoryPtr();
 
 	D3D11_SUBRESOURCE_DATA textureData;
 	ZeroMemory(&textureData, sizeof(textureData));
 	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = size * sizeof(float) * 4;
+	textureData.SysMemPitch = resolution * sizeof(XMFLOAT2);
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
 	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
-		delete[] memory;
 		return hr;
 	}
 
@@ -203,7 +161,6 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
-	delete[] memory;
 
 	return hr;
 }
@@ -213,14 +170,12 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
-	TextureMemory &textureMemory = *textureMemoryPtr.get();
-
-	int size = textureMemory.GetSize();
-
+	TextureResolution resolution = textureMemoryPtr->GetResolution();
+	
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = size;
-	textureDesc.Height = size;
+	textureDesc.Width = resolution;
+	textureDesc.Height = resolution;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -231,29 +186,18 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMUBYTEN4 *memory = new XMUBYTEN4[size * size];
-
-	for(int i = 0; i < size; i++)
-	{
-		for(int j = 0; j < size; j++)
-		{
-			XMFLOAT4 tempFLOAT4 = XMFLOAT4(textureMemory(i, j, 0), textureMemory(i, j, 1), textureMemory(i, j, 2), textureMemory(i, j, 3));
-			XMVECTOR tempVECTOR = XMLoadFloat4(&tempFLOAT4);
-			XMStoreUByteN4(&memory[i * size + j], tempVECTOR);
-		}
-	}
+	XMUBYTEN4 *memory = (XMUBYTEN4*) textureMemoryPtr->GetMemoryPtr();
 
 	D3D11_SUBRESOURCE_DATA textureData;
 	ZeroMemory(&textureData, sizeof(textureData));
 	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = size * sizeof(uint8_t) * 4;
+	textureData.SysMemPitch = resolution * sizeof(XMUBYTEN4);
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
 	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
-		delete[] memory;
 		return hr;
 	}
 
@@ -267,7 +211,6 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
-	delete[] memory;
 
 	return hr;
 }
@@ -277,14 +220,12 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
-	TextureMemory &textureMemory = *textureMemoryPtr.get();
-
-	int size = textureMemory.GetSize();
+	TextureResolution resolution = textureMemoryPtr->GetResolution();
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = size;
-	textureDesc.Height = size;
+	textureDesc.Width = resolution;
+	textureDesc.Height = resolution;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R16G16B16A16_UNORM;
@@ -295,29 +236,18 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMUSHORTN4 *memory = new XMUSHORTN4[size * size];
-
-	for(int i = 0; i < size; i++)
-	{
-		for(int j = 0; j < size; j++)
-		{
-			XMFLOAT4 tempFLOAT4 = XMFLOAT4(textureMemory(i, j, 0), textureMemory(i, j, 1), textureMemory(i, j, 2), textureMemory(i, j, 3));
-			XMVECTOR tempVECTOR = XMLoadFloat4(&tempFLOAT4);
-			XMStoreUShortN4(&memory[i * size + j], tempVECTOR);
-		}
-	}
+	XMUSHORTN4 *memory = (XMUSHORTN4*) textureMemoryPtr->GetMemoryPtr();
 
 	D3D11_SUBRESOURCE_DATA textureData;
 	ZeroMemory(&textureData, sizeof(textureData));
 	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = size * sizeof(uint16_t) * 4;
+	textureData.SysMemPitch = resolution * sizeof(XMUSHORTN4);
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
 	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
-		delete[] memory;
 		return hr;
 	}
 
@@ -331,7 +261,6 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
-	delete[] memory;
 
 	return hr;
 }
@@ -341,14 +270,12 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
-	TextureMemory &textureMemory = *textureMemoryPtr.get();
-
-	int size = textureMemory.GetSize();
+	TextureResolution resolution = textureMemoryPtr->GetResolution();
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	textureDesc.Width = size;
-	textureDesc.Height = size;
+	textureDesc.Width = resolution;
+	textureDesc.Height = resolution;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -359,27 +286,18 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMFLOAT4 *memory = new XMFLOAT4[size * size];
-
-	for(int i = 0; i < size; i++)
-	{
-		for(int j = 0; j < size; j++)
-		{
-			memory[i * size + j] = XMFLOAT4(textureMemory(i, j, 0), textureMemory(i, j, 1), textureMemory(i, j, 2), textureMemory(i, j, 3));
-		}
-	}
+	XMFLOAT4 *memory = (XMFLOAT4*) textureMemoryPtr->GetMemoryPtr();
 
 	D3D11_SUBRESOURCE_DATA textureData;
 	ZeroMemory(&textureData, sizeof(textureData));
 	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = size * sizeof(float) * 4;
+	textureData.SysMemPitch = resolution * sizeof(XMFLOAT4);
 	textureData.SysMemSlicePitch = 0;
 	ID3D11Texture2D *texture = 0;
 
 	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
 	if(FAILED(hr))
 	{
-		delete[] memory;
 		return hr;
 	}
 
@@ -393,13 +311,12 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 
 	texture->Release();
-	delete[] memory;
 
 	return hr;
 }
 
 
-HRESULT DirectXTexture::InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPerChannel bpc)
+HRESULT DirectXTexture::InitFromMemory(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -415,7 +332,8 @@ HRESULT DirectXTexture::InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPe
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
 
-	TextureType textureType = textureMemoryPtr->GetTextureType();
+	textureType = textureMemoryPtr->GetTextureType();
+	BitsPerChannel bpc = textureMemoryPtr->GetFormat();
 
 	switch(textureType)
 	{
@@ -493,6 +411,8 @@ HRESULT DirectXTexture::InitFromFile(LPCWSTR fileName)
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
 
+	textureType = COLOR;
+
 	ID3D11Resource *resource;
 	hr = CreateDDSTextureFromFile(device, fileName, &resource, &textureSRV);
 	if(resource) resource->Release();
@@ -500,7 +420,7 @@ HRESULT DirectXTexture::InitFromFile(LPCWSTR fileName)
 	{
 		return hr;
 	}
-
+	
 	isInitialized = true;
 	
 	return hr;
@@ -522,6 +442,8 @@ HRESULT DirectXTexture::InitFromRenderer(shared_ptr<DirectXRenderer> renderer)
 
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
+
+	textureType = COLOR;
 
 	ID3D11Texture2D *texture = nullptr;
 	hr = renderer->Render(&texture);
@@ -551,6 +473,12 @@ HRESULT DirectXTexture::InitFromRenderer(shared_ptr<DirectXRenderer> renderer)
 	isInitialized = true;
 
 	return hr;
+}
+
+
+TextureType DirectXTexture::GetTextureType()
+{
+	return textureType;
 }
 
 

@@ -5,10 +5,13 @@
 #include "MathHelper.h"
 
 
-TextureMemoryPtr BaseColor(TextureMemoryPtr inputTexturePtr, int size);
-TextureMemoryPtr BaseGrayscale(TextureMemoryPtr inputTexturePtr, int size);
-TextureMemoryPtr UniformColor(int size, TextureType textureType, XMFLOAT4 color);
-TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr backgroundTexturePtr, TextureMemoryPtr blendCoefficientTexturePtr, int size, int blendMode, float k);
-TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, int size, float x1, float x2, float x3, float x4, float x5);
-TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, int size);
-TextureMemoryPtr NormalColor(int size);
+TextureMemoryPtr BaseColor(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel);
+TextureMemoryPtr Metallic(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel);
+TextureMemoryPtr Roughness(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel);
+TextureMemoryPtr Normal(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel);
+TextureMemoryPtr Height(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel);
+TextureMemoryPtr UniformColor(TextureResolution resolution, BitsPerChannel bitsPerChannel, TextureType textureType, XMFLOAT4 color);
+TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr backgroundTexturePtr, TextureMemoryPtr blendCoefficientTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, UINT blendMode, float k);
+TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float x1, float x2, float x3, float x4, float x5);
+TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel);
+TextureMemoryPtr NormalColor(TextureResolution resolution, BitsPerChannel bitsPerChannel);

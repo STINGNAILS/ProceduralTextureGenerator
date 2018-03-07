@@ -1,12 +1,37 @@
 #pragma once
 
+#include "DirectXDevice.h"
+
+
 #define TextureMemoryPtr shared_ptr<TextureMemory>
 
 
 enum TextureType
 {
-	GRAYSCALE,
-	COLOR
+	GRAYSCALE = 0,
+	COLOR     = 1
+};
+
+
+enum TextureResolution
+{
+	RES16   = 16,
+	RES32   = 32,
+	RES64   = 64,
+	RES128  = 128,
+	RES256  = 256,
+	RES512  = 512,
+	RES1024 = 1024,
+	RES2048 = 2048,
+	RES4096 = 4096
+};
+
+
+enum BitsPerChannel
+{
+	BPC8  = 8,
+	BPC16 = 16,
+	BPC32 = 32
 };
 
 
@@ -15,21 +40,33 @@ class TextureMemory
 	private:
 
 	TextureType textureType;
-	int size;
-	int offset;
+	TextureResolution textureResolution;
+	BitsPerChannel bitsPerChannel;
 
-	float *textureMemory;
-	
+	void *textureMemory;
+
+	inline XMFLOAT2 SampleGrayscale8(UINT u, UINT v, TextureResolution sampleResolution);
+	inline XMFLOAT2 SampleGrayscale16(UINT u, UINT v, TextureResolution sampleResolution);
+	inline XMFLOAT2 SampleGrayscale32(UINT u, UINT v, TextureResolution sampleResolution);
+	inline XMFLOAT4 SampleColor8(UINT u, UINT v, TextureResolution sampleResolution);
+	inline XMFLOAT4 SampleColor16(UINT u, UINT v, TextureResolution sampleResolution);
+	inline XMFLOAT4 SampleColor32(UINT u, UINT v, TextureResolution sampleResolution);
+
 	public:
 
 	TextureMemory();
-	TextureMemory(TextureType textureType_, int size_);
+	TextureMemory(TextureType textureType_, TextureResolution textureResolution_, BitsPerChannel bitsPerChannel_);
 	~TextureMemory();
 
 	TextureType GetTextureType();
-	int GetSize();
+	TextureResolution GetResolution();
+	BitsPerChannel GetFormat();
+	void *GetMemoryPtr();
 
-	float &operator()(int u, int v, int channel);
-	float &operator[](int i);
+	XMFLOAT2 SampleGrayscale(UINT u, UINT v, TextureResolution sampleResolution);
+	XMFLOAT4 SampleColor(UINT u, UINT v, TextureResolution sampleResolution);
+
+	void SetValue(UINT u, UINT v, XMFLOAT2 value);
+	void SetValue(UINT u, UINT v, XMFLOAT4 value);
 };
 

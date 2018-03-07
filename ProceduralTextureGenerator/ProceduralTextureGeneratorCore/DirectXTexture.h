@@ -9,14 +9,6 @@
 #define DirectXTexturePtr shared_ptr<DirectXTexture>
 
 
-enum BitsPerChannel
-{
-	BPC8,
-	BPC16,
-	BPC32
-};
-
-
 class DirectXTexture
 {
 	private:
@@ -27,6 +19,8 @@ class DirectXTexture
 	ID3D11DeviceContext *painter;
 
 	ID3D11ShaderResourceView *textureSRV;
+
+	TextureType textureType;
 
 	HRESULT InitGrayscale8(TextureMemoryPtr textureMemoryPtr);
 	HRESULT InitGrayscale16(TextureMemoryPtr textureMemoryPtr);
@@ -40,9 +34,11 @@ class DirectXTexture
 	DirectXTexture();
 	~DirectXTexture();
 
-	HRESULT InitFromMemory(TextureMemoryPtr textureMemoryPtr, BitsPerChannel bpc);
+	HRESULT InitFromMemory(TextureMemoryPtr textureMemoryPtr);
 	HRESULT InitFromFile(LPCWSTR fileName);
 	HRESULT InitFromRenderer(shared_ptr<DirectXRenderer> renderer);
+
+	TextureType GetTextureType();
 
 	void Set(int slot);
 };

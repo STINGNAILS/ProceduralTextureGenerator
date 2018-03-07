@@ -2,10 +2,11 @@
 #include "NoiseFunctions.h"
 
 
-TextureMemoryPtr PerlinNoise(int size, int octaves, int gridStartingSize, float persistence)
+TextureMemoryPtr PerlinNoise(TextureResolution resolution, BitsPerChannel bitsPerChannel, int octaves, int gridStartingSize, float persistence)
 {
-	TextureMemoryPtr perlinNoiseTexturePtr = make_shared<TextureMemory>(GRAYSCALE, size);
-	TextureMemory &perlinNoiseTexture = *perlinNoiseTexturePtr.get();
+	TextureMemoryPtr perlinNoiseTexturePtr = make_shared<TextureMemory>(GRAYSCALE, resolution, bitsPerChannel);
+
+	vector<float> noise(resolution * resolution, 0.0f);
 
 	vector<vector<Vector2D>> gradients(octaves);
 	vector<int> gridSize(octaves);
@@ -24,20 +25,20 @@ TextureMemoryPtr PerlinNoise(int size, int octaves, int gridStartingSize, float 
 	}
 
 	#pragma omp parallel for
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < resolution; i++)
 	{
-		for(int j = 0; j < size; j++)
+		for(int j = 0; j < resolution; j++)
 		{
 			for(int k = 0; k < octaves; k++)
 			{
 				Vector2D dir;
 
-				float x = (float)j / (size - 1) * (gridSize[k] - 1);
+				float x = (float)j / (resolution - 1) * (gridSize[k] - 1);
 				int xNode = (int)x < (gridSize[k] - 1) ? (int)x : (gridSize[k] - 2);
 				dir.x = x - xNode;
 				float xQerp = Qerp(dir.x);
 
-				float z = (float) i / (size - 1) * (gridSize[k] - 1);
+				float z = (float) i / (resolution - 1) * (gridSize[k] - 1);
 				int zNode = (int) z < (gridSize[k] - 1) ? (int) z : (gridSize[k] - 2);
 				dir.y = z - zNode;
 				float zQerp = Qerp(dir.y);
@@ -64,19 +65,19 @@ TextureMemoryPtr PerlinNoise(int size, int octaves, int gridStartingSize, float 
 				float height2 = Lerp(dot21, dot22, xQerp);
 				float height = Lerp(height1, height2, zQerp);
 
-				perlinNoiseTexture(i, j, 0) += height * amplitude[k];
+				noise[i * resolution + j] += height * amplitude[k];
 			}
 		}
 	}
 
-	float heightMin = perlinNoiseTexture(0, 0, 0);
+	float heightMin = noise[0];
 	float heightMax = heightMin;
 
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < resolution; i++)
 	{
-		for(int j = 0; j < size; j++)
+		for(int j = 0; j < resolution; j++)
 		{
-			float height = perlinNoiseTexture(i, j, 0);
+			float height = noise[i * resolution + j];
 			if(height < heightMin)
 			{
 				heightMin = height;
@@ -92,11 +93,11 @@ TextureMemoryPtr PerlinNoise(int size, int octaves, int gridStartingSize, float 
 	float dh = heightMax - heightMin;
 
 	#pragma omp parallel for
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < resolution; i++)
 	{
-		for(int j = 0; j < size; j++)
+		for(int j = 0; j < resolution; j++)
 		{
-			perlinNoiseTexture(i, j, 0) = (perlinNoiseTexture(i, j, 0) - heightMin) / dh;
+			perlinNoiseTexturePtr->SetValue(i, j, XMFLOAT2((noise[i * resolution + j] - heightMin) / dh, 1.0));
 		}
 	}
 

@@ -11,8 +11,8 @@ FunctionGraph::FunctionGraph()
 
 	AddNode(0, -384.0f, 0.0f);
 	AddNode(1, -128.0f, 0.0f);
-	AddNode(1, 128.0f, 0.0f);
-	AddNode(0, 384.0f, 0.0f);
+	AddNode(2, 128.0f, 0.0f);
+	AddNode(3, 384.0f, 0.0f);
 
 	selectedNodeIndex = -1;
 	selectedLinkIndex = -1;
