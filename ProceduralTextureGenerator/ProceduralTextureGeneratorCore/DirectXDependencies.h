@@ -12,11 +12,10 @@
 
 using namespace DirectX;
 using namespace PackedVector;
+using namespace std;
 
 #pragma warning(pop)
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3d10.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-
-using namespace std;

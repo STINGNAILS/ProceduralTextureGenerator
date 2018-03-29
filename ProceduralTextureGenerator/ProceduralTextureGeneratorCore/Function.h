@@ -12,10 +12,13 @@
 #define HEIGHT 4
 #define UNIFORM_COLOR 5
 #define BLEND 6
-#define LEVELS 7
+#define REMAP 7
 #define GRADIENT 8
 #define PERLIN_NOISE 9
-#define NORMAL_COLOR 10
+#define WORLEY_NOISE 10
+#define NORMAL_COLOR 11
+#define BLUR 12
+#define DIRECTIONAL_BLUR 13
 
 
 TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTexturePtrs, vector<int> intParameters, vector<float> floatParameters);

@@ -61,12 +61,45 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ParameterControls\ColorSetter.xaml.cs">
+      <DependentUpon>ColorSetter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ObjectView.xaml.cs">
       <DependentUpon>ObjectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextureView.xaml.cs">
       <DependentUpon>TextureView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ParameterControls\SelectionParameter.xaml.cs">
+      <DependentUpon>SelectionParameter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ParameterControls\RemapSetter.xaml.cs">
+      <DependentUpon>RemapSetter.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Controls\ParameterControls\SelectionParameter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ParameterControls\FloatParameter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ParameterControls\IntegerParameter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ParameterControls\RemapSetter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Brushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ParameterControls\ColorSetter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\GraphView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -76,6 +109,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\View.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ParameterControls\GrayscaleSetter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Core.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -93,6 +134,15 @@
     <Compile Include="Controls\View.xaml.cs">
       <DependentUpon>View.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ParameterControls\GrayscaleSetter.xaml.cs">
+      <DependentUpon>GrayscaleSetter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ParameterControls\FloatParameter.xaml.cs">
+      <DependentUpon>FloatParameter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ParameterControls\IntegerParameter.xaml.cs">
+      <DependentUpon>IntegerParameter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CoreDll.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -102,9 +152,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ParameterPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MouseHelper.cs" />
+    <Compile Include="Controls\ParameterPanel.xaml.cs">
+      <DependentUpon>ParameterPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ParentHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -131,5 +189,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

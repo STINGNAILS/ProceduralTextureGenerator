@@ -670,7 +670,7 @@ TextureMemoryPtr Blend(TextureMemoryPtr foregroundTexturePtr, TextureMemoryPtr b
 }
 
 
-TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float x1, float x2, float x3, float x4, float x5)
+TextureMemoryPtr Remap(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, UINT remapMode, float x1, float y1, float x2, float y2, float x3, float y3)
 {
 	if(inputTexturePtr.get() == nullptr)
 	{
@@ -679,14 +679,38 @@ TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, TextureResolution reso
 
 	TextureType textureType = inputTexturePtr->GetTextureType();
 
-	TextureMemoryPtr leveledTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+	TextureMemoryPtr remappedTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
 
-	float a1 = (-0.5f * x1 + x2 - 0.5f * x3) / ((x2 - x1) * (x3 - x1) * (x3 - x2));
-	float b1 = (1 - a1 * (x3 * x3 - x1 * x1)) / (x3 - x1);
-	float c1 = -(a1 * x1 * x1 + b1 * x1);
+	float a;
+	float b;
+	float c;
 
-	float a2 = x5 - x4;
-	float b2 = x4;
+	switch(remapMode)
+	{
+		case 1:
+		{
+			a = 0.0f;
+			b = (y1 - y3) / (x1 - x3);
+			c = y1 - b * x1;
+
+			break;
+		}
+		case 2:
+		{
+			float z1 = x1 * x1 - x3 * x3;
+			float z2 = x1 - x3;
+			float z3 = x2 * x2 - x3 * x3;
+			float z4 = x2 - x3;
+			float w1 = y1 - y3;
+			float w2 = y2 - y3;
+
+			a = (w1 - w2 * z2 / z4) / (z1 - z3 * z2 / z4);
+			b = (w1 - a * z1) / z2;
+			c = y1 - b * x1 - a * x1 * x1;
+
+			break;
+		}
+	}
 
 	switch(textureType)
 	{
@@ -697,42 +721,42 @@ TextureMemoryPtr Levels(TextureMemoryPtr inputTexturePtr, TextureResolution reso
 			{
 				for(int j = 0; j < resolution; j++)
 				{
-					float x = inputTexturePtr->SampleGrayscale(i, j, resolution).x;
-
-					XMFLOAT2 value = XMFLOAT2(a2 * min(max(a1 * x * x + b1 * x + c1, 0.0f), 1.0f) + b2, 1.0f);
-					leveledTexturePtr->SetValue(i, j, value);
+					float x = min(max(inputTexturePtr->SampleGrayscale(i, j, resolution).x, x1), x3);
+					
+					XMFLOAT2 value = XMFLOAT2(c + x * (b + x * a), 1.0f);
+					remappedTexturePtr->SetValue(i, j, value);
 				}
 			}
 			break;
 		}
 		case COLOR:
 		{
-			XMVECTOR a1V = XMVectorReplicate(a1);
-			XMVECTOR b1V = XMVectorReplicate(b1);
-			XMVECTOR c1V = XMVectorReplicate(c1);
+			XMVECTOR aV = XMVectorReplicate(a);
+			XMVECTOR bV = XMVectorReplicate(b);
+			XMVECTOR cV = XMVectorReplicate(c);
 
-			XMVECTOR a2V = XMVectorReplicate(a2);
-			XMVECTOR b2V = XMVectorReplicate(b2);
+			XMVECTOR minV = XMVectorReplicate(x1);
+			XMVECTOR maxV = XMVectorReplicate(x3);
 
 			#pragma omp parallel for
 			for(int i = 0; i < resolution; i++)
 			{
 				for(int j = 0; j < resolution; j++)
 				{
-					XMVECTOR inputSampleV = XMLoadFloat4(&inputTexturePtr->SampleColor(i, j, resolution));
+					XMVECTOR xV = XMVectorClamp(XMLoadFloat4(&inputTexturePtr->SampleColor(i, j, resolution)), minV, maxV);
 
-					XMVECTOR valueV = XMVectorMultiplyAdd(a2V, XMVectorSaturate(XMVectorMultiplyAdd(XMVectorMultiplyAdd(a1V, inputSampleV, b1V), inputSampleV, c1V)), b2V);
+					XMVECTOR valueV = XMVectorMultiplyAdd(XMVectorMultiplyAdd(aV, xV, bV), xV, cV);
 
 					XMFLOAT4 value;
 					XMStoreFloat4(&value, valueV);
-					leveledTexturePtr->SetValue(i, j, value);
+					remappedTexturePtr->SetValue(i, j, value);
 				}
 			}
 			break;
 		}
 	}
 
-	return leveledTexturePtr;
+	return remappedTexturePtr;
 }
 
 
@@ -876,4 +900,309 @@ TextureMemoryPtr NormalColor(TextureResolution resolution, BitsPerChannel bitsPe
 	}
 
 	return normalColorTexturePtr;
+}
+
+
+TextureMemoryPtr Blur(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity)
+{
+	if(inputTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	TextureType textureType = inputTexturePtr->GetTextureType();
+
+	TextureMemoryPtr horizontallyBlurredTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+	TextureMemoryPtr blurredTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+
+	int kernelWidth = (int) roundf(resolution / 256.0f * intensity);
+	vector<float> kernel(kernelWidth * 2 + 1);
+
+	float factor = 1.0f / sqrt(2 * _Pi * intensity * intensity);
+	float norm = 0.0f;
+	for(int i = 0; i < kernelWidth; i++)
+	{
+		kernel[i] = factor * exp(-(kernelWidth - i) * (kernelWidth - i) / (2 * intensity * intensity));
+		kernel[kernelWidth * 2 - i] = kernel[i];
+		norm += kernel[i] * 2.0f;
+	}
+	kernel[kernelWidth] = intensity > 0.0f ? factor : 1.0f;
+	norm += kernel[kernelWidth];
+
+	switch(textureType)
+	{
+		case GRAYSCALE:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					float sum = 0;
+					for(int k = 0; k < kernel.size(); k++)
+					{
+						int index = j + k - kernelWidth;
+						index = index >= 0 ? (index < resolution ? index : index - resolution) : index + resolution;
+
+						sum += kernel[k] * inputTexturePtr->SampleGrayscale(i, index, resolution).x;
+					}
+
+					horizontallyBlurredTexturePtr->SetValue(i, j, XMFLOAT2(sum / norm, 1.0f));
+				}
+			}
+
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					float sum = 0;
+					for(int k = 0; k < kernel.size(); k++)
+					{
+						int index = i + k - kernelWidth;
+						index = index >= 0 ? (index < resolution ? index : index - resolution) : index + resolution;
+
+						sum += kernel[k] * horizontallyBlurredTexturePtr->SampleGrayscale(index, j, resolution).x;
+					}
+
+					blurredTexturePtr->SetValue(i, j, XMFLOAT2(sum / norm, 1.0f));
+				}
+			}
+
+			break;
+		}
+		case COLOR:
+		{
+			XMVECTOR normReciprocalV = XMVectorReplicate(1.0f / norm);
+
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					XMVECTOR sumV = XMVectorZero();
+					for(int k = 0; k < kernel.size(); k++)
+					{
+						int index = j + k - kernelWidth;
+						index = index >= 0 ? (index < resolution ? index : index - resolution) : index + resolution;
+
+						XMVECTOR kernelV = XMVectorReplicate(kernel[k]);
+						XMVECTOR sampleV = XMLoadFloat4(&inputTexturePtr->SampleColor(i, index, resolution));
+
+						sumV = XMVectorMultiplyAdd(kernelV, sampleV, sumV);
+					}
+
+					XMFLOAT4 value;
+					XMStoreFloat4(&value, XMVectorMultiply(sumV, normReciprocalV));
+					horizontallyBlurredTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					XMVECTOR sumV = XMVectorZero();
+					for(int k = 0; k < kernel.size(); k++)
+					{
+						int index = i + k - kernelWidth;
+						index = index >= 0 ? (index < resolution ? index : index - resolution) : index + resolution;
+
+						XMVECTOR kernelV = XMVectorReplicate(kernel[k]);
+						XMVECTOR sampleV = XMLoadFloat4(&horizontallyBlurredTexturePtr->SampleColor(index, j, resolution));
+
+						sumV = XMVectorMultiplyAdd(kernelV, sampleV, sumV);
+					}
+
+					XMFLOAT4 value;
+					XMStoreFloat4(&value, XMVectorMultiply(sumV, normReciprocalV));
+					blurredTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			break;
+		}
+	}
+	
+	return blurredTexturePtr;
+}
+
+
+
+TextureMemoryPtr DirectionalBlur(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity, float angle)
+{
+	if(inputTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	TextureType textureType = inputTexturePtr->GetTextureType();
+
+	TextureMemoryPtr blurredTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+
+	int kernelWidth;
+	vector<XMFLOAT2> kernel;
+	vector<XMINT4> kernelIndices;
+	float a = tanf(angle * _Pi / 180.0f);
+	float factor = 1.0f / sqrt(2 * _Pi * intensity * intensity);
+	float norm = 0.0f;
+
+	if((angle > 45.0f && angle < 135.0f) || (angle > 225.0f && angle < 315.0f))
+	{
+		kernelWidth = (int) roundf(resolution / 256.0f * intensity * abs(sin(angle * _Pi / 180.0f)));
+		kernel.resize(kernelWidth * 2 + 1);
+		kernelIndices.resize(kernel.size());
+
+		for(int i = 0; i < kernelWidth; i++)
+		{
+			float y = i - kernelWidth;
+			float x = y / a;
+
+			int xInt = (int) floorf(x);
+			int yInt = i - kernelWidth;
+
+			float kernelMidpoint = factor * exp(-(x * x + y * y) / (2 * intensity * intensity));
+			kernel[i].x = kernelMidpoint * (xInt + 1 - x);
+			kernel[i].y = kernelMidpoint * (x - xInt);
+			kernel[kernelWidth * 2 - i].x = kernel[i].y;
+			kernel[kernelWidth * 2 - i].y = kernel[i].x;
+
+			kernelIndices[i].x = -yInt;
+			kernelIndices[i].y = xInt;
+			kernelIndices[i].z = -yInt;
+			kernelIndices[i].w = xInt + 1;
+			kernelIndices[kernelWidth * 2 - i].x = yInt;
+			kernelIndices[kernelWidth * 2 - i].y = -(xInt + 1);
+			kernelIndices[kernelWidth * 2 - i].z = yInt;
+			kernelIndices[kernelWidth * 2 - i].w = -xInt;
+
+			norm += kernelMidpoint * 2.0f;
+		}
+
+		kernel[kernelWidth].x = intensity > 0.0f ? factor * 0.5f : 1.0f;
+		kernel[kernelWidth].y = intensity > 0.0f ? factor * 0.5f : 1.0f;
+
+		kernelIndices[kernelWidth].x = 0;
+		kernelIndices[kernelWidth].y = 0;
+		kernelIndices[kernelWidth].z = 0;
+		kernelIndices[kernelWidth].w = 0;
+
+		norm += factor;
+	}
+	else
+	{
+		kernelWidth = (int) roundf(resolution / 256.0f * intensity *  abs(cos(angle * _Pi / 180.0f)));
+		kernel.resize(kernelWidth * 2 + 1);
+		kernelIndices.resize(kernel.size());
+
+		for(int i = 0; i < kernelWidth; i++)
+		{
+			float x = i - kernelWidth;
+			float y = a * x;
+
+			int xInt = i - kernelWidth;
+			int yInt = (int) ceilf(y);
+
+			float kernelMidpoint = factor * exp(-(x * x + y * y) / (2 * intensity * intensity));
+			kernel[i].x = kernelMidpoint * (y + 1 - yInt);
+			kernel[i].y = kernelMidpoint * (yInt - y);
+			kernel[kernelWidth * 2 - i].x = kernel[i].y;
+			kernel[kernelWidth * 2 - i].y = kernel[i].x;
+
+			kernelIndices[i].x = -yInt;
+			kernelIndices[i].y = xInt;
+			kernelIndices[i].z = -(yInt - 1);
+			kernelIndices[i].w = xInt;
+			kernelIndices[kernelWidth * 2 - i].x = yInt - 1;
+			kernelIndices[kernelWidth * 2 - i].y = -xInt;
+			kernelIndices[kernelWidth * 2 - i].z = yInt;
+			kernelIndices[kernelWidth * 2 - i].w = -xInt;
+
+			norm += kernelMidpoint * 2.0f;
+		}
+
+		kernel[kernelWidth].x = intensity > 0.0f ? factor * 0.5f : 1.0f;
+		kernel[kernelWidth].y = intensity > 0.0f ? factor * 0.5f : 1.0f;
+
+		kernelIndices[kernelWidth].x = 0;
+		kernelIndices[kernelWidth].y = 0;
+		kernelIndices[kernelWidth].z = 0;
+		kernelIndices[kernelWidth].w = 0;
+
+		norm += factor;
+	}
+
+	switch(textureType)
+	{
+		case GRAYSCALE:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					float sum = 0;
+					for(int k = 0; k < kernel.size(); k++)
+					{
+						int i0 = i + kernelIndices[k].x;
+						int j0 = j + kernelIndices[k].y;
+						int i1 = i + kernelIndices[k].z;
+						int j1 = j + kernelIndices[k].w;
+
+						i0 = i0 >= 0 ? (i0 < resolution ? i0 : i0 - resolution) : i0 + resolution;
+						j0 = j0 >= 0 ? (j0 < resolution ? j0 : j0 - resolution) : j0 + resolution;
+						i1 = i1 >= 0 ? (i1 < resolution ? i1 : i1 - resolution) : i1 + resolution;
+						j1 = j1 >= 0 ? (j1 < resolution ? j1 : j1 - resolution) : j1 + resolution;
+
+						sum += kernel[k].x * inputTexturePtr->SampleGrayscale(i0, j0, resolution).x + kernel[k].y * inputTexturePtr->SampleGrayscale(i1, j1, resolution).x;
+					}
+
+					blurredTexturePtr->SetValue(i, j, XMFLOAT2(sum / norm, 1.0f));
+				}
+			}
+
+			break;
+		}
+		case COLOR:
+		{
+			XMVECTOR normReciprocalV = XMVectorReplicate(1.0f / norm);
+
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					XMVECTOR sumV = XMVectorZero();
+					for(int k = 0; k < kernel.size(); k++)
+					{
+						int i0 = i + kernelIndices[k].x;
+						int j0 = j + kernelIndices[k].y;
+						int i1 = i + kernelIndices[k].z;
+						int j1 = j + kernelIndices[k].w;
+
+						i0 = i0 >= 0 ? (i0 < resolution ? i0 : i0 - resolution) : i0 + resolution;
+						j0 = j0 >= 0 ? (j0 < resolution ? j0 : j0 - resolution) : j0 + resolution;
+						i1 = i1 >= 0 ? (i1 < resolution ? i1 : i1 - resolution) : i1 + resolution;
+						j1 = j1 >= 0 ? (j1 < resolution ? j1 : j1 - resolution) : j1 + resolution;
+
+						XMVECTOR kernel0V = XMVectorReplicate(kernel[k].x);
+						XMVECTOR kernel1V = XMVectorReplicate(kernel[k].y);
+						XMVECTOR sample0V = XMLoadFloat4(&inputTexturePtr->SampleColor(i0, j0, resolution));
+						XMVECTOR sample1V = XMLoadFloat4(&inputTexturePtr->SampleColor(i1, j1, resolution));
+
+						sumV = XMVectorAdd(XMVectorMultiplyAdd(kernel0V, sample0V, XMVectorMultiply(kernel1V, sample1V)), sumV);
+					}
+
+					XMFLOAT4 value;
+					XMStoreFloat4(&value, XMVectorMultiply(sumV, normReciprocalV));
+					blurredTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			break;
+		}
+	}
+
+	return blurredTexturePtr;
 }

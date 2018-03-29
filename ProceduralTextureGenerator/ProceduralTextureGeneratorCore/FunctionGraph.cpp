@@ -4,22 +4,22 @@
 
 FunctionGraph::FunctionGraph()
 {
-	newFunctionLink = make_shared<FunctionLink>();
-
 	nextNodeIndex = 0;
+	selectedNodeIndex = -1;
+	functionNodesPtr = make_shared<map<int, FunctionNode>>();
+
 	nextLinkIndex = 0;
+	selectedLinkIndex = -1;
+	functionLinksPtr = make_shared<map<int, FunctionLink>>();
 
 	AddNode(0, -384.0f, 0.0f);
 	AddNode(1, -128.0f, 0.0f);
 	AddNode(2, 128.0f, 0.0f);
 	AddNode(3, 384.0f, 0.0f);
 
-	selectedNodeIndex = -1;
-	selectedLinkIndex = -1;
+	newFunctionLink = nullptr;
 
 	interactionState = INTERACTION_NONE;
-
-	newFunctionLink = nullptr;
 
 	Process();
 }
@@ -27,30 +27,34 @@ FunctionGraph::FunctionGraph()
 
 FunctionGraph::~FunctionGraph()
 {
-	Release();
+	
 }
 
 
 DirectXTexturePtr FunctionGraph::GetBaseColorTexture()
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
 	return functionNodes[0].GetDirectXTexture();
 }
 
 
 DirectXTexturePtr FunctionGraph::GetMetallicTexture()
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
 	return functionNodes[1].GetDirectXTexture();
 }
 
 
 DirectXTexturePtr FunctionGraph::GetRoughnessTexture()
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
 	return functionNodes[2].GetDirectXTexture();
 }
 
 
 DirectXTexturePtr FunctionGraph::GetNormalTexture()
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
 	return functionNodes[3].GetDirectXTexture();
 }
 
@@ -63,6 +67,8 @@ int FunctionGraph::GetSelectedNodeIndex()
 
 int FunctionGraph::GetSelectedNodeFunctionIndex()
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+
 	if(selectedNodeIndex != -1)
 	{
 		return functionNodes[selectedNodeIndex].GetFunctionIndex();
@@ -76,6 +82,8 @@ int FunctionGraph::GetSelectedNodeFunctionIndex()
 
 int FunctionGraph::GetSelectedNodeIntParameter(int parameterIndex)
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+
 	if(selectedNodeIndex != -1)
 	{
 		vector<int> intParameters = functionNodes[selectedNodeIndex].GetIntParameters();
@@ -91,6 +99,8 @@ int FunctionGraph::GetSelectedNodeIntParameter(int parameterIndex)
 
 float FunctionGraph::GetSelectedNodeFloatParameter(int parameterIndex)
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+
 	if(selectedNodeIndex != -1)
 	{
 		vector<float> floatParameters = functionNodes[selectedNodeIndex].GetFloatParameters();
@@ -106,20 +116,22 @@ float FunctionGraph::GetSelectedNodeFloatParameter(int parameterIndex)
 
 void FunctionGraph::SetSelectedNodeIntParameter(int parameterIndex, int value)
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+
 	if(selectedNodeIndex != -1)
 	{
 		functionNodes[selectedNodeIndex].SetIntParameter(parameterIndex, value);
-		Process();
 	}
 }
 
 
 void FunctionGraph::SetSelectedNodeFloatParameter(int parameterIndex, float value)
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+
 	if(selectedNodeIndex != -1)
 	{
 		functionNodes[selectedNodeIndex].SetFloatParameter(parameterIndex, value);
-		Process();
 	}
 }
 
@@ -132,8 +144,11 @@ enum NodeColor
 };
 
 
-void FunctionGraph::Validate(map<int, FunctionNode> &functionNodesCopy, map<int, FunctionLink> &functionLinksCopy)
+void FunctionGraph::Validate(shared_ptr<map<int, FunctionNode>> functionNodesCopyPtr, shared_ptr<map<int, FunctionLink>> functionLinksCopyPtr)
 {
+	map<int, FunctionNode> &functionNodesCopy = *functionNodesCopyPtr.get();
+	map<int, FunctionLink> &functionLinksCopy = *functionLinksCopyPtr.get();
+
 	vector<int> graphTraverseOrderCopy;
 
 	stack<int> traverseStack;
@@ -199,8 +214,8 @@ void FunctionGraph::Validate(map<int, FunctionNode> &functionNodesCopy, map<int,
 
 	if(isDirectedAcyclic)
 	{
-		functionNodes = functionNodesCopy;
-		functionLinks = functionLinksCopy;
+		functionNodesPtr = functionNodesCopyPtr;
+		functionLinksPtr = functionLinksCopyPtr;
 		graphTraverseOrder = graphTraverseOrderCopy;
 
 		Process();
@@ -210,20 +225,38 @@ void FunctionGraph::Validate(map<int, FunctionNode> &functionNodesCopy, map<int,
 
 void FunctionGraph::AddNode(int functionIndex, float x, float y)
 {
+	shared_ptr<map<int, FunctionNode>> functionNodesCopyPtr = make_shared<map<int, FunctionNode>>();
+	shared_ptr<map<int, FunctionLink>> functionLinksCopyPtr = make_shared<map<int, FunctionLink>>();
+
+	*functionNodesCopyPtr.get() = *functionNodesPtr.get();
+	*functionLinksCopyPtr.get() = *functionLinksPtr.get();
+
+	map<int, FunctionNode> &functionNodesCopy = *functionNodesCopyPtr.get();
+	map<int, FunctionLink> &functionLinksCopy = *functionLinksCopyPtr.get();
+
 	FunctionNode newFunctionNode = FunctionNode(functionIndex);
 	newFunctionNode.SetPosition(x, y);
 
-	functionNodes[nextNodeIndex] = newFunctionNode;
+	functionNodesCopy[nextNodeIndex] = newFunctionNode;
 	graphTraverseOrder.push_back(nextNodeIndex);
 
 	nextNodeIndex++;
+
+	Validate(functionNodesCopyPtr, functionLinksCopyPtr);
 }
 
 
 void FunctionGraph::AddLink(int inputNodeIndex, int outputNodeIndex, int inputPinIndex)
 {
-	map<int, FunctionNode> functionNodesCopy = functionNodes;
-	map<int, FunctionLink> functionLinksCopy = functionLinks;
+	shared_ptr<map<int, FunctionNode>> functionNodesCopyPtr = make_shared<map<int, FunctionNode>>();
+	shared_ptr<map<int, FunctionLink>> functionLinksCopyPtr = make_shared<map<int, FunctionLink>>();
+	
+	*functionNodesCopyPtr.get() = *functionNodesPtr.get();
+	*functionLinksCopyPtr.get() = *functionLinksPtr.get();
+
+	map<int, FunctionNode> &functionNodesCopy = *functionNodesCopyPtr.get();
+	map<int, FunctionLink> &functionLinksCopy = *functionLinksCopyPtr.get();
+	
 
 	int linkToRemoveIndex = functionNodesCopy[outputNodeIndex].GetInputLinkIndices()[inputPinIndex];
 	if(linkToRemoveIndex != -1)
@@ -238,19 +271,22 @@ void FunctionGraph::AddLink(int inputNodeIndex, int outputNodeIndex, int inputPi
 	functionLinksCopy[nextLinkIndex].SetInputNodeIndex(inputNodeIndex);
 	functionLinksCopy[nextLinkIndex].SetOutputNodeIndex(outputNodeIndex);
 	functionLinksCopy[nextLinkIndex].SetInputPinIndex(inputPinIndex);
-	functionLinksCopy[nextLinkIndex].SetPolylineCoords(functionNodes[inputNodeIndex].GetOutputPinPosition(), functionNodes[outputNodeIndex].GetInputPinPositions()[inputPinIndex], COLOR);
+	functionLinksCopy[nextLinkIndex].SetPolylineCoords(functionNodesCopy[inputNodeIndex].GetOutputPinPosition(), functionNodesCopy[outputNodeIndex].GetInputPinPositions()[inputPinIndex], COLOR);
 
 	functionNodesCopy[inputNodeIndex].AddOutputLink(nextLinkIndex);
 	functionNodesCopy[outputNodeIndex].AddInputLink(inputPinIndex, nextLinkIndex);
 
 	nextLinkIndex++;
 
-	Validate(functionNodesCopy, functionLinksCopy);
+	Validate(functionNodesCopyPtr, functionLinksCopyPtr);
 }
 
 
 void FunctionGraph::SelectNode(int nodeIndex)
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+	map<int, FunctionLink> &functionLinks = *functionLinksPtr.get();
+
 	if(selectedNodeIndex != -1)
 	{
 		functionNodes[selectedNodeIndex].Unselect();
@@ -271,6 +307,9 @@ void FunctionGraph::SelectNode(int nodeIndex)
 
 void FunctionGraph::SelectLink(int linkIndex)
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+	map<int, FunctionLink> &functionLinks = *functionLinksPtr.get();
+
 	if(selectedLinkIndex != -1)
 	{
 		functionLinks[selectedLinkIndex].Unselect();
@@ -291,8 +330,14 @@ void FunctionGraph::SelectLink(int linkIndex)
 
 void FunctionGraph::RemoveSelectedNode()
 {
-	map<int, FunctionNode> functionNodesCopy = functionNodes;
-	map<int, FunctionLink> functionLinksCopy = functionLinks;
+	shared_ptr<map<int, FunctionNode>> functionNodesCopyPtr = make_shared<map<int, FunctionNode>>();
+	shared_ptr<map<int, FunctionLink>> functionLinksCopyPtr = make_shared<map<int, FunctionLink>>();
+
+	*functionNodesCopyPtr.get() = *functionNodesPtr.get();
+	*functionLinksCopyPtr.get() = *functionLinksPtr.get();
+
+	map<int, FunctionNode> &functionNodesCopy = *functionNodesCopyPtr.get();
+	map<int, FunctionLink> &functionLinksCopy = *functionLinksCopyPtr.get();
 
 	vector<int> inputLinkIndices = functionNodesCopy[selectedNodeIndex].GetInputLinkIndices();
 	vector<int> outputLinkIndices = functionNodesCopy[selectedNodeIndex].GetOutputLinkIndices();
@@ -300,11 +345,14 @@ void FunctionGraph::RemoveSelectedNode()
 	for(int i = 0; i < inputLinkIndices.size(); i++)
 	{
 		int inputLinkIndex = inputLinkIndices[i];
-		int inputNodeIndex = functionLinksCopy[inputLinkIndex].GetInputNodeIndex();
 
-		functionNodesCopy[inputNodeIndex].RemoveOutputLink(inputLinkIndex);
+		if(inputLinkIndex != -1)
+		{
+			int inputNodeIndex = functionLinksCopy[inputLinkIndex].GetInputNodeIndex();
 
-		functionLinksCopy.erase(inputLinkIndex);
+			functionNodesCopy[inputNodeIndex].RemoveOutputLink(inputLinkIndex);
+			functionLinksCopy.erase(inputLinkIndex);
+		}
 	}
 
 	for(int i = 0; i < outputLinkIndices.size(); i++)
@@ -319,7 +367,7 @@ void FunctionGraph::RemoveSelectedNode()
 
 	functionNodesCopy.erase(selectedNodeIndex);
 
-	Validate(functionNodesCopy, functionLinksCopy);
+	Validate(functionNodesCopyPtr, functionLinksCopyPtr);
 
 	selectedNodeIndex = -1;
 	selectedLinkIndex = -1;
@@ -328,8 +376,14 @@ void FunctionGraph::RemoveSelectedNode()
 
 void FunctionGraph::RemoveSelectedLink()
 {
-	map<int, FunctionNode> functionNodesCopy = functionNodes;
-	map<int, FunctionLink> functionLinksCopy = functionLinks;
+	shared_ptr<map<int, FunctionNode>> functionNodesCopyPtr = make_shared<map<int, FunctionNode>>();
+	shared_ptr<map<int, FunctionLink>> functionLinksCopyPtr = make_shared<map<int, FunctionLink>>();
+
+	*functionNodesCopyPtr.get() = *functionNodesPtr.get();
+	*functionLinksCopyPtr.get() = *functionLinksPtr.get();
+
+	map<int, FunctionNode> &functionNodesCopy = *functionNodesCopyPtr.get();
+	map<int, FunctionLink> &functionLinksCopy = *functionLinksCopyPtr.get();
 
 	int inputNodeIndex = functionLinksCopy[selectedLinkIndex].GetInputNodeIndex();
 	int outputNodeIndex = functionLinksCopy[selectedLinkIndex].GetOutputNodeIndex();
@@ -339,7 +393,7 @@ void FunctionGraph::RemoveSelectedLink()
 
 	functionLinksCopy.erase(selectedLinkIndex);
 
-	Validate(functionNodesCopy, functionLinksCopy);
+	Validate(functionNodesCopyPtr, functionLinksCopyPtr);
 
 	selectedNodeIndex = -1;
 	selectedLinkIndex = -1;
@@ -363,7 +417,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 {
 	bool isInteracting = false;
 
-	for(auto it = functionNodes.begin(); it != functionNodes.end() && !isInteracting; it++)
+	for(auto it = functionNodesPtr->begin(); it != functionNodesPtr->end() && !isInteracting; it++)
 	{
 		vector<XMFLOAT2> inputPinPositions = it->second.GetInputPinPositions();
 
@@ -382,7 +436,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 		}
 	}
 
-	for(auto it = functionNodes.begin(); it != functionNodes.end() && !isInteracting; it++)
+	for(auto it = functionNodesPtr->begin(); it != functionNodesPtr->end() && !isInteracting; it++)
 	{
 		XMFLOAT2 outputPinPosition = it->second.GetOutputPinPosition();
 
@@ -397,7 +451,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 
 	}
 
-	for(auto it = functionNodes.begin(); it != functionNodes.end() && !isInteracting; it++)
+	for(auto it = functionNodesPtr->begin(); it != functionNodesPtr->end() && !isInteracting; it++)
 	{
 		XMFLOAT2 position = it->second.GetPosition();
 
@@ -411,7 +465,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 		}
 	}
 
-	for(auto it = functionLinks.begin(); it != functionLinks.end() && !isInteracting; it++)
+	for(auto it = functionLinksPtr->begin(); it != functionLinksPtr->end() && !isInteracting; it++)
 	{
 		vector<XMFLOAT2> positions = it->second.GetPolylineVertices();
 
@@ -439,6 +493,9 @@ void FunctionGraph::OnMouseDown(int x, int y)
 
 void FunctionGraph::OnMouseMove(int x, int y)
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+	map<int, FunctionLink> &functionLinks = *functionLinksPtr.get();
+
 	switch(interactionState)
 	{
 		case INTERACTION_DRAG_NODE:
@@ -513,7 +570,7 @@ void FunctionGraph::OnMouseUp(int x, int y)
 		{
 			bool inputPinIsFound = false;
 
-			for(auto it = functionNodes.begin(); it != functionNodes.end() && !inputPinIsFound; it++)
+			for(auto it = functionNodesPtr->begin(); it != functionNodesPtr->end() && !inputPinIsFound; it++)
 			{
 				XMFLOAT2 outputPinPosition = it->second.GetOutputPinPosition();
 
@@ -528,7 +585,7 @@ void FunctionGraph::OnMouseUp(int x, int y)
 		{
 			bool inputPinIsFound = false;
 
-			for(auto it = functionNodes.begin(); it != functionNodes.end() && !inputPinIsFound; it++)
+			for(auto it = functionNodesPtr->begin(); it != functionNodesPtr->end() && !inputPinIsFound; it++)
 			{
 				vector<XMFLOAT2> inputPinPositions = it->second.GetInputPinPositions();
 
@@ -553,6 +610,9 @@ void FunctionGraph::OnMouseUp(int x, int y)
 
 void FunctionGraph::Process()
 {
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+	map<int, FunctionLink> &functionLinks = *functionLinksPtr.get();
+
 	for(int i = 0; i < graphTraverseOrder.size(); i++)
 	{
 		FunctionNode &currentNode = functionNodes[graphTraverseOrder[i]];
@@ -573,7 +633,7 @@ void FunctionGraph::Process()
 					textureMemoryPtrs[j] = nullptr;
 				}
 			}
-
+			
 			vector<int> intParameters = currentNode.GetIntParameters();
 			vector<float> floatParameters = currentNode.GetFloatParameters();
 
@@ -596,22 +656,18 @@ void FunctionGraph::Process()
 
 void FunctionGraph::Render()
 {
+	shared_ptr<map<int, FunctionNode>> functionNodesToRenderPtr = functionNodesPtr;
+	shared_ptr<map<int, FunctionLink>> functionLinksToRenderPtr = functionLinksPtr;
+
 	if(newFunctionLink.get() != nullptr) newFunctionLink->Render();
 
-	for(auto it = functionLinks.begin(); it != functionLinks.end(); it++)
+	for(auto it = functionLinksToRenderPtr->begin(); it != functionLinksToRenderPtr->end(); it++)
 	{
 		it->second.Render();
 	}
 
-	for(auto it = functionNodes.begin(); it != functionNodes.end(); it++)
+	for(auto it = functionNodesToRenderPtr->begin(); it != functionNodesToRenderPtr->end(); it++)
 	{
 		it->second.Render();
 	}
-}
-
-
-void FunctionGraph::Release()
-{
-	functionNodes.clear();
-	functionLinks.clear();
 }

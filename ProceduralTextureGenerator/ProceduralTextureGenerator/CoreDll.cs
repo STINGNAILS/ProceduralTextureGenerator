@@ -62,5 +62,8 @@ namespace ProceduralTextureGenerator
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewSetSelectedNodeFloatParameter")]
 		public static extern void GraphViewSetSelectedNodeFloatParameter(int parameterIndex, float value);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewProcess")]
+		public static extern void GraphViewProcess();
 	}
 }

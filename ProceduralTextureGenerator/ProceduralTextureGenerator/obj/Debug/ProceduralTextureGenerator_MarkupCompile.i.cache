@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\App.xaml
-51886297316
+14-1183104455
 
-15-1631371651
+23-780747819
 17-1787121461
-Controls\GraphView.xaml;Controls\TextureView.xaml;Controls\View.xaml;MainWindow.xaml;Controls\ObjectView.xaml;
+Controls\ParameterControls\SelectionParameter.xaml;Controls\ParameterControls\FloatParameter.xaml;Controls\ParameterControls\IntegerParameter.xaml;Controls\ParameterControls\RemapSetter.xaml;Styles\Brushes.xaml;Controls\ParameterControls\ColorSetter.xaml;Controls\GraphView.xaml;Controls\TextureView.xaml;Controls\View.xaml;Controls\ParameterControls\GrayscaleSetter.xaml;Styles\Core.xaml;MainWindow.xaml;Controls\ObjectView.xaml;Controls\ParameterPanel.xaml;
 
 False
 

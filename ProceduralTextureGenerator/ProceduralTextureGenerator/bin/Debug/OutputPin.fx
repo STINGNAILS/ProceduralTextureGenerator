@@ -56,7 +56,7 @@ float4 PS(VertexOut vertexOut) : SV_Target
 {
 	float r = sqrt(vertexOut.uv.x * vertexOut.uv.x + vertexOut.uv.y * vertexOut.uv.y);
 	clip(1.0f - r);
-	float k0 = 1.0f - step(1.0f, r);
+	float k0 = 1.0f - step(1.0001f, r);
 	float k1 = 1.0f - step(ratio, r);
 	float4 color1 = (1.0f - state) * (r * vertexOut.col0 + (1.0f - r) * vertexOut.col1) + state * vertexOut.col0;
 	float4 color2 = vertexOut.col2;

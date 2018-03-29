@@ -34,7 +34,7 @@ namespace ProceduralTextureGenerator
 
 			CompositionTarget.Rendering += Update;
 
-			graphView.SetParameterStackPanel(parametersStackPannel);
+			graphView.SetParameterPanel(parameterPannel);
 
 			frameTime = new Stopwatch();
 			frameTime.Start();
@@ -45,12 +45,12 @@ namespace ProceduralTextureGenerator
 		{
 			RenderingEventArgs args = (RenderingEventArgs)e;
 
-			if(this.lastRenderTime != args.RenderingTime)
+			if(lastRenderTime != args.RenderingTime)
 			{
 				UpdateControls();
 				objectView.Render();
 				graphView.Render();
-				this.lastRenderTime = args.RenderingTime;
+				lastRenderTime = args.RenderingTime;
 			}
 		}
 

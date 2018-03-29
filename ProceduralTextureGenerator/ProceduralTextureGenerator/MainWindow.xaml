@@ -12,16 +12,17 @@
             <RowDefinition Height="340*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="12*"/>
-            <ColumnDefinition Width="12*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
 
         <local:ObjectView x:Name="objectView" Grid.Column="0" Grid.RowSpan="2" Focusable="True"/>
-        <local:GraphView x:Name="graphView" Grid.Column="1" Grid.RowSpan="2" Focusable="True"/>
+        <GridSplitter Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Gray" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"/>
+        <local:GraphView x:Name="graphView" Grid.Column="2" Grid.RowSpan="2" Focusable="True"/>
         <!--<local:TextureView x:Name="textureView" Grid.Column="1" Grid.Row="1" Focusable="True"/>-->
 
-        <UserControl Grid.Column="2" Background="#FF404040" BorderBrush="#FF202020" BorderThickness="2" Grid.RowSpan="2" />
-        <StackPanel x:Name="parametersStackPannel" Grid.Column="2" Grid.RowSpan="2"/>
+        <local:ParameterPanel x:Name="parameterPannel" Grid.Column="3" Grid.RowSpan="2"/>
     </Grid>
 </Window>

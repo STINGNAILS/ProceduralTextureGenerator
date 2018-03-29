@@ -17,10 +17,13 @@
                 <ContextMenu>
                     <MenuItem Header="Uniform Color" Click="AddUniformColorNode"></MenuItem>
                     <MenuItem Header="Blend" Click="AddBlendNode"></MenuItem>
-                    <MenuItem Header="Levels" Click="AddLevelsNode"></MenuItem>
+                    <MenuItem Header="Remap" Click="AddRemapNode"></MenuItem>
                     <MenuItem Header="Gradient" Click="AddGradientNode"></MenuItem>
                     <MenuItem Header="Perlin Noise" Click="AddPerlinNoiseNode"></MenuItem>
+                    <MenuItem Header="Worley Noise" Click="AddWorleyNoiseNode"></MenuItem>
                     <MenuItem Header="Normal Color" Click="AddNormalColorNode"></MenuItem>
+                    <MenuItem Header="Blur" Click="AddBlurNode"></MenuItem>
+                    <MenuItem Header="Directional Blur" Click="AddDirectionalBlurNode"></MenuItem>
                 </ContextMenu>
             </ContentControl.ContextMenu>
         </ContentControl>

@@ -32,8 +32,7 @@ CPP_API void Init()
 
 	scenes[1] = make_shared<Scene>();
 	scenes[2] = make_shared<Scene>();
-	//scenes[3] = make_shared<Scene>();
-
+	scenes[3] = make_shared<Scene>();
 
 	shared_ptr<Camera3D> camera1 = make_shared<Camera3D>();
 	camera1->Init();
@@ -214,17 +213,18 @@ CPP_API float GraphViewGetSelectedNodeFloatParameter(int parameterIndex)
 CPP_API void GraphViewSetSelectedNodeIntParameter(int parameterIndex, int value)
 {
 	functionGraph->SetSelectedNodeIntParameter(parameterIndex, value);
-
-	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-	cube1->SetNormalMap(functionGraph->GetNormalTexture());
 }
 
 
 CPP_API void GraphViewSetSelectedNodeFloatParameter(int parameterIndex, float value)
 {
 	functionGraph->SetSelectedNodeFloatParameter(parameterIndex, value);
+}
+
+
+CPP_API void GraphViewProcess()
+{
+	functionGraph->Process();
 
 	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
 	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());

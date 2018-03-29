@@ -19,11 +19,11 @@ class FunctionGraph : public RenderableObject
 
 	int nextNodeIndex;
 	int selectedNodeIndex;
-	map<int, FunctionNode> functionNodes;
+	shared_ptr<map<int, FunctionNode>> functionNodesPtr;
 
 	int nextLinkIndex;
 	int selectedLinkIndex;
-	map<int, FunctionLink> functionLinks;
+	shared_ptr<map<int, FunctionLink>> functionLinksPtr;
 
 	vector<int> graphTraverseOrder;
 
@@ -32,7 +32,7 @@ class FunctionGraph : public RenderableObject
 	InteractionState interactionState;
 	XMFLOAT2 clickOffset;
 
-	void Validate(map<int, FunctionNode> &functionNodesCopy, map<int, FunctionLink> &functionLinksCopy);
+	void Validate(shared_ptr<map<int, FunctionNode>> functionNodesCopyPtr, shared_ptr<map<int, FunctionLink>> functionLinksCopyPtr);
 
 	public:
 
@@ -70,7 +70,5 @@ class FunctionGraph : public RenderableObject
 	void Process();
 
 	void Render();
-
-	void Release();
 };
 

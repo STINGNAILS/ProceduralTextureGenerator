@@ -536,24 +536,23 @@ void TextureMemory::SetValue(UINT u, UINT v, XMFLOAT4 value)
 		case GRAYSCALE:
 		{
 			XMFLOAT2 value_ = XMFLOAT2((value.x + value.y + value.z) / 3.0f, 1.0f);
+			XMVECTOR tempV = XMVectorSaturate(XMLoadFloat2(&value_));
 
 			switch(bitsPerChannel)
 			{
 				case BPC8:
 				{
-					XMVECTOR tempV = XMLoadFloat2(&value_);
 					XMStoreUByteN2(&((XMUBYTEN2*) textureMemory)[u * textureResolution + v], tempV);
 					break;
 				}
 				case BPC16:
 				{
-					XMVECTOR tempV = XMLoadFloat2(&value_);
 					XMStoreUShortN2(&((XMUSHORTN2*) textureMemory)[u * textureResolution + v], tempV);
 					break;
 				}
 				case BPC32:
 				{
-					((XMFLOAT2*) textureMemory)[u * textureResolution + v] = value_;
+					XMStoreFloat2(&((XMFLOAT2*) textureMemory)[u * textureResolution + v], tempV);
 					break;
 				}
 			}
@@ -562,24 +561,23 @@ void TextureMemory::SetValue(UINT u, UINT v, XMFLOAT4 value)
 		case COLOR:
 		{
 			XMFLOAT4 value_ = XMFLOAT4(value.x, value.y, value.z, 1.0f);
+			XMVECTOR tempV = XMVectorSaturate(XMLoadFloat4(&value_));
 
 			switch(bitsPerChannel)
 			{
 				case BPC8:
 				{
-					XMVECTOR tempV = XMLoadFloat4(&value_);
 					XMStoreUByteN4(&((XMUBYTEN4*) textureMemory)[u * textureResolution + v], tempV);
 					break;
 				}
 				case BPC16:
 				{
-					XMVECTOR tempV = XMLoadFloat4(&value_);
 					XMStoreUShortN4(&((XMUSHORTN4*) textureMemory)[u * textureResolution + v], tempV);
 					break;
 				}
 				case BPC32:
 				{
-					((XMFLOAT4*) textureMemory)[u * textureResolution + v] = value_;
+					XMStoreFloat4(&((XMFLOAT4*) textureMemory)[u * textureResolution + v], tempV);
 					break;
 				}
 			}

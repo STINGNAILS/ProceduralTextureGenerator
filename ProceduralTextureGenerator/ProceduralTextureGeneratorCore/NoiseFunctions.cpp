@@ -14,7 +14,7 @@ TextureMemoryPtr PerlinNoise(TextureResolution resolution, BitsPerChannel bitsPe
 
 	for(int k = 0; k < octaves; k++)
 	{
-		gridSize[k] = gridStartingSize * (int)pow(2, k) + 1;
+		gridSize[k] = gridStartingSize * (int) exp(k) + 1;
 		amplitude[k] = pow(persistence, k);
 
 		gradients[k].resize(gridSize[k] * gridSize[k]);
@@ -102,4 +102,135 @@ TextureMemoryPtr PerlinNoise(TextureResolution resolution, BitsPerChannel bitsPe
 	}
 
 	return perlinNoiseTexturePtr;
+}
+
+
+TextureMemoryPtr WorleyNoise(TextureResolution resolution, BitsPerChannel bitsPerChannel, int octaves, int sitesStartingNum, float persistence, UINT distanceType, float exponent)
+{
+	TextureMemoryPtr worleyNoiseTexturePtr = make_shared<TextureMemory>(GRAYSCALE, resolution, bitsPerChannel);
+
+	vector<float> noise(resolution * resolution, 0.0f);
+
+	vector<vector<XMFLOAT2>> sites(octaves);
+	vector<float> amplitude(octaves);
+
+	random_device rd;
+	mt19937 rng(rd());
+	uniform_real_distribution<> uniformRNG(0.0, 1.0);
+	
+	for(int k = 0; k < octaves; k++)
+	{
+		sites[k].resize(sitesStartingNum * (int) exp2(k));
+		for(int i = 0; i < sites[k].size(); i++)
+		{
+			sites[k][i] = XMFLOAT2(uniformRNG(rng), uniformRNG(rng));
+		}
+
+		amplitude[k] = pow(persistence, k);
+	}
+
+	switch(distanceType)
+	{
+		//1 point
+		case 1:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					XMFLOAT2 uv = XMFLOAT2((float) i / resolution, (float) j / resolution);
+
+					for(int k = 0; k < octaves; k++)
+					{
+						double distance = 100;
+						for(int l = 0; l < sites[k].size(); l++)
+						{
+							float x = uv.x - sites[k][l].x > 0.5f ? sites[k][l].x + 1.0f : uv.x - sites[k][l].x < -0.5f ? sites[k][l].x - 1.0f : sites[k][l].x;
+							float y = uv.y - sites[k][l].y > 0.5f ? sites[k][l].y + 1.0f : uv.y - sites[k][l].y < -0.5f ? sites[k][l].y - 1.0f : sites[k][l].y;
+							
+							double distance_ = pow(pow(abs(x - uv.x), exponent) + pow(abs(y - uv.y), exponent), 1.0 / exponent);
+							if(distance_ < distance)
+							{
+								distance = distance_;
+							}
+						}
+
+						noise[i * resolution + j] += distance * amplitude[k];
+					}
+				}
+			}
+			break;
+		}
+		//2 points
+		case 2:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				for(int j = 0; j < resolution; j++)
+				{
+					XMFLOAT2 uv = XMFLOAT2((float) i / resolution, (float) j / resolution);
+
+					for(int k = 0; k < octaves; k++)
+					{
+						double distance1 = 100;
+						double distance2 = 101;
+						for(int l = 0; l < sites[k].size(); l++)
+						{
+							float x = uv.x - sites[k][l].x > 0.5f ? sites[k][l].x + 1.0f : uv.x - sites[k][l].x < -0.5f ? sites[k][l].x - 1.0f : sites[k][l].x;
+							float y = uv.y - sites[k][l].y > 0.5f ? sites[k][l].y + 1.0f : uv.y - sites[k][l].y < -0.5f ? sites[k][l].y - 1.0f : sites[k][l].y;
+
+							double distance_ = pow(pow(abs(x - uv.x), exponent) + pow(abs(y - uv.y), exponent), 1.0 / exponent);
+							if(distance_ < distance1)
+							{
+								distance2 = distance1;
+								distance1 = distance_;
+							}
+							else if(distance_ < distance2)
+							{
+								distance2 = distance_;
+							}
+						}
+
+						noise[i * resolution + j] += (distance2 - distance1) * amplitude[k];
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	float heightMin = noise[0];
+	float heightMax = heightMin;
+
+	for(int i = 0; i < resolution; i++)
+	{
+		for(int j = 0; j < resolution; j++)
+		{
+			float height = noise[i * resolution + j];
+			if(height < heightMin)
+			{
+				heightMin = height;
+			}
+			else if(height > heightMax)
+			{
+				heightMax = height;
+			}
+		}
+
+	}
+
+	float dh = heightMax - heightMin;
+
+	#pragma omp parallel for
+	for(int i = 0; i < resolution; i++)
+	{
+		for(int j = 0; j < resolution; j++)
+		{
+			worleyNoiseTexturePtr->SetValue(i, j, XMFLOAT2((noise[i * resolution + j] - heightMin) / dh, 1.0));
+		}
+	}
+
+	return worleyNoiseTexturePtr;
 }

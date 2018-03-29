@@ -73,19 +73,21 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return Blend(foregroundTexturePtr, backgroundTexturePtr, blendCoefficientTexturePtr, resolution, bpc, blendMode, k);
 		}
-		case LEVELS:
+		case REMAP:
 		{
 			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
 
 			TextureResolution resolution = (TextureResolution) intParameters[0];
 			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			UINT remapMode = intParameters[2];
 			float x1 = floatParameters[0];
-			float x2 = floatParameters[1];
-			float x3 = floatParameters[2];
-			float x4 = floatParameters[3];
-			float x5 = floatParameters[4];
+			float y1 = floatParameters[1];
+			float x2 = floatParameters[2];
+			float y2 = floatParameters[3];
+			float x3 = floatParameters[4];
+			float y3 = floatParameters[5];
 
-			return Levels(inputTexturePtr, resolution, bpc, x1, x2, x3, x4, x5);
+			return Remap(inputTexturePtr, resolution, bpc, remapMode, x1, y1, x2, y2, x3, y3);
 		}
 		case GRADIENT:
 		{
@@ -106,12 +108,45 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return PerlinNoise(resolution, bpc, octaves, gridStartingSize, persistence);
 		}
+		case WORLEY_NOISE:
+		{
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			UINT octaves = intParameters[2];
+			UINT sitesStartingNum = intParameters[3];
+			UINT distanceType = intParameters[4];
+			float persistence = floatParameters[0];
+			float exponent = floatParameters[1];
+
+			return WorleyNoise(resolution, bpc, octaves, sitesStartingNum, persistence, distanceType, exponent);
+		}
 		case NORMAL_COLOR:
 		{
 			TextureResolution resolution = (TextureResolution) intParameters[0];
 			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
 
 			return NormalColor(resolution, bpc);
+		}
+		case BLUR:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			float intensity = floatParameters[0];
+
+			return Blur(inputTexturePtr, resolution, bpc, intensity);
+		}
+		case DIRECTIONAL_BLUR:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			float intensity = floatParameters[0];
+			float angle = floatParameters[1];
+
+			return DirectionalBlur(inputTexturePtr, resolution, bpc, intensity, angle);
 		}
 		default:
 		{
@@ -153,7 +188,7 @@ int FunctionInputNodesNum(int functionIndex)
 		{
 			return 3;
 		}
-		case LEVELS:
+		case REMAP:
 		{
 			return 1;
 		}
@@ -165,9 +200,21 @@ int FunctionInputNodesNum(int functionIndex)
 		{
 			return 0;
 		}
+		case WORLEY_NOISE:
+		{
+			return 0;
+		}
 		case NORMAL_COLOR:
 		{
 			return 0;
+		}
+		case BLUR:
+		{
+			return 1;
+		}
+		case DIRECTIONAL_BLUR:
+		{
+			return 1;
 		}
 		default:
 		{
@@ -239,11 +286,12 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
-		case LEVELS:
+		case REMAP:
 		{
-			vector<int> intParameters(2);
+			vector<int> intParameters(3);
 			intParameters[0] = 1024;
 			intParameters[1] = 8;
+			intParameters[2] = 1;
 
 			return intParameters;
 		}
@@ -265,7 +313,34 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
+		case WORLEY_NOISE:
+		{
+			vector<int> intParameters(5);
+			intParameters[0] = 1024;
+			intParameters[1] = 16;
+			intParameters[2] = 1;
+			intParameters[3] = 50;
+			intParameters[4] = 1;
+
+			return intParameters;
+		}
 		case NORMAL_COLOR:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
+		case BLUR:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
+		case DIRECTIONAL_BLUR:
 		{
 			vector<int> intParameters(2);
 			intParameters[0] = 1024;
@@ -336,14 +411,15 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 
 			return floatParameters;
 		}
-		case LEVELS:
+		case REMAP:
 		{
-			vector<float> floatParameters(5);
+			vector<float> floatParameters(6);
 			floatParameters[0] = 0.0f;
-			floatParameters[1] = 0.5f;
-			floatParameters[2] = 1.0f;
-			floatParameters[3] = 0.0f;
+			floatParameters[1] = 0.0f;
+			floatParameters[2] = 0.5f;
+			floatParameters[3] = 0.5f;
 			floatParameters[4] = 1.0f;
+			floatParameters[5] = 1.0f;
 
 			return floatParameters;
 		}
@@ -360,9 +436,32 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 
 			return floatParameters;
 		}
+		case WORLEY_NOISE:
+		{
+			vector<float> floatParameters(2);
+			floatParameters[0] = 0.5f;
+			floatParameters[1] = 2;
+
+			return floatParameters;
+		}
 		case NORMAL_COLOR:
 		{
 			vector<float> floatParameters(0);
+
+			return floatParameters;
+		}
+		case BLUR:
+		{
+			vector<float> floatParameters(1);
+			floatParameters[0] = 1.0f;
+
+			return floatParameters;
+		}
+		case DIRECTIONAL_BLUR:
+		{
+			vector<float> floatParameters(2);
+			floatParameters[0] = 1.0f;
+			floatParameters[1] = 0.0f;
 
 			return floatParameters;
 		}

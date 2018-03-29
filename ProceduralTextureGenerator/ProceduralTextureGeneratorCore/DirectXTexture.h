@@ -17,7 +17,7 @@ class DirectXTexture
 
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
-
+	
 	ID3D11ShaderResourceView *textureSRV;
 
 	TextureType textureType;

@@ -161,7 +161,7 @@ float4 PS(VertexOut vertexOut) : SV_Target
 {
 	const float3 albedo = SRGBToLinear(albedoMap.Sample(basicSampler, vertexOut.uv).xyz);
 	const float metallic = saturate(1.190476f * metallicMap.Sample(basicSampler, vertexOut.uv) - 0.095238f);
-	const float roughness = max(roughnessMap.Sample(basicSampler, vertexOut.uv), 0.01f);
+	const float roughness = max(pow(roughnessMap.Sample(basicSampler, vertexOut.uv), 2.2), 0.01f);
 	const float3 normal = 2.0f * normalMap.Sample(basicSampler, vertexOut.uv).rgb - 1.0f;
 
 	const float3 diffuse = lerp(albedo, float3(0.0f, 0.0f, 0.0f), metallic);

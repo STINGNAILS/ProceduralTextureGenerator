@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ #include "stdafx.h"
 #include "DirectXView.h"
 
 
@@ -47,7 +47,7 @@ HRESULT DirectXView::Init(void *viewResource)
 	IUnknown *unknownResource = (IUnknown*) viewResource;
 
 	IDXGIResource *dxgiResource;
-	hr = unknownResource->QueryInterface(__uuidof(IDXGIResource), (void**) &dxgiResource);
+	hr = unknownResource->QueryInterface(__uuidof(IDXGIResource), (void**) (&dxgiResource));
 	if(FAILED(hr))
 	{
 		return hr;
@@ -55,12 +55,12 @@ HRESULT DirectXView::Init(void *viewResource)
 
 	HANDLE sharedHandle;
 	hr = dxgiResource->GetSharedHandle(&sharedHandle);
+	dxgiResource->Release();
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
-	dxgiResource->Release();
 
 	IUnknown *tempResource;
 	hr = device->OpenSharedResource(sharedHandle, __uuidof(ID3D11Resource), (void**) (&tempResource));
@@ -70,12 +70,18 @@ HRESULT DirectXView::Init(void *viewResource)
 	}
 
 	hr = tempResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**) (&viewBuffer));
+	tempResource->Release();
 	if(FAILED(hr))
 	{
 		return hr;
 	}
-
-	tempResource->Release();
+	
+	IDXGISurface *dxgiSurface;
+	hr = viewBuffer->QueryInterface(__uuidof(IDXGISurface), (void**) (&dxgiSurface));
+	if(FAILED(hr))
+	{
+		return hr;
+	}
 	
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
 	rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -161,7 +167,7 @@ void DirectXView::BeginRender()
 		const float clearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
 		painter->ClearRenderTargetView(renderTargetView, clearColor);
 		painter->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
+		
 		painter->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 		painter->OMSetDepthStencilState(depthStencilState, 1);
 		painter->RSSetViewports(1, &viewport);
