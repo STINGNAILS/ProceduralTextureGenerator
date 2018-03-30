@@ -273,7 +273,7 @@ namespace ProceduralTextureGenerator
 			KeyValuePair<string, int>[] distanceTypeSelections = new KeyValuePair<string, int>[2]
 			{
 				new KeyValuePair<string, int>("Distance to the closest site", 1),
-				new KeyValuePair<string, int>("Difference between distances to 2 closest sites", 2),
+				new KeyValuePair<string, int>("Difference between distances to 2 closest sites", 2)
 			};
 			parameterStackPanel.Children.Add(new SelectionParameter("Distance Type", distanceTypeIndex, distanceTypeSelections));
 
@@ -317,6 +317,37 @@ namespace ProceduralTextureGenerator
 			parameterStackPanel.Children.Add(new FloatParameter("Intensity", intensityIndex, 0.0f, 100.0f));
 
 			parameterStackPanel.Children.Add(new FloatParameter("Angle", angleIndex, 0.0f, 360.0f));
+		}
+
+
+		private void AddMetalReflectanceParameters(int metalIndex)
+		{
+			Label metalReflectanceParametersLabel = new Label
+			{
+				Content = "Metal Reflectance Parameters",
+				FontFamily = new FontFamily("Segoe UI Semibold"),
+				FontSize = 16,
+				Height = 30,
+				Foreground = Brushes.White,
+				Background = Brushes.DarkGray,
+				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
+			};
+			parameterStackPanel.Children.Add(metalReflectanceParametersLabel);
+
+			KeyValuePair<string, int>[] metalSelections = new KeyValuePair<string, int>[10]
+			{
+				new KeyValuePair<string, int>("Iron", 0),
+				new KeyValuePair<string, int>("Titanium", 1),
+				new KeyValuePair<string, int>("Aluminium", 2),
+				new KeyValuePair<string, int>("Nickel", 3),
+				new KeyValuePair<string, int>("Silver", 4),
+				new KeyValuePair<string, int>("Gold", 5),
+				new KeyValuePair<string, int>("Platinum", 6),
+				new KeyValuePair<string, int>("Copper", 7),
+				new KeyValuePair<string, int>("Chromium", 8),
+				new KeyValuePair<string, int>("Cobalt", 9)
+			};
+			parameterStackPanel.Children.Add(new SelectionParameter("Metal", metalIndex, metalSelections));
 		}
 
 
@@ -505,6 +536,19 @@ namespace ProceduralTextureGenerator
 					AddNodeName("Directional Blur");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
 					AddDirectionalBlurParameters(intensityIndex, angleIndex);
+
+					break;
+				}
+				//Metal Reflectance
+				case 14:
+				{
+					int textureResolutionIndex = 0;
+					int bpcIndex = 1;
+					int metalIndex = 2;
+
+					AddNodeName("Metal Reflectance");
+					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddMetalReflectanceParameters(metalIndex);
 
 					break;
 				}

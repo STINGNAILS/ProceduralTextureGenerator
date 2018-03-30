@@ -19,6 +19,7 @@
 #define NORMAL_COLOR 11
 #define BLUR 12
 #define DIRECTIONAL_BLUR 13
+#define METAL_REFLECTANCE 14
 
 
 TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTexturePtrs, vector<int> intParameters, vector<float> floatParameters);

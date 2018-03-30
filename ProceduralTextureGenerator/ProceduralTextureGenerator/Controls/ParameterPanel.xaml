@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Background="#FF404040" BorderBrush="#FF202020" BorderThickness="2">
     <Grid>
-        <ScrollViewer>
+        <!--<ScrollViewer>-->
             <StackPanel x:Name="parameterStackPanel"/>
-        </ScrollViewer>
+        <!--</ScrollViewer>-->
     </Grid>
 </UserControl>

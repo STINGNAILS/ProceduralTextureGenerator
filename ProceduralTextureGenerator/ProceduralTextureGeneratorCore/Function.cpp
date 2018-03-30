@@ -148,6 +148,14 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return DirectionalBlur(inputTexturePtr, resolution, bpc, intensity, angle);
 		}
+		case METAL_REFLECTANCE:
+		{
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			int metalIndex = intParameters[2];
+
+			return MetalReflectance(resolution, bpc, metalIndex);
+		}
 		default:
 		{
 			return nullptr;
@@ -215,6 +223,10 @@ int FunctionInputNodesNum(int functionIndex)
 		case DIRECTIONAL_BLUR:
 		{
 			return 1;
+		}
+		case METAL_REFLECTANCE:
+		{
+			return 0;
 		}
 		default:
 		{
@@ -348,6 +360,15 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
+		case METAL_REFLECTANCE:
+		{
+			vector<int> intParameters(3);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+			intParameters[2] = 0;
+
+			return intParameters;
+		}
 		default:
 		{
 			vector<int> intParameters(2);
@@ -462,6 +483,12 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 			vector<float> floatParameters(2);
 			floatParameters[0] = 1.0f;
 			floatParameters[1] = 0.0f;
+
+			return floatParameters;
+		}
+		case METAL_REFLECTANCE:
+		{
+			vector<float> floatParameters(0);
 
 			return floatParameters;
 		}

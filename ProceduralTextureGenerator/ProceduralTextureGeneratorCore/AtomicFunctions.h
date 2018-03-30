@@ -17,3 +17,4 @@ TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution re
 TextureMemoryPtr NormalColor(TextureResolution resolution, BitsPerChannel bitsPerChannel);
 TextureMemoryPtr Blur(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity);
 TextureMemoryPtr DirectionalBlur(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity, float angle);
+TextureMemoryPtr MetalReflectance(TextureResolution resolution, BitsPerChannel bitsPerChannel, int metalIndex);
