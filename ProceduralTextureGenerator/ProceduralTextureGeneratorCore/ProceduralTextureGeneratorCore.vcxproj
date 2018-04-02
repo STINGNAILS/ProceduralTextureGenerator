@@ -189,6 +189,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextureFrame.h" />
     <ClInclude Include="TextureMemory.h" />
+    <ClInclude Include="TextureQuad.h" />
     <ClInclude Include="VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +246,7 @@
     </ClCompile>
     <ClCompile Include="TextureFrame.cpp" />
     <ClCompile Include="TextureMemory.cpp" />
+    <ClCompile Include="TextureQuad.cpp" />
     <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

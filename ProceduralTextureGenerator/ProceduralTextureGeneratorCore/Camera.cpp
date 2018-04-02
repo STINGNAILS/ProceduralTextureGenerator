@@ -80,18 +80,6 @@ const XMMATRIX Camera::ViewProjCentered()
 }
 
 
-const XMFLOAT3 Camera::Position()
-{
-	return position;
-}
-
-
-const XMFLOAT2 Camera::WidthHeight()
-{
-	return XMFLOAT2(w, h);
-}
-
-
 void Camera::Set()
 {
 	if(isInitialized)
@@ -99,7 +87,7 @@ void Camera::Set()
 		CameraCB cameraCB;
 		XMStoreFloat4x4(&cameraCB.viewProj, XMMatrixTranspose(ViewProj()));
 		XMStoreFloat4x4(&cameraCB.viewProjCentered, XMMatrixTranspose(ViewProjCentered()));
-		cameraCB.cameraPosW = Position();
+		cameraCB.cameraPosW = position;
 
 		constantBuffer->Update(&cameraCB);
 		constantBuffer->Set(0);

@@ -56,9 +56,15 @@ void Camera2D::SetPosition(XMFLOAT2 position_)
 	CalculateView();
 }
 
-const float Camera2D::Zoom()
+
+XMFLOAT3 Camera2D::ScreenToWorld(float x, float y)
 {
-	return zoom;
+	XMFLOAT3 world;
+	world.x = (position.x + w * (x - 0.5f)) / zoom;
+	world.y = (position.y + h * (y - 0.5f)) / zoom;
+	world.z = 0.0f;
+	
+	return world;
 }
 
 
@@ -71,9 +77,15 @@ void Camera2D::Navigate(float dx, float dy, float dt)
 }
 
 
-void Camera2D::Zoom(float dz)
+void Camera2D::Zoom(float x, float y, float dz)
 {
-	zoom *= pow(1.15, dz / 120.0);
+	XMFLOAT3 world = ScreenToWorld(x, y);
+	float s1 = zoom;
+	float s2 = zoom * pow(1.15, dz / 120.0);
+
+	zoom = s2;
+	position.x += (s2 - s1) * world.x;
+	position.y += (s2 - s1) * world.y;
 
 	CalculateView();
 }

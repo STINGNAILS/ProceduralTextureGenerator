@@ -50,6 +50,7 @@ namespace ProceduralTextureGenerator
 				UpdateControls();
 				objectView.Render();
 				graphView.Render();
+				textureView.Render();
 				lastRenderTime = args.RenderingTime;
 			}
 		}
@@ -62,7 +63,7 @@ namespace ProceduralTextureGenerator
 
 			objectView.Update(dt);
 			graphView.Update(dt);
-			//textureView.OnMouseMove(dx, dy, dt);
+			textureView.Update(dt);
 
 			frameTime.Restart();
 		}

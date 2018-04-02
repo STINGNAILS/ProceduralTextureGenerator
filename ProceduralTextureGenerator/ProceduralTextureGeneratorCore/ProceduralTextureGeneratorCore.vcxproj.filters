@@ -149,6 +149,9 @@
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Graphics\DirectX</Filter>
     </ClInclude>
+    <ClInclude Include="TextureQuad.h">
+      <Filter>Graphics\Renderable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderCompiler.cpp">
@@ -256,6 +259,9 @@
     </ClCompile>
     <ClCompile Include="ConstantBuffer.cpp">
       <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureQuad.cpp">
+      <Filter>Graphics\Renderable</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

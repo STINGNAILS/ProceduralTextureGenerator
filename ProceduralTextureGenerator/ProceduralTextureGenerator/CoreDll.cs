@@ -22,7 +22,7 @@ namespace ProceduralTextureGenerator
 		public static extern void Navigate(int viewIndex, float dx, float dy, float dt);
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Zoom")]
-		public static extern void Zoom(int viewIndex, float dz);
+		public static extern void Zoom(int viewIndex, float x, float y, float dz);
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Render")]
 		public static extern void Render(int viewIndex);
@@ -41,6 +41,9 @@ namespace ProceduralTextureGenerator
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewOnMouseUp")]
 		public static extern void GraphViewOnMouseUp(float x, float y);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewOnMouseDoubleClick")]
+		public static extern void GraphViewOnMouseDoubleClick(float x, float y);
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewRemoveSelected")]
 		public static extern void GraphViewRemoveSelected();

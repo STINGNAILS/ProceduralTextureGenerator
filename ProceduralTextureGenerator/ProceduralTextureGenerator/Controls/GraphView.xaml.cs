@@ -26,12 +26,12 @@ namespace ProceduralTextureGenerator
 
 		ParameterPanel parameterPanel;
 
+
 		public GraphView()
         {
             InitializeComponent();
 
 			isInteracting = false;
-
 		}
 
 
@@ -63,6 +63,7 @@ namespace ProceduralTextureGenerator
 		{
 			parameterPanel.Update();
 		}
+
 
 		private void AddUniformColorNode(object sender, RoutedEventArgs e)
 		{
@@ -160,6 +161,16 @@ namespace ProceduralTextureGenerator
 				Point mouseCoords = e.GetPosition(this);
 				CoreDll.GraphViewOnMouseUp((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
 				isInteracting = false;
+			}
+		}
+
+
+		private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if(e.ChangedButton == MouseButton.Left)
+			{
+				Point mouseCoords = e.GetPosition(this);
+				CoreDll.GraphViewOnMouseDoubleClick((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
 			}
 		}
 

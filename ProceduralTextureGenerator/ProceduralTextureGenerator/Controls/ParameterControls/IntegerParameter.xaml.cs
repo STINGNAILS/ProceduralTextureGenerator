@@ -23,13 +23,7 @@ namespace ProceduralTextureGenerator
 		int index;
 		int minValue;
 		int maxValue;
-
-
-		public IntegerParameter()
-        {
-            InitializeComponent();
-        }
-
+		
 
 		public IntegerParameter(string name, int index_, int minValue_, int maxValue_)
 		{

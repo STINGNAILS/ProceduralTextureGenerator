@@ -32,12 +32,6 @@ namespace ProceduralTextureGenerator
 		private int dragIndex;
 
 
-		public RemapSetter()
-		{
-			InitializeComponent();
-		}
-
-
 		public RemapSetter(string name, int remapModeIndex_, int x1Index_, int y1Index_, int x2Index_, int y2Index_, int x3Index_, int y3Index_)
 		{
 			InitializeComponent();

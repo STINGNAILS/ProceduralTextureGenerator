@@ -142,9 +142,9 @@ void Camera3D::SetZFAR(float zFar_)
 }
 
 
-const float Camera3D::Zoom()
+XMFLOAT3 Camera3D::ScreenToWorld(float x, float y)
 {
-	return 1.0f;
+	return XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
 
 
@@ -217,7 +217,7 @@ void Camera3D::Navigate(float dx, float dy, float dt)
 }
 
 
-void Camera3D::Zoom(float dz)
+void Camera3D::Zoom(float x, float y, float dz)
 {
 	//а вот нет зума для такой камеры
 }

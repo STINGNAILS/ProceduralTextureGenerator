@@ -23,12 +23,6 @@ namespace ProceduralTextureGenerator
 		private int index;
 
 
-		public GrayscaleSetter()
-		{
-			InitializeComponent();
-		}
-
-
 		public GrayscaleSetter(string name, int index_)
 		{
 			InitializeComponent();

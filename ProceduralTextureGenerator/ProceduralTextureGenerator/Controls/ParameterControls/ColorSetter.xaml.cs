@@ -25,12 +25,6 @@ namespace ProceduralTextureGenerator
 		private int bIndex;
 
 
-		public ColorSetter()
-		{
-			InitializeComponent();
-		}
-
-
 		public ColorSetter(string name, int rIndex_, int gIndex_, int bIndex_)
 		{
 			InitializeComponent();

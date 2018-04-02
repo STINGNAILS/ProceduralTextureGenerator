@@ -19,9 +19,9 @@ class Camera2D : public Camera
 
 	void SetPosition(XMFLOAT2 position_);
 
-	const float Zoom();
+	XMFLOAT3 ScreenToWorld(float x, float y);
 
 	void Navigate(float dx, float dy, float dt);
-	void Zoom(float dz);
+	void Zoom(float x, float y, float dz);
 };
 

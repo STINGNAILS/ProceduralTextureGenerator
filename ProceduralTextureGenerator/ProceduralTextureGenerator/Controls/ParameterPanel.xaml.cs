@@ -19,39 +19,6 @@ namespace ProceduralTextureGenerator
 	/// <summary>
 	/// Логика взаимодействия для ParameterPanel.xaml
 	/// </summary>
-
-	public struct FloatTextBoxData
-	{
-		public int index;
-		public float minValue;
-		public float maxValue;
-
-
-		public FloatTextBoxData(int index_, float minValue_, float maxValue_)
-		{
-			index = index_;
-			minValue = minValue_;
-			maxValue = maxValue_;
-		}
-	}
-
-
-	public struct IntTextBoxData
-	{
-		public int index;
-		public int minValue;
-		public int maxValue;
-
-
-		public IntTextBoxData(int index_, int minValue_, int maxValue_)
-		{
-			index = index_;
-			minValue = minValue_;
-			maxValue = maxValue_;
-		}
-	}
-
-
 	public partial class ParameterPanel : UserControl
 	{
 		public ParameterPanel()
@@ -62,49 +29,13 @@ namespace ProceduralTextureGenerator
 
 		private void AddNodeName(string nodeName)
 		{
-			Label baseColorLabel = new Label
-			{
-				Content = nodeName,
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 32,
-				Foreground = Brushes.White,
-				Background = Brushes.Gray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(baseColorLabel);
-		}
-
-
-		private void AddCategoryName(string categoryName)
-		{
-			Label label = new Label
-			{
-				Content = categoryName,
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(label);
+			parameterStackPanel.Children.Add(new NodeName(nodeName));
 		}
 
 
 		private void AddBaseParameters(int textureResolutionIndex, int bpcIndex)
 		{
-			Label baseColorLabel = new Label
-			{
-				Content = "Base Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(baseColorLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Base Parameters"));
 
 			KeyValuePair<string, int>[] resolutionSelections = new KeyValuePair<string, int>[9]
 			{
@@ -132,17 +63,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddColorParameters(int colorModeIndex, int rIndex, int gIndex, int bIndex)
 		{
-			Label colorParametersLabel = new Label
-			{
-				Content = "Color Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(colorParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Color Parameters"));
 
 			KeyValuePair<string, int>[] colorModeSelections = new KeyValuePair<string, int>[2]
 			{
@@ -164,17 +85,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddBlendParameters(int blendModeIndex, int kIndex)
 		{
-			Label blendParametersLabel = new Label
-			{
-				Content = "Blend Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(blendParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Blend Parameters"));
 
 			KeyValuePair<string, int>[] blendModeSelections = new KeyValuePair<string, int>[6]
 			{
@@ -193,17 +104,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddRemapParameters(int remapModeIndex, int x1Index, int y1Index, int x2Index, int y2Index, int x3Index, int y3Index)
 		{
-			Label levelsParametersLabel = new Label
-			{
-				Content = "Remap Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(levelsParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Remap Parameters"));
 
 			KeyValuePair<string, int>[] remapModeSelections = new KeyValuePair<string, int>[2]
 			{
@@ -218,17 +119,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddNoiseParameters(int octavesIndex, int persistenceindex)
 		{
-			Label noiseParametersLabel = new Label
-			{
-				Content = "Noise Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(noiseParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Noise Parameters"));
 
 			parameterStackPanel.Children.Add(new IntegerParameter("Octaves", octavesIndex, 1, 12));
 
@@ -238,17 +129,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddPerlinNoiseParameters(int gridStartingSizeIndex)
 		{
-			Label perlinNoiseParametersLabel = new Label
-			{
-				Content = "Perlin Noise Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(perlinNoiseParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Perlin Noise Parameters"));
 
 			parameterStackPanel.Children.Add(new IntegerParameter("Grid Starting Size", gridStartingSizeIndex, 1, 6));
 		}
@@ -256,17 +137,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddWorleyNoiseParameters(int sitesStartingNumIndex, int distanceTypeIndex, int exponentIndex)
 		{
-			Label worleyNoiseParametersLabel = new Label
-			{
-				Content = "Worley Noise Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(worleyNoiseParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Worley Noise Parameters"));
 
 			parameterStackPanel.Children.Add(new IntegerParameter("Sites Starting Number", sitesStartingNumIndex, 10, 200));
 
@@ -283,17 +154,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddBlurParameters(int intensityIndex)
 		{
-			Label blurParametersLabel = new Label
-			{
-				Content = "Blur Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(blurParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Blur Parameters"));
 
 			parameterStackPanel.Children.Add(new FloatParameter("Intensity", intensityIndex, 0.0f, 100.0f));
 		}
@@ -302,17 +163,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddDirectionalBlurParameters(int intensityIndex, int angleIndex)
 		{
-			Label directionalBlurParametersLabel = new Label
-			{
-				Content = "Directional Blur Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(directionalBlurParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Directional Blur Parameters"));
 
 			parameterStackPanel.Children.Add(new FloatParameter("Intensity", intensityIndex, 0.0f, 100.0f));
 
@@ -322,17 +173,7 @@ namespace ProceduralTextureGenerator
 
 		private void AddMetalReflectanceParameters(int metalIndex)
 		{
-			Label metalReflectanceParametersLabel = new Label
-			{
-				Content = "Metal Reflectance Parameters",
-				FontFamily = new FontFamily("Segoe UI Semibold"),
-				FontSize = 16,
-				Height = 30,
-				Foreground = Brushes.White,
-				Background = Brushes.DarkGray,
-				Margin = new Thickness(2.0, 2.0, 0.0, 0.0)
-			};
-			parameterStackPanel.Children.Add(metalReflectanceParametersLabel);
+			parameterStackPanel.Children.Add(new CategoryName("Metal Reflectance Parameters"));
 
 			KeyValuePair<string, int>[] metalSelections = new KeyValuePair<string, int>[10]
 			{
@@ -553,93 +394,6 @@ namespace ProceduralTextureGenerator
 					break;
 				}
 			}
-		}
-
-
-		private void SelectText(object sender, KeyboardFocusChangedEventArgs e)
-		{
-			TextBox textBox = (TextBox)sender;
-			textBox.SelectAll();
-		}
-
-
-		private void SelectText(object sender, MouseButtonEventArgs e)
-		{
-			TextBox textBox = (TextBox)sender;
-			textBox.SelectAll();
-		}
-
-
-		private void IgnoreMouseButton(object sender, MouseButtonEventArgs e)
-		{
-			TextBox textBox = (TextBox)sender;
-			if(textBox == null || textBox.IsKeyboardFocusWithin)
-			{
-				return;
-			}
-
-			e.Handled = true;
-			textBox.Focus();
-		}
-
-
-		private void X1TextBoxOnFocusLost(object sender, RoutedEventArgs e)
-		{
-			float value;
-			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
-			{
-				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(0, value);
-			}
-			Update();
-		}
-
-
-		private void X2TextBoxOnFocusLost(object sender, RoutedEventArgs e)
-		{
-			float value;
-			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
-			{
-				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(1, value);
-			}
-			Update();
-		}
-
-
-		private void X3TextBoxOnFocusLost(object sender, RoutedEventArgs e)
-		{
-			float value;
-			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
-			{
-				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(2, value);
-			}
-			Update();
-		}
-
-
-		private void X4TextBoxOnFocusLost(object sender, RoutedEventArgs e)
-		{
-			float value;
-			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
-			{
-				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(3, value);
-			}
-			Update();
-		}
-
-
-		private void X5TextBoxOnFocusLost(object sender, RoutedEventArgs e)
-		{
-			float value;
-			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
-			{
-				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(4, value);
-			}
-			Update();
 		}
 	}
 }

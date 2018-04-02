@@ -19,6 +19,7 @@ class FunctionGraph : public RenderableObject
 
 	int nextNodeIndex;
 	int selectedNodeIndex;
+	int trackedNodeIndex;
 	shared_ptr<map<int, FunctionNode>> functionNodesPtr;
 
 	int nextLinkIndex;
@@ -44,6 +45,8 @@ class FunctionGraph : public RenderableObject
 	DirectXTexturePtr GetRoughnessTexture();
 	DirectXTexturePtr GetNormalTexture();
 
+	DirectXTexturePtr GetTrackedTexture();
+
 	int GetSelectedNodeIndex();
 	int GetSelectedNodeFunctionIndex();
 	int GetSelectedNodeIntParameter(int parameterIndex);
@@ -66,6 +69,7 @@ class FunctionGraph : public RenderableObject
 	void OnMouseDown(int x, int y);
 	void OnMouseMove(int x, int y);
 	void OnMouseUp(int x, int y);
+	void OnMouseDoubleClick(int x, int y);
 
 	void Process();
 

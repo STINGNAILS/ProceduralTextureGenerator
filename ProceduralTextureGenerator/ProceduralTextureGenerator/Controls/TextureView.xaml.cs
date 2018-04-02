@@ -20,53 +20,27 @@ namespace ProceduralTextureGenerator
     /// </summary>
     public partial class TextureView : UserControl
     {
-        private bool isNavigating;
-
-
         public TextureView()
         {
             InitializeComponent();
-
-            isNavigating = false;
-        }
+		}
 
 
-        public void Init()
-        {
-            //view.Init(3);
-        }
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			view.Init(3);
+		}
 
 
-        private void OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Right)
-            {
-                isNavigating = true;
-            }
-        }
+		public void Update(float dt)
+		{
+			view.Update(dt);
+		}
 
 
-        public void OnMouseMove(float dx, float dy, float dt)
-        {
-            if (isNavigating)
-            {
-                //view.Navigate(3, dx, dy, dt);
-            }
-        }
-
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //view.Resize(3);
-        }
-
-
-        private void OnMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Right)
-            {
-                isNavigating = false;
-            }
-        }
-    }
+		public void Render()
+		{
+			view.Render();
+		}
+	}
 }

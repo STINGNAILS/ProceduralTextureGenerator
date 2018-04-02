@@ -126,7 +126,9 @@ namespace ProceduralTextureGenerator
 
 		private void OnMouseWheel(object sender, MouseWheelEventArgs e)
 		{
-			CoreDll.Zoom(viewIndex, e.Delta);
+			Point mouseCoords = e.GetPosition(this);
+
+			CoreDll.Zoom(viewIndex, (float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight), e.Delta);
 		}
 	}
 }

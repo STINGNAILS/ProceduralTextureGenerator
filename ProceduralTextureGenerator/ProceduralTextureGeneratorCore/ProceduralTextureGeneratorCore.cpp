@@ -9,6 +9,7 @@
 #include "Camera3D.h"
 #include "Cube.h"
 #include "FunctionGraph.h"
+#include "TextureQuad.h"
 
 
 #define CPP_EXPORTS_API
@@ -24,6 +25,8 @@ map<int, shared_ptr<Scene>> scenes;
 shared_ptr<FunctionGraph> functionGraph;
 
 shared_ptr<Cube> cube1;
+
+shared_ptr<TextureQuad> textureQuad;
 
 
 CPP_API void Init()
@@ -79,6 +82,21 @@ CPP_API void Init()
 	camera2->SetVelocity(5.0f);
 
 	scenes[2]->SetCamera(camera2);
+
+
+	shared_ptr<Camera2D> camera3 = make_shared<Camera2D>();
+	camera3->Init();
+	camera3->SetPosition(XMFLOAT2(0.0f, 0.0f));
+	camera3->SetVelocity(10.0f);
+
+	scenes[3]->SetCamera(camera3);
+
+
+	textureQuad = make_shared<TextureQuad>();
+	textureQuad->Init();
+	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+
+	scenes[3]->AddRenderableObject(textureQuad, "TextureQuad");
 }
 
 
@@ -106,9 +124,9 @@ CPP_API void Navigate(int viewIndex, float dx, float dy, float dt)
 }
 
 
-CPP_API void Zoom(int viewIndex, float dz)
+CPP_API void Zoom(int viewIndex, float x, float y, float dz)
 {
-	scenes[viewIndex]->GetCamera()->Zoom(dz);
+	scenes[viewIndex]->GetCamera()->Zoom(x, y, dz);
 }
 
 
@@ -131,47 +149,50 @@ CPP_API void Release()
 
 CPP_API void GraphViewAddNode(int functionIndex, float x, float y)
 {
-	XMFLOAT3 position = scenes[2]->GetCamera()->Position();
-	XMFLOAT2 widthHeight = scenes[2]->GetCamera()->WidthHeight();
-	float zoom = scenes[2]->GetCamera()->Zoom();
+	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 
-	functionGraph->AddNode(functionIndex, (position.x + widthHeight.x * (x - 0.5f)) / zoom, (position.y + widthHeight.y * (y - 0.5f)) / zoom);
+	functionGraph->AddNode(functionIndex, world.x, world.y);
 	functionGraph->Process();
 }
 
 
 CPP_API void GraphViewOnMouseDown(float x, float y)
 {
-	XMFLOAT3 position = scenes[2]->GetCamera()->Position();
-	XMFLOAT2 widthHeight = scenes[2]->GetCamera()->WidthHeight();
-	float zoom = scenes[2]->GetCamera()->Zoom();
+	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 
-	functionGraph->OnMouseDown((position.x + widthHeight.x * (x - 0.5f)) / zoom, (position.y + widthHeight.y * (y - 0.5f)) / zoom);
+	functionGraph->OnMouseDown(world.x, world.y);
 }
 
 
 CPP_API void GraphViewOnMouseMove(float x, float y)
 {
-	XMFLOAT3 position = scenes[2]->GetCamera()->Position();
-	XMFLOAT2 widthHeight = scenes[2]->GetCamera()->WidthHeight();
-	float zoom = scenes[2]->GetCamera()->Zoom();
+	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 
-	functionGraph->OnMouseMove((position.x + widthHeight.x * (x - 0.5f)) / zoom, (position.y + widthHeight.y * (y - 0.5f)) / zoom);
+	functionGraph->OnMouseMove(world.x, world.y);
 }
 
 
 CPP_API void GraphViewOnMouseUp(float x, float y)
 {
-	XMFLOAT3 position = scenes[2]->GetCamera()->Position();
-	XMFLOAT2 widthHeight = scenes[2]->GetCamera()->WidthHeight();
-	float zoom = scenes[2]->GetCamera()->Zoom();
+	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 	
-	functionGraph->OnMouseUp((position.x + widthHeight.x * (x - 0.5f)) / zoom, (position.y + widthHeight.y * (y - 0.5f)) / zoom);
+	functionGraph->OnMouseUp(world.x, world.y);
 
 	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
 	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
 	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
 	cube1->SetNormalMap(functionGraph->GetNormalTexture());
+
+	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+}
+
+
+CPP_API void GraphViewOnMouseDoubleClick(float x, float y)
+{
+	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
+	
+	functionGraph->OnMouseDoubleClick(world.x, world.y);
+	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
 }
 
 
@@ -183,6 +204,8 @@ CPP_API void GraphViewRemoveSelected()
 	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
 	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
 	cube1->SetNormalMap(functionGraph->GetNormalTexture());
+
+	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
 }
 
 
@@ -230,4 +253,6 @@ CPP_API void GraphViewProcess()
 	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
 	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
 	cube1->SetNormalMap(functionGraph->GetNormalTexture());
+
+	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
 }

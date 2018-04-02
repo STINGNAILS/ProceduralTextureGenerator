@@ -9,6 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="469*"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="340*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -18,11 +19,12 @@
             <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
 
-        <local:ObjectView x:Name="objectView" Grid.Column="0" Grid.RowSpan="2" Focusable="True"/>
-        <GridSplitter Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Gray" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"/>
-        <local:GraphView x:Name="graphView" Grid.Column="2" Grid.RowSpan="2" Focusable="True"/>
-        <!--<local:TextureView x:Name="textureView" Grid.Column="1" Grid.Row="1" Focusable="True"/>-->
+        <local:ObjectView x:Name="objectView" Grid.Row="0" Grid.Column="0" Focusable="True"/>
+        <GridSplitter Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="Gray" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+        <local:TextureView x:Name="textureView" Grid.Column="0" Grid.Row="2" Focusable="True"/>
+        <GridSplitter Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Gray" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3"/>
+        <local:GraphView x:Name="graphView" Grid.Column="2" Grid.RowSpan="3" Focusable="True"/>
 
-        <local:ParameterPanel x:Name="parameterPannel" Grid.Column="3" Grid.RowSpan="2"/>
+        <local:ParameterPanel x:Name="parameterPannel" Grid.Column="3" Grid.RowSpan="3"/>
     </Grid>
 </Window>

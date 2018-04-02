@@ -6,6 +6,7 @@ FunctionGraph::FunctionGraph()
 {
 	nextNodeIndex = 0;
 	selectedNodeIndex = -1;
+	trackedNodeIndex = 0;
 	functionNodesPtr = make_shared<map<int, FunctionNode>>();
 
 	nextLinkIndex = 0;
@@ -56,6 +57,13 @@ DirectXTexturePtr FunctionGraph::GetNormalTexture()
 {
 	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
 	return functionNodes[3].GetDirectXTexture();
+}
+
+
+DirectXTexturePtr FunctionGraph::GetTrackedTexture()
+{
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+	return functionNodes[trackedNodeIndex].GetDirectXTexture();
 }
 
 
@@ -371,6 +379,8 @@ void FunctionGraph::RemoveSelectedNode()
 
 	selectedNodeIndex = -1;
 	selectedLinkIndex = -1;
+
+	trackedNodeIndex = 0;
 }
 
 
@@ -605,6 +615,24 @@ void FunctionGraph::OnMouseUp(int x, int y)
 
 	newFunctionLink = nullptr;
 	interactionState = INTERACTION_NONE;
+}
+
+
+void FunctionGraph::OnMouseDoubleClick(int x, int y)
+{
+	bool isInteracting = false;
+
+	for(auto it = functionNodesPtr->begin(); it != functionNodesPtr->end() && !isInteracting; it++)
+	{
+		XMFLOAT2 position = it->second.GetPosition();
+
+		if(x >= position.x - 64.0f && x <= position.x + 64.0f && y >= position.y - 64.0f && y <= position.y + 64.0f)
+		{
+			SelectNode(it->first);
+
+			trackedNodeIndex = it->first;
+		}
+	}
 }
 
 

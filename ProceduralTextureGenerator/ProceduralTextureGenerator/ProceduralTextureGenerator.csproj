@@ -61,6 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ParameterControls\CategoryName.xaml.cs">
+      <DependentUpon>CategoryName.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ParameterControls\ColorSetter.xaml.cs">
       <DependentUpon>ColorSetter.xaml</DependentUpon>
     </Compile>
@@ -76,6 +79,10 @@
     <Compile Include="Controls\ParameterControls\RemapSetter.xaml.cs">
       <DependentUpon>RemapSetter.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\ParameterControls\CategoryName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ParameterControls\SelectionParameter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -89,6 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ParameterControls\RemapSetter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ParameterControls\NodeName.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -161,6 +172,9 @@
     <Compile Include="MouseHelper.cs" />
     <Compile Include="Controls\ParameterPanel.xaml.cs">
       <DependentUpon>ParameterPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ParameterControls\NodeName.xaml.cs">
+      <DependentUpon>NodeName.xaml</DependentUpon>
     </Compile>
     <Compile Include="ParentHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

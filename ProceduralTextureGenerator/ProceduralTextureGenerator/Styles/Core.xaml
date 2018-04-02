@@ -12,7 +12,6 @@
         <Setter Property="Height" Value="32"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Background" Value="Gray"/>
-        <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Margin" Value="2,2,0,0"/>
     </Style>
 
@@ -22,7 +21,6 @@
         <Setter Property="Height" Value="30"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Background" Value="DarkGray"/>
-        <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Margin" Value="2,2,0,0"/>
     </Style>
 
@@ -53,13 +51,110 @@
         <Setter Property="BorderBrush" Value="Silver"/>
         <Setter Property="Margin" Value="2,0,8,0"/>
     </Style>
-    
+
+    <Style TargetType="{x:Type ToggleButton}" x:Key="ComboBoxToggleButton">
+        <Setter Property="BorderBrush" Value="Silver"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Grid.ColumnSpan="2" BorderThickness="{Binding BorderThickness, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}}" BorderBrush="{Binding BorderBrush, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="24" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="Border" Grid.ColumnSpan="2" Background="#FF202020" BorderBrush="Silver" BorderThickness="0" />
+                            <Border x:Name="BorderToggle" Grid.Column="0" Background="{Binding Background, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}}" BorderBrush="Silver" Margin="1" BorderThickness="0,0,1,0" />
+                            <Grid Grid.Column="1">
+                                <Path x:Name="ArrowDown" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Data="M -2 0 L 2 4 L 6 0 Z" Margin="0,8,0,0">
+                                    <Path.Fill>
+                                        <SolidColorBrush Color="Silver"/>
+                                    </Path.Fill>
+                                </Path>
+                                <Path x:Name="ArrowUp" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M -2 4 L 2 0 L 6 4 Z" Margin="0,0,0,8">
+                                    <Path.Fill>
+                                        <SolidColorBrush Color="Silver"/>
+                                    </Path.Fill>
+                                </Path>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="ParameterComboBoxStyle" TargetType="ComboBox">
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Height" Value="24"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="#FF202020"/>
+        <Setter Property="Foreground" Value="Silver"/>
         <Setter Property="Margin" Value="2,0,8,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ComboBox}">
+                    <Grid>
+                        <ToggleButton Name="ToggleButton" Style="{StaticResource ComboBoxToggleButton}" Grid.Column="2" Focusable="False"
+                                      IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
+                        <ContentPresenter Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="6,3,32,3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBox x:Name="PART_EditableTextBox" TextAlignment="Center" FontFamily="Segoe UI" FontSize="14" Focusable="True" Foreground="Silver" Background="#FF202020" Visibility="Hidden" IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                        <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide" Margin="3,-8,-3,8">
+                            <Grid Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border x:Name="DropDownBorder" Background="#FF202020" BorderThickness="1" Margin="0,3,0,3" BorderBrush="Silver"/>
+                                <ScrollViewer Margin="0,3" SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="{x:Type ComboBoxItem}" TargetType="ComboBoxItem">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Foreground" Value="Silver"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="HoverOn">
+                            <ColorAnimation Storyboard.TargetName="content" Storyboard.TargetProperty="(ComboBoxItem.Foreground).(SolidColorBrush.Color)"
+                                            Duration="0:0:0.3" To="White"/>
+                        </Storyboard>
+                        <Storyboard x:Key="HoverOff">
+                            <ColorAnimation Storyboard.TargetName="content" Storyboard.TargetProperty="(ComboBoxItem.Foreground).(SolidColorBrush.Color)"
+                                            Duration="0:0:0.3" To="Silver"/>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <Border Name="Border" Padding="2" BorderThickness="1" SnapsToDevicePixels="True">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Color="Transparent" Offset="0" />
+                                <GradientStop Color="Transparent" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <ContentPresenter x:Name="content"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOn}"/>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOff}"/>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="ParameterSeparatorStyle" TargetType="Rectangle">

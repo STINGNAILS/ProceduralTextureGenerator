@@ -25,12 +25,6 @@ namespace ProceduralTextureGenerator
 		float maxValue;
 
 
-        public FloatParameter()
-        {
-            InitializeComponent();
-		}
-
-
 		public FloatParameter(string name, int index_, float minValue_, float maxValue_)
 		{
 			InitializeComponent();
