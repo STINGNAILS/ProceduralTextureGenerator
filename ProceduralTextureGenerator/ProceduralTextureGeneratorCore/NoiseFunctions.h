@@ -5,5 +5,5 @@
 #include "MathHelper.h"
 
 
-TextureMemoryPtr PerlinNoise(TextureResolution resolution, BitsPerChannel bitsPerChannel, int octaves, int gridStartingSize, float persistence);
-TextureMemoryPtr WorleyNoise(TextureResolution resolution, BitsPerChannel bitsPerChannel, int octaves, int sitesStartingNum, float persistence, UINT distanceType, float exponent);
+TextureMemoryPtr PerlinNoise(TextureResolution resolution, BitsPerChannel bitsPerChannel, int seed, float persistence, int minimalOctave, int maximalOctave);
+TextureMemoryPtr WorleyNoise(TextureResolution resolution, BitsPerChannel bitsPerChannel, int seed, int sitesNum, int patternType, int distanceType, float borderWidth);

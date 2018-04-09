@@ -182,7 +182,6 @@
     <ClInclude Include="RadianceMapRenderer.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderableObject.h" />
-    <ClInclude Include="RNG.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="stdafx.h" />
@@ -235,7 +234,6 @@
     <ClCompile Include="RadianceMapRenderer.cpp" />
     <ClCompile Include="RasterizerState.cpp" />
     <ClCompile Include="RenderableObject.cpp" />
-    <ClCompile Include="RNG.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="stdafx.cpp">

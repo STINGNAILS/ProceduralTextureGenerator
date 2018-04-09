@@ -117,38 +117,57 @@ namespace ProceduralTextureGenerator
 		}
 
 
-		private void AddNoiseParameters(int octavesIndex, int persistenceindex)
+		private void AddNoiseParameters(int seedIndex)
 		{
 			parameterStackPanel.Children.Add(new CategoryName("Noise Parameters"));
 
-			parameterStackPanel.Children.Add(new IntegerParameter("Octaves", octavesIndex, 1, 12));
-
-			parameterStackPanel.Children.Add(new FloatParameter("Persistence", persistenceindex, 0.0f, 5.0f));
+			parameterStackPanel.Children.Add(new IntegerParameter("Seed", seedIndex, 0, 32767));
 		}
 
 
-		private void AddPerlinNoiseParameters(int gridStartingSizeIndex)
+		private void AddPerlinNoiseParameters(int minimalOctaveIndex, int maximalOctaveIndex, int persistenceIndex)
 		{
 			parameterStackPanel.Children.Add(new CategoryName("Perlin Noise Parameters"));
 
-			parameterStackPanel.Children.Add(new IntegerParameter("Grid Starting Size", gridStartingSizeIndex, 1, 6));
+			int minimalOctaveMaxValue = CoreDll.GraphViewGetSelectedNodeIntParameter(maximalOctaveIndex);
+			int maximalOctaveMinValue = CoreDll.GraphViewGetSelectedNodeIntParameter(minimalOctaveIndex);
+
+			parameterStackPanel.Children.Add(new IntegerParameter("Minimal Octave", minimalOctaveIndex, 1, minimalOctaveMaxValue));
+
+			parameterStackPanel.Children.Add(new IntegerParameter("Maximal Octave", maximalOctaveIndex, maximalOctaveMinValue, 10));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Persistence", persistenceIndex, 0.01f, 5.0f));
 		}
 
 
-		private void AddWorleyNoiseParameters(int sitesStartingNumIndex, int distanceTypeIndex, int exponentIndex)
+		private void AddWorleyNoiseParameters(int sitesNumIndex, int patternTypeIndex, int distanceTypeIndex, int borderWidthIndex)
 		{
 			parameterStackPanel.Children.Add(new CategoryName("Worley Noise Parameters"));
 
-			parameterStackPanel.Children.Add(new IntegerParameter("Sites Starting Number", sitesStartingNumIndex, 10, 200));
-
-			KeyValuePair<string, int>[] distanceTypeSelections = new KeyValuePair<string, int>[2]
+			parameterStackPanel.Children.Add(new IntegerParameter("Sites Number", sitesNumIndex, 10, 5000))
+				;
+			KeyValuePair<string, int>[] patternTypeSelections = new KeyValuePair<string, int>[5]
 			{
-				new KeyValuePair<string, int>("Distance to the closest site", 1),
-				new KeyValuePair<string, int>("Difference between distances to 2 closest sites", 2)
+				new KeyValuePair<string, int>("F1", 1),
+				new KeyValuePair<string, int>("F2", 2),
+				new KeyValuePair<string, int>("F2 - F1", 3),
+				new KeyValuePair<string, int>("Border", 4),
+				new KeyValuePair<string, int>("Random Color", 5),
+			};
+			parameterStackPanel.Children.Add(new SelectionParameter("Pattern Type", patternTypeIndex, patternTypeSelections));
+
+			if(CoreDll.GraphViewGetSelectedNodeIntParameter(patternTypeIndex) == 4)
+			{
+				parameterStackPanel.Children.Add(new FloatParameter("Border Width", borderWidthIndex, 0.001f, 0.05f));
+			}
+
+			KeyValuePair<string, int>[] distanceTypeSelections = new KeyValuePair<string, int>[3]
+			{
+				new KeyValuePair<string, int>("Manhattan", 1),
+				new KeyValuePair<string, int>("Euclidean", 2),
+				new KeyValuePair<string, int>("Chebyshev", 3),
 			};
 			parameterStackPanel.Children.Add(new SelectionParameter("Distance Type", distanceTypeIndex, distanceTypeSelections));
-
-			parameterStackPanel.Children.Add(new FloatParameter("Minkowski Exponent", exponentIndex, 0.01f, 10.0f));
 		}
 
 
@@ -313,14 +332,15 @@ namespace ProceduralTextureGenerator
 				{
 					int textureResolutionIndex = 0;
 					int bpcIndex = 1;
-					int octavesIndex = 2;
-					int gridStartingSizeIndex = 3;
+					int seedIndex = 2;
+					int minimalOctaveIndex = 3;
+					int maximalOctaveIndex = 4;
 					int persistenceIndex = 0;
 
 					AddNodeName("Perlin Noise");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
-					AddNoiseParameters(octavesIndex, persistenceIndex);
-					AddPerlinNoiseParameters(gridStartingSizeIndex);
+					AddNoiseParameters(seedIndex);
+					AddPerlinNoiseParameters(minimalOctaveIndex, maximalOctaveIndex, persistenceIndex);
 
 					break;
 				}
@@ -329,16 +349,16 @@ namespace ProceduralTextureGenerator
 				{
 					int textureResolutionIndex = 0;
 					int bpcIndex = 1;
-					int octavesIndex = 2;
-					int sitesStartingNumIndex = 3;
-					int distanceTypeIndex = 4;
-					int persistenceIndex = 0;
-					int exponentIndex = 1;
+					int seedIndex = 2;
+					int sitesNumIndex = 3;
+					int patternTypeIndex = 4;
+					int distanceTypeIndex = 5;
+					int borderWidthIndex = 0;
 
 					AddNodeName("Worley Noise");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
-					AddNoiseParameters(octavesIndex, persistenceIndex);
-					AddWorleyNoiseParameters(sitesStartingNumIndex, distanceTypeIndex, exponentIndex);
+					AddNoiseParameters(seedIndex);
+					AddWorleyNoiseParameters(sitesNumIndex, patternTypeIndex, distanceTypeIndex, borderWidthIndex);
 
 					break;
 				}

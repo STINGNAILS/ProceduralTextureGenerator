@@ -49,9 +49,6 @@
     <ClInclude Include="GeometryHelper.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="RNG.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Graphics\Camera</Filter>
     </ClInclude>
@@ -158,9 +155,6 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="GeometryHelper.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="RNG.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">

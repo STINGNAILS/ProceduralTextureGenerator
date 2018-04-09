@@ -184,29 +184,26 @@ void FunctionGraph::Validate(shared_ptr<map<int, FunctionNode>> functionNodesCop
 				FunctionNode currentNode = functionNodesCopy[currentNodeIndex];
 				vector<int> inputLinkIndices = currentNode.GetInputLinkIndices();
 
-				vector<int> inputNodeIndices;
+				bool inputsAreBlack = true;
+
 				for(int i = 0; i < inputLinkIndices.size(); i++)
 				{
 					if(inputLinkIndices[i] != -1)
 					{
-						inputNodeIndices.push_back(functionLinksCopy[inputLinkIndices[i]].GetInputNodeIndex());
-					}
-				}
+						int inputNodeIndex = functionLinksCopy[inputLinkIndices[i]].GetInputNodeIndex();
 
-				bool inputsAreBlack = true;
-
-				for(int j = inputNodeIndices.size() - 1; j >= 0; j--)
-				{
-					if(nodeColors[inputNodeIndices[j]] == WHITE)
-					{
-						traverseStack.push(inputNodeIndices[j]);
-						nodeColors[inputNodeIndices[j]] = GRAY;
-						inputsAreBlack = false;
-					}
-					else if(nodeColors[inputNodeIndices[j]] == GRAY)
-					{
-						isDirectedAcyclic = false;
-						break;
+						if(nodeColors[inputNodeIndex] == WHITE)
+						{
+							traverseStack.push(inputNodeIndex);
+							nodeColors[inputNodeIndex] = GRAY;
+							inputsAreBlack = false;
+							break;
+						}
+						else if(nodeColors[inputNodeIndex] == GRAY)
+						{
+							isDirectedAcyclic = false;
+							break;
+						}
 					}
 				}
 

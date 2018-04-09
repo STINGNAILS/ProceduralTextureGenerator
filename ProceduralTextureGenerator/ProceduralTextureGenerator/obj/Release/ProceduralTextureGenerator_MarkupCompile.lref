@@ -14,4 +14,6 @@ FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureG
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\MainWindow.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ObjectView.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterPanel.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\CategoryName.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\NodeName.xaml;;
 

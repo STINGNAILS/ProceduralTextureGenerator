@@ -102,23 +102,24 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 		{
 			TextureResolution resolution = (TextureResolution) intParameters[0];
 			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
-			UINT octaves = intParameters[2];
-			UINT gridStartingSize = intParameters[3];
+			int seed = intParameters[2];
+			int minimalOctave = intParameters[3];
+			int maximalOctave = intParameters[4];
 			float persistence = floatParameters[0];
 
-			return PerlinNoise(resolution, bpc, octaves, gridStartingSize, persistence);
+			return PerlinNoise(resolution, bpc, seed, persistence, minimalOctave, maximalOctave);
 		}
 		case WORLEY_NOISE:
 		{
 			TextureResolution resolution = (TextureResolution) intParameters[0];
 			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
-			UINT octaves = intParameters[2];
-			UINT sitesStartingNum = intParameters[3];
-			UINT distanceType = intParameters[4];
-			float persistence = floatParameters[0];
-			float exponent = floatParameters[1];
+			int seed = intParameters[2];
+			int sitesNum = intParameters[3];
+			int patternType = intParameters[4];
+			int distanceType = intParameters[5];
+			float borderWidth = floatParameters[0];
 
-			return WorleyNoise(resolution, bpc, octaves, sitesStartingNum, persistence, distanceType, exponent);
+			return WorleyNoise(resolution, bpc, seed, sitesNum, patternType, distanceType, borderWidth);
 		}
 		case NORMAL_COLOR:
 		{
@@ -317,22 +318,24 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 		}
 		case PERLIN_NOISE:
 		{
-			vector<int> intParameters(4);
+			vector<int> intParameters(5);
 			intParameters[0] = 1024;
 			intParameters[1] = 16;
-			intParameters[2] = 8;
-			intParameters[3] = 2;
+			intParameters[2] = 0;
+			intParameters[3] = 1;
+			intParameters[4] = 8;
 
 			return intParameters;
 		}
 		case WORLEY_NOISE:
 		{
-			vector<int> intParameters(5);
+			vector<int> intParameters(6);
 			intParameters[0] = 1024;
 			intParameters[1] = 16;
-			intParameters[2] = 1;
+			intParameters[2] = 0;
 			intParameters[3] = 50;
 			intParameters[4] = 1;
+			intParameters[5] = 2;
 
 			return intParameters;
 		}
@@ -459,9 +462,8 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 		}
 		case WORLEY_NOISE:
 		{
-			vector<float> floatParameters(2);
-			floatParameters[0] = 0.5f;
-			floatParameters[1] = 2;
+			vector<float> floatParameters(1);
+			floatParameters[0] = 0.02f;
 
 			return floatParameters;
 		}
