@@ -61,6 +61,12 @@ CPP_API void Init()
 	scenes[1]->SetEnvironment(environment1);
 
 
+	shared_ptr<BackgroundGrid> backgroundGrid = make_shared<BackgroundGrid>();
+	backgroundGrid->Init();
+
+	scenes[2]->SetBackground(backgroundGrid);
+
+
 	functionGraph = make_shared<FunctionGraph>();
 
 	scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
@@ -248,6 +254,40 @@ CPP_API void GraphViewSetSelectedNodeFloatParameter(int parameterIndex, float va
 CPP_API void GraphViewProcess()
 {
 	functionGraph->Process();
+
+	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
+	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
+	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
+	cube1->SetNormalMap(functionGraph->GetNormalTexture());
+
+	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+}
+
+
+CPP_API void ResetFunctionGraph()
+{
+	functionGraph = make_shared<FunctionGraph>();
+
+	scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
+
+	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
+	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
+	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
+	cube1->SetNormalMap(functionGraph->GetNormalTexture());
+
+	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+}
+
+
+CPP_API void SaveFunctionGraphToFile(LPSTR fileName)
+{
+	functionGraph->SaveToFile(fileName);
+}
+
+
+CPP_API void LoadFunctionGraphFromFile(LPSTR fileName)
+{
+	functionGraph->LoadFromFile(fileName);
 
 	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
 	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());

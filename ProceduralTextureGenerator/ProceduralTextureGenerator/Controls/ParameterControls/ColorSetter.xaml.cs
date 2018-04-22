@@ -25,6 +25,11 @@ namespace ProceduralTextureGenerator
 		private int bIndex;
 
 
+		private float rPrevious;
+		private float gPrevious;
+		private float bPrevious;
+
+
 		public ColorSetter(string name, int rIndex_, int gIndex_, int bIndex_)
 		{
 			InitializeComponent();
@@ -39,23 +44,27 @@ namespace ProceduralTextureGenerator
 			float g = CoreDll.GraphViewGetSelectedNodeFloatParameter(gIndex);
 			float b = CoreDll.GraphViewGetSelectedNodeFloatParameter(bIndex);
 
+			rPrevious = r;
+			gPrevious = g;
+			bPrevious = b;
+
 			redColorTextBox.Text = r.ToString("F4").Replace(",", ".");
 			redColorTextBox.Tag = rIndex;
-			redColorTextBox.LostFocus += FocusLost;
+			redColorTextBox.LostFocus += FocusLostRed;
 			redColorTextBox.GotKeyboardFocus += SelectText;
 			redColorTextBox.MouseDoubleClick += SelectText;
 			redColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
 
 			greenColorTextBox.Text = g.ToString("F4").Replace(",", ".");
 			greenColorTextBox.Tag = gIndex;
-			greenColorTextBox.LostFocus += FocusLost;
+			greenColorTextBox.LostFocus += FocusLostGreen;
 			greenColorTextBox.GotKeyboardFocus += SelectText;
 			greenColorTextBox.MouseDoubleClick += SelectText;
 			greenColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
 
 			blueColorTextBox.Text = b.ToString("F4").Replace(",", ".");
 			blueColorTextBox.Tag = bIndex;
-			blueColorTextBox.LostFocus += FocusLost;
+			blueColorTextBox.LostFocus += FocusLostBlue;
 			blueColorTextBox.GotKeyboardFocus += SelectText;
 			blueColorTextBox.MouseDoubleClick += SelectText;
 			blueColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
@@ -64,21 +73,71 @@ namespace ProceduralTextureGenerator
 		}
 
 
-		private void FocusLost(object sender, RoutedEventArgs e)
+		private void FocusLostRed(object sender, RoutedEventArgs e)
 		{
 			float value;
 			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
 			{
-				int index = (int)(((TextBox)sender).Tag);
 				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
 
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(index, value);
-				CoreDll.GraphViewProcess();
+				if(value != rPrevious)
+				{
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(rIndex, value);
+					CoreDll.GraphViewProcess();
+					
+					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+
+					rPrevious = value;
+				}
 			}
 
 			ParentHelper.GetParentParameterPanel(this)?.Update();
 		}
-		
+
+
+		private void FocusLostGreen(object sender, RoutedEventArgs e)
+		{
+			float value;
+			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
+			{
+				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
+
+				if(value != gPrevious)
+				{
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(gIndex, value);
+					CoreDll.GraphViewProcess();
+
+					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+
+					gPrevious = value;
+				}
+			}
+
+			ParentHelper.GetParentParameterPanel(this)?.Update();
+		}
+
+
+		private void FocusLostBlue(object sender, RoutedEventArgs e)
+		{
+			float value;
+			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
+			{
+				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
+
+				if(value != bPrevious)
+				{
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(bIndex, value);
+					CoreDll.GraphViewProcess();
+
+					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+
+					bPrevious = value;
+				}
+			}
+
+			ParentHelper.GetParentParameterPanel(this)?.Update();
+		}
+
 
 		private void SelectText(object sender, KeyboardFocusChangedEventArgs e)
 		{

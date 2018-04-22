@@ -86,8 +86,10 @@ void Camera::Set()
 	{
 		CameraCB cameraCB;
 		XMStoreFloat4x4(&cameraCB.viewProj, XMMatrixTranspose(ViewProj()));
+		XMStoreFloat4x4(&cameraCB.viewProjInverse, XMMatrixTranspose(XMMatrixInverse(nullptr, ViewProj())));
 		XMStoreFloat4x4(&cameraCB.viewProjCentered, XMMatrixTranspose(ViewProjCentered()));
 		cameraCB.cameraPosW = position;
+		cameraCB.scale = zoom;
 
 		constantBuffer->Update(&cameraCB);
 		constantBuffer->Set(0);

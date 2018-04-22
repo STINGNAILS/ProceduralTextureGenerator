@@ -42,6 +42,8 @@ class Environment
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
 	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<SamplerState> anistotropicSamplerState;
+	shared_ptr<SamplerState> basicSamplerState;
 	shared_ptr<ConstantBuffer> constantBuffer;
 
 	bool environmentIsInitialized;

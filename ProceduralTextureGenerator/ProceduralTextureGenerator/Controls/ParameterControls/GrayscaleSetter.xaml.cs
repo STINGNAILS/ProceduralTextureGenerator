@@ -22,6 +22,8 @@ namespace ProceduralTextureGenerator
 	{
 		private int index;
 
+		private float sPrevious;
+
 
 		public GrayscaleSetter(string name, int index_)
 		{
@@ -32,6 +34,8 @@ namespace ProceduralTextureGenerator
 			index = index_;
 
 			float s = CoreDll.GraphViewGetSelectedNodeFloatParameter(index);
+
+			sPrevious = s;
 
 			grayscaleTextBox.Text = s.ToString("F4").Replace(",", ".");
 			grayscaleTextBox.LostFocus += FocusLost;
@@ -50,8 +54,15 @@ namespace ProceduralTextureGenerator
 			{
 				value = Math.Min(Math.Max(value, 0.0f), 1.0f);
 
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(index, value);
-				CoreDll.GraphViewProcess();
+				if(value != sPrevious)
+				{
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(index, value);
+					CoreDll.GraphViewProcess();
+
+					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+
+					sPrevious = value;
+				}
 			}
 
 			ParentHelper.GetParentParameterPanel(this)?.Update();

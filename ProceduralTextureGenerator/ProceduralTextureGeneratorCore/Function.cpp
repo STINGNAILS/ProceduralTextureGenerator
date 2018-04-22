@@ -157,6 +157,16 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return MetalReflectance(resolution, bpc, metalIndex);
 		}
+		case HEIGHT_TO_NORMAL:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			float height = floatParameters[0];
+
+			return HeightToNormal(inputTexturePtr, resolution, bpc, height);
+		}
 		default:
 		{
 			return nullptr;
@@ -229,6 +239,10 @@ int FunctionInputNodesNum(int functionIndex)
 		{
 			return 0;
 		}
+		case HEIGHT_TO_NORMAL:
+		{
+			return 1;
+		}
 		default:
 		{
 			return 0;
@@ -269,7 +283,7 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 		{
 			vector<int> intParameters(2);
 			intParameters[0] = 1024;
-			intParameters[1] = 8;
+			intParameters[1] = 16;
 
 			return intParameters;
 		}
@@ -343,7 +357,7 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 		{
 			vector<int> intParameters(2);
 			intParameters[0] = 1024;
-			intParameters[1] = 8;
+			intParameters[1] = 16;
 
 			return intParameters;
 		}
@@ -369,6 +383,14 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 			intParameters[0] = 1024;
 			intParameters[1] = 8;
 			intParameters[2] = 0;
+
+			return intParameters;
+		}
+		case HEIGHT_TO_NORMAL:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 16;
 
 			return intParameters;
 		}
@@ -463,7 +485,7 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 		case WORLEY_NOISE:
 		{
 			vector<float> floatParameters(1);
-			floatParameters[0] = 0.02f;
+			floatParameters[0] = 0.005f;
 
 			return floatParameters;
 		}
@@ -491,6 +513,13 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 		case METAL_REFLECTANCE:
 		{
 			vector<float> floatParameters(0);
+
+			return floatParameters;
+		}
+		case HEIGHT_TO_NORMAL:
+		{
+			vector<float> floatParameters(1);
+			floatParameters[0] = 0.01f;
 
 			return floatParameters;
 		}

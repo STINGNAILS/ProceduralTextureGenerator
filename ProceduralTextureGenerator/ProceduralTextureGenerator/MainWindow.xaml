@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProceduralTextureGenerator"
         mc:Ignorable="d"
-        Title="Procedural Texture Generator" Height="840" Width="1600" Closed="OnExit" KeyDown="OnKeyDown">
+        Title="Procedural Texture Generator" Height="840" Width="1600" Closing="OnClosing" Closed="OnExit" KeyDown="OnKeyDown">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
             <RowDefinition Height="469*"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="340*"/>
@@ -19,12 +20,47 @@
             <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
 
-        <local:ObjectView x:Name="objectView" Grid.Row="0" Grid.Column="0" Focusable="True"/>
-        <GridSplitter Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="Gray" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
-        <local:TextureView x:Name="textureView" Grid.Column="0" Grid.Row="2" Focusable="True"/>
-        <GridSplitter Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="Gray" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3"/>
-        <local:GraphView x:Name="graphView" Grid.Column="2" Grid.RowSpan="3" Focusable="True"/>
+        <Menu Style="{StaticResource MainMenuStyle}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_New Function Graph" Click="NewFunctionGraph" ClipToBounds="True">
+                <MenuItem.Icon>
+                    <Path Width="16" Height="16" Stretch="Fill" Fill="DarkRed" Data="{StaticResource NewFunctionGraph}" RenderTransformOrigin="0.5,0.5" >
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="-1"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_Open" Click="OpenFunctionGraph">
+                <MenuItem.Icon>
+                    <Path Width="16" Height="16" Stretch="Fill" Fill="DarkRed" Data="{StaticResource OpenFunctionGraph}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_Save" Click="SaveFunctionGraph">
+                <MenuItem.Icon>
+                    <Path Width="16" Height="16" Stretch="Fill" Fill="DarkRed" Data="{StaticResource SaveFunctionGraph}" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </Menu>
 
-        <local:ParameterPanel x:Name="parameterPannel" Grid.Column="3" Grid.RowSpan="3"/>
+        <local:ObjectView x:Name="objectView" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="0" Focusable="True"/>
+        <Border BorderBrush="#FF282828" Panel.ZIndex="1" BorderThickness="1" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="0"/>
+
+        <GridSplitter Height="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="#FF282828" Foreground="#FF282828" BorderBrush="#FF282828" SnapsToDevicePixels="True" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+        <local:TextureView x:Name="textureView" SnapsToDevicePixels="True" Grid.Column="0" Grid.Row="3" Focusable="True"/>
+        <Border BorderBrush="#FF282828" Panel.ZIndex="1" BorderThickness="1" SnapsToDevicePixels="True" Grid.Column="0" Grid.Row="3"/>
+
+        <GridSplitter Width="3" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="#FF282828" Foreground="#FF282828" BorderBrush="#FF282828" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3"/>
+
+        <local:GraphView x:Name="graphView" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" Focusable="True"/>
+        <Border BorderBrush="#FF282828" Panel.ZIndex="1" BorderThickness="1" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3"/>
+
+        <local:ParameterPanel x:Name="parameterPannel" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="3" Grid.RowSpan="3"/>
+        <Border BorderBrush="#FF282828" Panel.ZIndex="1" BorderThickness="1" SnapsToDevicePixels="True" Grid.Row="1" Grid.Column="3" Grid.RowSpan="3"/>
     </Grid>
 </Window>

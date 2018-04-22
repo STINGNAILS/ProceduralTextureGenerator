@@ -103,6 +103,34 @@ HRESULT Environment::InitEnvironment(LPCWSTR fileName)
 		DirectXObjectPool::SetRasterizerState("CullFront", rasterizerState);
 	}
 
+	anistotropicSamplerState = DirectXObjectPool::GetSamplerState("Anisotropic");
+	if(anistotropicSamplerState.get() == nullptr)
+	{
+		anistotropicSamplerState = make_shared<SamplerState>();
+
+		hr = anistotropicSamplerState->Init(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP, 16);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetSamplerState("Anisotropic", anistotropicSamplerState);
+	}
+
+	basicSamplerState = DirectXObjectPool::GetSamplerState("Basic");
+	if(basicSamplerState.get() == nullptr)
+	{
+		basicSamplerState = make_shared<SamplerState>();
+
+		hr = basicSamplerState->Init(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, 0);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetSamplerState("Basic", basicSamplerState);
+	}
+
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("Environment");
 	if(polygonMesh.get() == nullptr)
 	{
@@ -290,6 +318,7 @@ void Environment::Set()
 
 		if(environmentIsInitialized)
 		{
+			anistotropicSamplerState->Set(0);
 			radianceMap->Set(0);
 			brdfLUT->Set(1);
 		}
@@ -305,7 +334,8 @@ void Environment::Render()
 		pixelShader->Set();
 		rasterizerState->Set();
 
-		environmentMap->Set(0);
+		basicSamplerState->Set(1);
+		environmentMap->Set(2);
 
 		polygonMesh->Render();
 	}

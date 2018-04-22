@@ -284,6 +284,7 @@ namespace ProceduralTextureGenerator
 
 			CoreDll.GraphViewProcess();
 
+			ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
 			ParentHelper.GetParentParameterPanel(this)?.Update();
 		}
 	}

@@ -124,8 +124,8 @@ HRESULT PolyLine::SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType)
 
 	points.resize(4);
 	points[0] = p0;
-	points[1] = XMFLOAT2(p0.x, p0.y - max(32.0f, 0.25f * (p0.y - p1.y)));
-	points[2] = XMFLOAT2(p1.x, p1.y + max(32.0f, 0.25f * (p0.y - p1.y)));
+	points[1] = XMFLOAT2(p0.x, p0.y - max(16.0f, 0.25f * (p0.y - p1.y)));
+	points[2] = XMFLOAT2(p1.x, p1.y + max(16.0f, 0.25f * (p0.y - p1.y)));
 	points[3] = p1;
 
 	linesPolygonMesh = make_shared<PolygonMesh>();

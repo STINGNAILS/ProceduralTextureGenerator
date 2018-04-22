@@ -28,6 +28,7 @@ class RadianceMapRenderer : public DirectXRenderer
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
 	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<SamplerState> samplerState;
 	shared_ptr<ConstantBuffer> constantBuffer;
 
 	int size;

@@ -14,6 +14,7 @@ class TextureQuad : public RenderableObject
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
 	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<SamplerState> samplerState;
 
 	DirectXTexturePtr texture;
 

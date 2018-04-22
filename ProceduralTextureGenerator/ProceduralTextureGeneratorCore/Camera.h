@@ -15,9 +15,10 @@ enum CameraType
 struct CameraCB
 {
 	XMFLOAT4X4 viewProj;
+	XMFLOAT4X4 viewProjInverse;
 	XMFLOAT4X4 viewProjCentered;
 	XMFLOAT3 cameraPosW;
-	int aligner1;
+	float scale;
 };
 
 
@@ -31,6 +32,8 @@ class Camera
 
 	XMFLOAT3 position;
 	float velocity;
+
+	float zoom;
 
 	float w;
 	float h;

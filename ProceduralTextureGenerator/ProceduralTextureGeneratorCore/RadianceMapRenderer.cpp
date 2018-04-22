@@ -124,6 +124,20 @@ HRESULT RadianceMapRenderer::Init(shared_ptr<DirectXTexture> environmentMap_, in
 		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
 	}
 
+	samplerState = DirectXObjectPool::GetSamplerState("Anisotropic");
+	if(samplerState.get() == nullptr)
+	{
+		samplerState = make_shared<SamplerState>();
+
+		hr = samplerState->Init(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP, 16);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetSamplerState("Anisotropic", samplerState);
+	}
+
 	constantBuffer = DirectXObjectPool::GetConstantBuffer("RadianceMap");
 	if(constantBuffer.get() == nullptr)
 	{
@@ -211,6 +225,7 @@ HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 
 	constantBuffer->Set(0);
 
+	samplerState->Set(0);
 	environmentMap->Set(0);
 
 	for(int faceIndex = 0; faceIndex < 6; faceIndex++)

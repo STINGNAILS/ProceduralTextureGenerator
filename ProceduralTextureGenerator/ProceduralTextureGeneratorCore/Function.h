@@ -2,6 +2,7 @@
 
 #include "AtomicFunctions.h"
 #include "NoiseFunctions.h"
+#include "NormalFunctions.h"
 #include "TextureMemory.h"
 
 
@@ -20,6 +21,7 @@
 #define BLUR 12
 #define DIRECTIONAL_BLUR 13
 #define METAL_REFLECTANCE 14
+#define HEIGHT_TO_NORMAL 15
 
 
 TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTexturePtrs, vector<int> intParameters, vector<float> floatParameters);

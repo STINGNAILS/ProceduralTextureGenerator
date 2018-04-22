@@ -1,6 +1,13 @@
 ﻿
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\App.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\CategoryName.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\SelectionParameter.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\FloatParameter.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\IntegerParameter.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\RemapSetter.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\NodeName.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\NewFunctionGraphDialog.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\NotSavedDialog.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Styles\Brushes.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\ColorSetter.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\GraphView.xaml;;
@@ -11,9 +18,4 @@ FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureG
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\MainWindow.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ObjectView.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterPanel.xaml;;
-FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\FloatParameter.xaml;;
-FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\IntegerParameter.xaml;;
-FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\RemapSetter.xaml;;
-FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\CategoryName.xaml;;
-FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\NodeName.xaml;;
 

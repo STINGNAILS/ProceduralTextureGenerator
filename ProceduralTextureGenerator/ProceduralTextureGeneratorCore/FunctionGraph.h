@@ -74,5 +74,8 @@ class FunctionGraph : public RenderableObject
 	void Process();
 
 	void Render();
+
+	void SaveToFile(LPSTR fileName);
+	void LoadFromFile(LPSTR fileName);
 };
 

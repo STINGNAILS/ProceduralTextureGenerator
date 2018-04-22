@@ -90,6 +90,20 @@ HRESULT TextureFrame::Init()
 		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
 	}
 
+	samplerState = DirectXObjectPool::GetSamplerState("Basic");
+	if(rasterizerState.get() == nullptr)
+	{
+		samplerState = make_shared<SamplerState>();
+
+		hr = samplerState->Init(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, 0);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetSamplerState("Basic", samplerState);
+	}
+
 	constantBuffer = DirectXObjectPool::GetConstantBuffer("TextureFrame");
 	if(constantBuffer.get() == nullptr)
 	{
@@ -111,10 +125,10 @@ HRESULT TextureFrame::Init()
 
 		vector<TextureFrameVertex> textureFrameVertices(4);
 
-		textureFrameVertices[0] = { XMFLOAT3(-64.0f, -64.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) };
-		textureFrameVertices[1] = { XMFLOAT3(64.0f, -64.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) };
-		textureFrameVertices[2] = { XMFLOAT3(-64.0f, 64.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) };
-		textureFrameVertices[3] = { XMFLOAT3(64.0f, 64.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) };
+		textureFrameVertices[0] = { XMFLOAT3(-31.0f, -31.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) };
+		textureFrameVertices[1] = { XMFLOAT3(31.0f, -31.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) };
+		textureFrameVertices[2] = { XMFLOAT3(-31.0f, 31.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) };
+		textureFrameVertices[3] = { XMFLOAT3(31.0f, 31.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) };
 
 		vector<UINT> textureFrameIndices(6);
 
@@ -204,6 +218,7 @@ void TextureFrame::Render()
 		constantBuffer->Update(&textureFrameCB);
 		constantBuffer->Set(1);
 
+		samplerState->Set(0);
 		texture->Set(0);
 
 		polygonMesh->Render();

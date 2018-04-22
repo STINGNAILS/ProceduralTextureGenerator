@@ -22,6 +22,8 @@ class DirectXTexture
 
 	TextureType textureType;
 
+	int GetMipLevelsNum(int textureSize);
+
 	HRESULT InitGrayscale8(TextureMemoryPtr textureMemoryPtr);
 	HRESULT InitGrayscale16(TextureMemoryPtr textureMemoryPtr);
 	HRESULT InitGrayscale32(TextureMemoryPtr textureMemoryPtr);

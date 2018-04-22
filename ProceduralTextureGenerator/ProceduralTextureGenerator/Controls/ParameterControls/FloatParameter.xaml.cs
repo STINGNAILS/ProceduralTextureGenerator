@@ -20,9 +20,11 @@ namespace ProceduralTextureGenerator
     /// </summary>
     public partial class FloatParameter : UserControl
     {
-		int index;
-		float minValue;
-		float maxValue;
+		private int index;
+		private float minValue;
+		private float maxValue;
+		
+		private float previousValue;
 
 
 		public FloatParameter(string name, int index_, float minValue_, float maxValue_)
@@ -36,6 +38,8 @@ namespace ProceduralTextureGenerator
 			maxValue = maxValue_;
 
 			float value = CoreDll.GraphViewGetSelectedNodeFloatParameter(index);
+
+			previousValue = value;
 
 			floatParameterTextBox.Text = value.ToString("F4").Replace(",", ".");
 			floatParameterTextBox.LostFocus += FocusLost;
@@ -52,8 +56,15 @@ namespace ProceduralTextureGenerator
 			{
 				value = Math.Min(Math.Max(value, minValue), maxValue);
 
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(index, value);
-				CoreDll.GraphViewProcess();
+				if(value != previousValue)
+				{
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(index, value);
+					CoreDll.GraphViewProcess();
+
+					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+
+					previousValue = value;
+				}
 			}
 
 			ParentHelper.GetParentParameterPanel(this)?.Update();

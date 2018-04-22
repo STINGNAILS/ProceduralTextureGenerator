@@ -886,23 +886,6 @@ TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution re
 }
 
 
-TextureMemoryPtr NormalColor(TextureResolution resolution, BitsPerChannel bitsPerChannel)
-{
-	TextureMemoryPtr normalColorTexturePtr = make_shared<TextureMemory>(COLOR, resolution, bitsPerChannel);
-
-	#pragma omp parallel for
-	for(int i = 0; i < resolution; i++)
-	{
-		for(int j = 0; j < resolution; j++)
-		{
-			normalColorTexturePtr->SetValue(i, j, XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f));
-		}
-	}
-
-	return normalColorTexturePtr;
-}
-
-
 TextureMemoryPtr Blur(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity)
 {
 	if(inputTexturePtr.get() == nullptr)

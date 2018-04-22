@@ -6,8 +6,6 @@ class Camera2D : public Camera
 {
 	private:
 
-	float zoom;
-
 	void CalculateView();
 
 	public:

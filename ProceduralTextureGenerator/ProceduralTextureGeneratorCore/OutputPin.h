@@ -36,8 +36,8 @@ class OutputPin : public RenderableObject
 	float xGlobal;
 	float yGlobal;
 
-	const float r0 = 12.0f;
-	const float r1 = 1.732051f * 4.0f;
+	const float r0 = 6.0f;
+	const float r1 = 1.732051f * 2.0f;
 
 	public:
 

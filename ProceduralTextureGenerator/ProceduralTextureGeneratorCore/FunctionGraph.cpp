@@ -13,10 +13,10 @@ FunctionGraph::FunctionGraph()
 	selectedLinkIndex = -1;
 	functionLinksPtr = make_shared<map<int, FunctionLink>>();
 
-	AddNode(0, -384.0f, 0.0f);
-	AddNode(1, -128.0f, 0.0f);
-	AddNode(2, 128.0f, 0.0f);
-	AddNode(3, 384.0f, 0.0f);
+	AddNode(0, -192.0f, 0.0f);
+	AddNode(1, -64.0f, 0.0f);
+	AddNode(2, 64.0f, 0.0f);
+	AddNode(3, 192.0f, 0.0f);
 
 	newFunctionLink = nullptr;
 
@@ -431,7 +431,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 		for(int i = 0; i < inputPinPositions.size() && !isInteracting; i++)
 		{
 			XMFLOAT2 inputPinPosition = inputPinPositions[i];
-			if((x - inputPinPosition.x) * (x - inputPinPosition.x) + (y - inputPinPosition.y) * (y - inputPinPosition.y) <= 256.0f)
+			if((x - inputPinPosition.x) * (x - inputPinPosition.x) + (y - inputPinPosition.y) * (y - inputPinPosition.y) <= 36.0f)
 			{
 				newFunctionLink = make_shared<FunctionLink>();
 				newFunctionLink->SetOutputNodeIndex(it->first);
@@ -447,7 +447,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 	{
 		XMFLOAT2 outputPinPosition = it->second.GetOutputPinPosition();
 
-		if((x - outputPinPosition.x) * (x - outputPinPosition.x) + (y - outputPinPosition.y) * (y - outputPinPosition.y) <= 256.0f)
+		if((x - outputPinPosition.x) * (x - outputPinPosition.x) + (y - outputPinPosition.y) * (y - outputPinPosition.y) <= 36.0f)
 		{
 			newFunctionLink = make_shared<FunctionLink>();
 			newFunctionLink->SetInputNodeIndex(it->first);
@@ -462,7 +462,7 @@ void FunctionGraph::OnMouseDown(int x, int y)
 	{
 		XMFLOAT2 position = it->second.GetPosition();
 
-		if(x >= position.x - 64.0f && x <= position.x + 64.0f && y >= position.y - 64.0f && y <= position.y + 64.0f)
+		if(x >= position.x - 32.0f && x <= position.x + 32.0f && y >= position.y - 32.0f && y <= position.y + 32.0f)
 		{
 			SelectNode(it->first);
 			clickOffset = XMFLOAT2(position.x - x, position.y - y);
@@ -581,7 +581,7 @@ void FunctionGraph::OnMouseUp(int x, int y)
 			{
 				XMFLOAT2 outputPinPosition = it->second.GetOutputPinPosition();
 
-				if((x - outputPinPosition.x) * (x - outputPinPosition.x) + (y - outputPinPosition.y) * (y - outputPinPosition.y) <= 144.0f)
+				if((x - outputPinPosition.x) * (x - outputPinPosition.x) + (y - outputPinPosition.y) * (y - outputPinPosition.y) <= 36.0f)
 				{
 					AddLink(it->first, outputNodeIndex, newFunctionLink->GetInputPinIndex());
 					inputPinIsFound = true;
@@ -600,7 +600,7 @@ void FunctionGraph::OnMouseUp(int x, int y)
 				{
 					XMFLOAT2 inputPinPosition = inputPinPositions[i];
 
-					if((x - inputPinPosition.x) * (x - inputPinPosition.x) + (y - inputPinPosition.y) * (y - inputPinPosition.y) <= 256.0f)
+					if((x - inputPinPosition.x) * (x - inputPinPosition.x) + (y - inputPinPosition.y) * (y - inputPinPosition.y) <= 36.0f)
 					{
 						AddLink(inputNodeIndex, it->first, i);
 						inputPinIsFound = true;
@@ -623,7 +623,7 @@ void FunctionGraph::OnMouseDoubleClick(int x, int y)
 	{
 		XMFLOAT2 position = it->second.GetPosition();
 
-		if(x >= position.x - 64.0f && x <= position.x + 64.0f && y >= position.y - 64.0f && y <= position.y + 64.0f)
+		if(x >= position.x - 32.0f && x <= position.x + 32.0f && y >= position.y - 32.0f && y <= position.y + 32.0f)
 		{
 			SelectNode(it->first);
 
@@ -695,4 +695,203 @@ void FunctionGraph::Render()
 	{
 		it->second.Render();
 	}
+}
+
+
+void FunctionGraph::SaveToFile(LPSTR fileName)
+{
+	shared_ptr<map<int, FunctionNode>> functionNodesToSavePtr = functionNodesPtr;
+	shared_ptr<map<int, FunctionLink>> functionLinksToSavePtr = functionLinksPtr;
+
+	ofstream os;
+	os.open(fileName, ios::binary);
+	if(!os.is_open())
+	{
+		return;
+	}
+
+	int nodesNum = functionNodesToSavePtr->size();
+	os.write((char*) &nodesNum, sizeof(int));
+
+	int linksNum = functionLinksToSavePtr->size();
+	os.write((char*) &linksNum, sizeof(int));
+
+	os.write((char*) &nextNodeIndex, sizeof(int));
+
+	os.write((char*) &nextLinkIndex, sizeof(int));
+
+	for(auto it = functionNodesToSavePtr->begin(); it != functionNodesToSavePtr->end(); it++)
+	{
+		int nodeIndex = it->first;
+		os.write((char*) &nodeIndex, sizeof(int));
+
+		int functionIndex = it->second.GetFunctionIndex();
+		os.write((char*) &functionIndex, sizeof(int));
+
+		vector<int> inputLinkIndices = it->second.GetInputLinkIndices();
+		int inputLinksNum = inputLinkIndices.size();
+		os.write((char*) &inputLinksNum, sizeof(int));
+		for(int i = 0; i < inputLinksNum; i++)
+		{
+			int inputLinkIndex = inputLinkIndices[i];
+			os.write((char*) &inputLinkIndex, sizeof(int));
+		}
+
+		vector<int> outputLinkIndices = it->second.GetOutputLinkIndices();
+		int outputLinksNum = outputLinkIndices.size();
+		os.write((char*) &outputLinksNum, sizeof(int));
+		for(int i = 0; i < outputLinksNum; i++)
+		{
+			int outputLinkIndex = outputLinkIndices[i];
+			os.write((char*) &outputLinkIndex, sizeof(int));
+		}
+
+		vector<int> intParameters = it->second.GetIntParameters();
+		int intParametersNum = intParameters.size();
+		os.write((char*) &intParametersNum, sizeof(int));
+		for(int i = 0; i < intParametersNum; i++)
+		{
+			int intParameter = intParameters[i];
+			os.write((char*) &intParameter, sizeof(int));
+		}
+
+		vector<float> floatParameters = it->second.GetFloatParameters();
+		int floatParametersNum = floatParameters.size();
+		os.write((char*) &floatParametersNum, sizeof(int));
+		for(int i = 0; i < floatParametersNum; i++)
+		{
+			float floatParameter = floatParameters[i];
+			os.write((char*) &floatParameter, sizeof(float));
+		}
+
+		XMFLOAT2 position = it->second.GetPosition();
+		os.write((char*) &position, sizeof(XMFLOAT2));
+	}
+
+	for(auto it = functionLinksToSavePtr->begin(); it != functionLinksToSavePtr->end(); it++)
+	{
+		int linkIndex = it->first;
+		os.write((char*) &linkIndex, sizeof(int));
+
+		int inputNodeIndex = it->second.GetInputNodeIndex();
+		os.write((char*) &inputNodeIndex, sizeof(int));
+
+		int outputNodeIndex = it->second.GetOutputNodeIndex();
+		os.write((char*) &outputNodeIndex, sizeof(int));
+
+		int inputPinIndex = it->second.GetInputPinIndex();
+		os.write((char*) &inputPinIndex, sizeof(int));
+	}
+
+	os.close();
+}
+
+
+void FunctionGraph::LoadFromFile(LPSTR fileName)
+{
+	shared_ptr<map<int, FunctionNode>> functionNodesToLoadPtr = make_shared<map<int, FunctionNode>>();
+	shared_ptr<map<int, FunctionLink>> functionLinksToLoadPtr = make_shared<map<int, FunctionLink>>();
+
+	map<int, FunctionNode> &functionNodesToLoad = *functionNodesToLoadPtr.get();
+	map<int, FunctionLink> &functionLinksToLoad = *functionLinksToLoadPtr.get();
+
+	ifstream is;
+	is.open(fileName, ios::binary);
+	if(!is.is_open())
+	{
+		return;
+	}
+
+	int nodesNum = 0;
+	is.read((char*) &nodesNum, sizeof(int));
+
+	int linksNum = 0;
+	is.read((char*) &linksNum, sizeof(int));
+
+	is.read((char*) &nextNodeIndex, sizeof(int));
+
+	is.read((char*) &nextLinkIndex, sizeof(int));
+
+	for(int k = 0; k < nodesNum; k++)
+	{
+		int nodeIndex = -1;
+		is.read((char*) &nodeIndex, sizeof(int));
+
+		int functionIndex = -1;
+		is.read((char*) &functionIndex, sizeof(int));
+
+		FunctionNode functionNode = FunctionNode(functionIndex);
+
+		int inputLinksNum = 0;
+		is.read((char*) &inputLinksNum, sizeof(int));
+		for(int i = 0; i < inputLinksNum; i++)
+		{
+			int inputLinkIndex = -1;
+			is.read((char*) &inputLinkIndex, sizeof(int));
+			functionNode.AddInputLink(i, inputLinkIndex);
+		}
+
+		int outputLinksNum = 0;
+		is.read((char*) &outputLinksNum, sizeof(int));
+		for(int i = 0; i < outputLinksNum; i++)
+		{
+			int outputLinkIndex = -1;
+			is.read((char*) &outputLinkIndex, sizeof(int));
+			functionNode.AddOutputLink(outputLinkIndex);
+		}
+
+		int intParametersNum = 0;
+		is.read((char*) &intParametersNum, sizeof(int));
+		for(int i = 0; i < intParametersNum; i++)
+		{
+			int intParameter = 0;
+			is.read((char*) &intParameter, sizeof(int));
+			functionNode.SetIntParameter(i, intParameter);
+		}
+
+		int floatParametersNum = 0;
+		is.read((char*) &floatParametersNum, sizeof(int));
+		for(int i = 0; i < floatParametersNum; i++)
+		{
+			float floatParameter = 0.0f;
+			is.read((char*) &floatParameter, sizeof(float));
+			functionNode.SetFloatParameter(i, floatParameter);
+		}
+
+		XMFLOAT2 position = XMFLOAT2(0.0f, 0.0f);
+		is.read((char*) &position, sizeof(XMFLOAT2));
+		functionNode.SetPosition(position.x, position.y);
+
+		functionNodesToLoad[nodeIndex] = functionNode;
+	}
+
+	for(int k = 0; k < linksNum; k++)
+	{
+		int linkIndex = -1;
+		is.read((char*) &linkIndex, sizeof(int));
+
+		FunctionLink functionLink;
+
+		int inputNodeIndex = -1;
+		is.read((char*) &inputNodeIndex, sizeof(int));
+		functionLink.SetInputNodeIndex(inputNodeIndex);
+
+		int outputNodeIndex = -1;
+		is.read((char*) &outputNodeIndex, sizeof(int));
+		functionLink.SetOutputNodeIndex(outputNodeIndex);
+
+		int inputPinIndex = -1;
+		is.read((char*) &inputPinIndex, sizeof(int));
+		functionLink.SetInputPinIndex(inputPinIndex);
+
+		functionLink.SetPolylineCoords(functionNodesToLoad[inputNodeIndex].GetOutputPinPosition(), functionNodesToLoad[outputNodeIndex].GetInputPinPositions()[inputPinIndex], COLOR);
+
+		functionLinksToLoad[linkIndex] = functionLink;
+	}
+
+	is.close();
+
+	Validate(functionNodesToLoadPtr, functionLinksToLoadPtr);
+
+	trackedNodeIndex = 0;
 }

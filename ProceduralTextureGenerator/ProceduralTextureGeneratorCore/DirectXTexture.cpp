@@ -16,6 +16,21 @@ DirectXTexture::~DirectXTexture()
 }
 
 
+int DirectXTexture::GetMipLevelsNum(int textureSize)
+{
+	int mipLevelsNum = 1;
+	int mipLevelSize = textureSize;
+
+	while(mipLevelSize > 1)
+	{
+		mipLevelSize = max(mipLevelSize / 2, 1);
+		mipLevelsNum++;
+	}
+
+	return mipLevelsNum;
+}
+
+
 HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
@@ -26,7 +41,7 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 	textureDesc.Width = resolution;
 	textureDesc.Height = resolution;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8_UNORM;
 	textureDesc.SampleDesc.Count = 1;
@@ -35,17 +50,39 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
-	
-	XMUBYTEN2 *memory = (XMUBYTEN2*) textureMemoryPtr->GetMemoryPtr();
 
-	D3D11_SUBRESOURCE_DATA textureData;
-	ZeroMemory(&textureData, sizeof(textureData));
-	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = resolution * sizeof(XMUBYTEN2);
-	textureData.SysMemSlicePitch = 0;
+	vector<TextureMemoryPtr> memory(textureDesc.MipLevels);
+	vector<D3D11_SUBRESOURCE_DATA> textureData(textureDesc.MipLevels);
+
+	memory[0] = textureMemoryPtr;
+	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
+	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
+	textureData[0].SysMemPitch = resolution * sizeof(XMUBYTEN2);
+	textureData[0].SysMemSlicePitch = 0;
+
+	for(int k = 1; k < memory.size(); k++)
+	{
+		TextureResolution mipResolution = (TextureResolution) (memory[k - 1]->GetResolution() / 2);
+
+		memory[k] = make_shared<TextureMemory>(GRAYSCALE, mipResolution, BPC8);
+
+		for(int i = 0; i < mipResolution; i++)
+		{
+			for(int j = 0; j < mipResolution; j++)
+			{
+				memory[k]->SetValue(i, j, memory[k - 1]->SampleGrayscale(i, j, mipResolution));
+			}
+		}
+
+		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
+		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
+		textureData[k].SysMemPitch = mipResolution * sizeof(XMUBYTEN2);
+		textureData[k].SysMemSlicePitch = 0;
+	}
+
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -76,7 +113,7 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 	textureDesc.Width = resolution;
 	textureDesc.Height = resolution;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R16G16_UNORM;
 	textureDesc.SampleDesc.Count = 1;
@@ -86,16 +123,38 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMUSHORTN2 *memory = (XMUSHORTN2*) textureMemoryPtr->GetMemoryPtr();
+	vector<TextureMemoryPtr> memory(textureDesc.MipLevels);
+	vector<D3D11_SUBRESOURCE_DATA> textureData(textureDesc.MipLevels);
 
-	D3D11_SUBRESOURCE_DATA textureData;
-	ZeroMemory(&textureData, sizeof(textureData));
-	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = resolution * sizeof(XMUSHORTN2);
-	textureData.SysMemSlicePitch = 0;
+	memory[0] = textureMemoryPtr;
+	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
+	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
+	textureData[0].SysMemPitch = resolution * sizeof(XMUSHORTN2);
+	textureData[0].SysMemSlicePitch = 0;
+
+	for(int k = 1; k < memory.size(); k++)
+	{
+		TextureResolution mipResolution = (TextureResolution) (memory[k - 1]->GetResolution() / 2);
+
+		memory[k] = make_shared<TextureMemory>(GRAYSCALE, mipResolution, BPC16);
+
+		for(int i = 0; i < mipResolution; i++)
+		{
+			for(int j = 0; j < mipResolution; j++)
+			{
+				memory[k]->SetValue(i, j, memory[k - 1]->SampleGrayscale(i, j, mipResolution));
+			}
+		}
+
+		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
+		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
+		textureData[k].SysMemPitch = mipResolution * sizeof(XMUSHORTN2);
+		textureData[k].SysMemSlicePitch = 0;
+	}
+
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -126,7 +185,7 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 	textureDesc.Width = resolution;
 	textureDesc.Height = resolution;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
@@ -136,16 +195,38 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMFLOAT2 *memory = (XMFLOAT2*) textureMemoryPtr->GetMemoryPtr();
+	vector<TextureMemoryPtr> memory(textureDesc.MipLevels);
+	vector<D3D11_SUBRESOURCE_DATA> textureData(textureDesc.MipLevels);
 
-	D3D11_SUBRESOURCE_DATA textureData;
-	ZeroMemory(&textureData, sizeof(textureData));
-	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = resolution * sizeof(XMFLOAT2);
-	textureData.SysMemSlicePitch = 0;
+	memory[0] = textureMemoryPtr;
+	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
+	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
+	textureData[0].SysMemPitch = resolution * sizeof(XMFLOAT2);
+	textureData[0].SysMemSlicePitch = 0;
+
+	for(int k = 1; k < memory.size(); k++)
+	{
+		TextureResolution mipResolution = (TextureResolution) (memory[k - 1]->GetResolution() / 2);
+
+		memory[k] = make_shared<TextureMemory>(GRAYSCALE, mipResolution, BPC32);
+
+		for(int i = 0; i < mipResolution; i++)
+		{
+			for(int j = 0; j < mipResolution; j++)
+			{
+				memory[k]->SetValue(i, j, memory[k - 1]->SampleGrayscale(i, j, mipResolution));
+			}
+		}
+
+		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
+		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
+		textureData[k].SysMemPitch = mipResolution * sizeof(XMFLOAT2);
+		textureData[k].SysMemSlicePitch = 0;
+	}
+
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -176,7 +257,7 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 	textureDesc.Width = resolution;
 	textureDesc.Height = resolution;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	textureDesc.SampleDesc.Count = 1;
@@ -186,16 +267,38 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMUBYTEN4 *memory = (XMUBYTEN4*) textureMemoryPtr->GetMemoryPtr();
+	vector<TextureMemoryPtr> memory(textureDesc.MipLevels);
+	vector<D3D11_SUBRESOURCE_DATA> textureData(textureDesc.MipLevels);
 
-	D3D11_SUBRESOURCE_DATA textureData;
-	ZeroMemory(&textureData, sizeof(textureData));
-	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = resolution * sizeof(XMUBYTEN4);
-	textureData.SysMemSlicePitch = 0;
+	memory[0] = textureMemoryPtr;
+	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
+	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
+	textureData[0].SysMemPitch = resolution * sizeof(XMUBYTEN4);
+	textureData[0].SysMemSlicePitch = 0;
+
+	for(int k = 1; k < memory.size(); k++)
+	{
+		TextureResolution mipResolution = (TextureResolution) (memory[k - 1]->GetResolution() / 2);
+
+		memory[k] = make_shared<TextureMemory>(COLOR, mipResolution, BPC8);
+
+		for(int i = 0; i < mipResolution; i++)
+		{
+			for(int j = 0; j < mipResolution; j++)
+			{
+				memory[k]->SetValue(i, j, memory[k - 1]->SampleColor(i, j, mipResolution));
+			}
+		}
+
+		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
+		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
+		textureData[k].SysMemPitch = mipResolution * sizeof(XMUBYTEN4);
+		textureData[k].SysMemSlicePitch = 0;
+	}
+
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -226,7 +329,7 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 	textureDesc.Width = resolution;
 	textureDesc.Height = resolution;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R16G16B16A16_UNORM;
 	textureDesc.SampleDesc.Count = 1;
@@ -236,16 +339,38 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMUSHORTN4 *memory = (XMUSHORTN4*) textureMemoryPtr->GetMemoryPtr();
+	vector<TextureMemoryPtr> memory(textureDesc.MipLevels);
+	vector<D3D11_SUBRESOURCE_DATA> textureData(textureDesc.MipLevels);
 
-	D3D11_SUBRESOURCE_DATA textureData;
-	ZeroMemory(&textureData, sizeof(textureData));
-	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = resolution * sizeof(XMUSHORTN4);
-	textureData.SysMemSlicePitch = 0;
+	memory[0] = textureMemoryPtr;
+	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
+	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
+	textureData[0].SysMemPitch = resolution * sizeof(XMUSHORTN4);
+	textureData[0].SysMemSlicePitch = 0;
+
+	for(int k = 1; k < memory.size(); k++)
+	{
+		TextureResolution mipResolution = (TextureResolution) (memory[k - 1]->GetResolution() / 2);
+
+		memory[k] = make_shared<TextureMemory>(COLOR, mipResolution, BPC16);
+
+		for(int i = 0; i < mipResolution; i++)
+		{
+			for(int j = 0; j < mipResolution; j++)
+			{
+				memory[k]->SetValue(i, j, memory[k - 1]->SampleColor(i, j, mipResolution));
+			}
+		}
+
+		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
+		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
+		textureData[k].SysMemPitch = mipResolution * sizeof(XMUSHORTN4);
+		textureData[k].SysMemSlicePitch = 0;
+	}
+
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -276,7 +401,7 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 	textureDesc.Width = resolution;
 	textureDesc.Height = resolution;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
@@ -286,16 +411,38 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	XMFLOAT4 *memory = (XMFLOAT4*) textureMemoryPtr->GetMemoryPtr();
+	vector<TextureMemoryPtr> memory(textureDesc.MipLevels);
+	vector<D3D11_SUBRESOURCE_DATA> textureData(textureDesc.MipLevels);
 
-	D3D11_SUBRESOURCE_DATA textureData;
-	ZeroMemory(&textureData, sizeof(textureData));
-	textureData.pSysMem = &memory[0];
-	textureData.SysMemPitch = resolution * sizeof(XMFLOAT4);
-	textureData.SysMemSlicePitch = 0;
+	memory[0] = textureMemoryPtr;
+	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
+	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
+	textureData[0].SysMemPitch = resolution * sizeof(XMFLOAT4);
+	textureData[0].SysMemSlicePitch = 0;
+
+	for(int k = 1; k < memory.size(); k++)
+	{
+		TextureResolution mipResolution = (TextureResolution) (memory[k - 1]->GetResolution() / 2);
+
+		memory[k] = make_shared<TextureMemory>(COLOR, mipResolution, BPC32);
+
+		for(int i = 0; i < mipResolution; i++)
+		{
+			for(int j = 0; j < mipResolution; j++)
+			{
+				memory[k]->SetValue(i, j, memory[k - 1]->SampleColor(i, j, mipResolution));
+			}
+		}
+
+		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
+		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
+		textureData[k].SysMemPitch = mipResolution * sizeof(XMFLOAT4);
+		textureData[k].SysMemSlicePitch = 0;
+	}
+
 	ID3D11Texture2D *texture = 0;
 
-	hr = device->CreateTexture2D(&textureDesc, &textureData, &texture);
+	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
 		return hr;
@@ -484,6 +631,9 @@ TextureType DirectXTexture::GetTextureType()
 
 void DirectXTexture::Set(int slot)
 {
-	painter->VSSetShaderResources(slot, 1, &textureSRV);
-	painter->PSSetShaderResources(slot, 1, &textureSRV);
+	if(isInitialized)
+	{
+		painter->VSSetShaderResources(slot, 1, &textureSRV);
+		painter->PSSetShaderResources(slot, 1, &textureSRV);
+	}
 }

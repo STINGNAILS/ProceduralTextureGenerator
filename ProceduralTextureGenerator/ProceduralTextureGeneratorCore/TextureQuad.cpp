@@ -89,6 +89,20 @@ HRESULT TextureQuad::Init()
 		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
 	}
 
+	samplerState = DirectXObjectPool::GetSamplerState("Basic");
+	if(rasterizerState.get() == nullptr)
+	{
+		samplerState = make_shared<SamplerState>();
+
+		hr = samplerState->Init(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, 0);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetSamplerState("Basic", samplerState);
+	}
+
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("TextureQuad");
 	if(polygonMesh.get() == nullptr)
 	{
@@ -156,6 +170,7 @@ void TextureQuad::Render()
 		pixelShader->Set();
 		rasterizerState->Set();
 
+		samplerState->Set(0);
 		texture->Set(0);
 
 		polygonMesh->Render();

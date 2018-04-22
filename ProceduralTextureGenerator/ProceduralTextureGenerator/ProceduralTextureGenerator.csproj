@@ -79,6 +79,11 @@
     <Compile Include="Controls\ParameterControls\RemapSetter.xaml.cs">
       <DependentUpon>RemapSetter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\NotSavedDialog.xaml.cs">
+      <DependentUpon>NotSavedDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\WindowCloseCommand.cs" />
+    <Compile Include="Dialogs\WindowDragBehavior.cs" />
     <Page Include="Controls\ParameterControls\CategoryName.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,6 +105,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ParameterControls\NodeName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\NewFunctionGraphDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\NotSavedDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -154,7 +167,7 @@
     <Compile Include="Controls\ParameterControls\IntegerParameter.xaml.cs">
       <DependentUpon>IntegerParameter.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CoreDll.cs" />
+    <Compile Include="Utility\CoreDll.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -169,14 +182,17 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MouseHelper.cs" />
+    <Compile Include="Utility\MouseHelper.cs" />
     <Compile Include="Controls\ParameterPanel.xaml.cs">
       <DependentUpon>ParameterPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ParameterControls\NodeName.xaml.cs">
       <DependentUpon>NodeName.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ParentHelper.cs" />
+    <Compile Include="Dialogs\NewFunctionGraphDialog.xaml.cs">
+      <DependentUpon>NewFunctionGraphDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\ParentHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -41,6 +41,12 @@ void Scene::SetCamera(shared_ptr<Camera> camera_)
 }
 
 
+void Scene::SetBackground(shared_ptr<BackgroundGrid> background_)
+{
+	backgroundGrid = background_;
+}
+
+
 void Scene::SetEnvironment(shared_ptr<Environment> environment_)
 {
 	environment = environment_;
@@ -65,6 +71,12 @@ shared_ptr<Camera> Scene::GetCamera()
 }
 
 
+shared_ptr<BackgroundGrid> Scene::GetBackground()
+{
+	return backgroundGrid;
+}
+
+
 shared_ptr<Environment> Scene::GetEnvironment()
 {
 	return environment;
@@ -84,14 +96,23 @@ void Scene::Render()
 		view->BeginRender();
 
 		camera->Set();
-		if(environment) environment->Set();
+
+		if(backgroundGrid)
+		{
+			backgroundGrid->Render();
+		}
+
+		if(environment)
+		{
+			environment->Render();
+			environment->Set();
+		}
 
 		for(auto it = renderableObjects.begin(); it != renderableObjects.end(); it++)
 		{
 			it->second->Render();
 		}
 
-		if(environment) environment->Render();
 
 		view->FinishRender();
 	}

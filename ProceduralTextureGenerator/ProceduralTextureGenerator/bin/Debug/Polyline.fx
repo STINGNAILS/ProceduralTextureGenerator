@@ -17,18 +17,19 @@ struct VertexOut
 cbuffer cbCamera : register(b0)
 {
 	float4x4 viewProj;
+	float4x4 viewProjInverse;
 	float4x4 viewProjCentered;
 	float3 cameraPosW;
-	int aligner1;
+	float scale;
 };
 
 
 cbuffer cbPolyline : register(b1)
 {
 	float state;
-	int aligner2;
-	int aligner3;
 	int aligner4;
+	int aligner5;
+	int aligner6;
 };
 
 

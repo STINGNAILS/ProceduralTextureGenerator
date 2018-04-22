@@ -20,9 +20,11 @@ namespace ProceduralTextureGenerator
     /// </summary>
     public partial class IntegerParameter : UserControl
 	{
-		int index;
-		int minValue;
-		int maxValue;
+		private int index;
+		private int minValue;
+		private int maxValue;
+
+		private int previousValue;
 		
 
 		public IntegerParameter(string name, int index_, int minValue_, int maxValue_)
@@ -36,6 +38,8 @@ namespace ProceduralTextureGenerator
 			maxValue = maxValue_;
 
 			int value = CoreDll.GraphViewGetSelectedNodeIntParameter(index);
+
+			previousValue = value;
 
 			integerParameterTextBox.Text = value.ToString();
 			integerParameterTextBox.LostFocus += FocusLost;
@@ -53,8 +57,15 @@ namespace ProceduralTextureGenerator
 			{
 				value = Math.Min(Math.Max(value, minValue), maxValue);
 
-				CoreDll.GraphViewSetSelectedNodeIntParameter(index, value);
-				CoreDll.GraphViewProcess();
+				if(value != previousValue)
+				{
+					CoreDll.GraphViewSetSelectedNodeIntParameter(index, value);
+					CoreDll.GraphViewProcess();
+
+					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+
+					previousValue = value;
+				}
 			}
 
 			ParentHelper.GetParentParameterPanel(this)?.Update();

@@ -125,6 +125,12 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void AddHeightToNormalNode(object sender, RoutedEventArgs e)
+		{
+			CoreDll.GraphViewAddNode(15, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+		}
+
+
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			Focus();

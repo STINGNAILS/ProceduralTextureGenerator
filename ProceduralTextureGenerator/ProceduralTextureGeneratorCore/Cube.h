@@ -15,6 +15,7 @@ class Cube : public RenderableObject
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
 	shared_ptr<RasterizerState> rasterizerState;
+	shared_ptr<SamplerState> samplerState;
 
 	shared_ptr<DirectXTexture> baseColorMap;
 	shared_ptr<DirectXTexture> metallicMap;

@@ -29,5 +29,26 @@ namespace ProceduralTextureGenerator
 				return GetParentParameterPanel(parent);
 			}
 		}
+
+
+		public static MainWindow GetParentMainWindow(DependencyObject child)
+		{
+			DependencyObject parent = VisualTreeHelper.GetParent(child);
+
+			if(parent == null)
+			{
+				return null;
+			}
+
+			MainWindow mainWindow = parent as MainWindow;
+			if(mainWindow != null)
+			{
+				return mainWindow;
+			}
+			else
+			{
+				return GetParentMainWindow(parent);
+			}
+		}
     }
 }

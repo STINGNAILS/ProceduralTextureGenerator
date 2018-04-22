@@ -78,6 +78,20 @@ HRESULT Cube::Init()
 
 		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
 	}
+
+	samplerState = DirectXObjectPool::GetSamplerState("Basic");
+	if(rasterizerState.get() == nullptr)
+	{
+		samplerState = make_shared<SamplerState>();
+
+		hr = samplerState->Init(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, 0);
+		if(FAILED(hr))
+		{
+			return hr;
+		}
+
+		DirectXObjectPool::SetSamplerState("Basic", samplerState);
+	}
 	
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("Cube");
 	if(polygonMesh.get() == nullptr)
@@ -237,6 +251,7 @@ void Cube::Render()
 		pixelShader->Set();
 		rasterizerState->Set();
 
+		samplerState->Set(1);
 		baseColorMap->Set(2);
 		metallicMap->Set(3);
 		roughnessMap->Set(4);

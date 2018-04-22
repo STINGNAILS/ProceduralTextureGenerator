@@ -63,6 +63,7 @@ namespace ProceduralTextureGenerator
 				}
 			}
 
+			ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
 			ParentHelper.GetParentParameterPanel(this)?.Update();
 		}
 	}

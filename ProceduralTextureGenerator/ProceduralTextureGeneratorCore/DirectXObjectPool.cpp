@@ -6,6 +6,7 @@ map<string, shared_ptr<PolygonMesh>> DirectXObjectPool::polygonMeshes;
 map<string, shared_ptr<VertexShader>> DirectXObjectPool::vertexShaders;
 map<string, shared_ptr<PixelShader>> DirectXObjectPool::pixelShaders;
 map<string, shared_ptr<RasterizerState>> DirectXObjectPool::rasterizerStates;
+map<string, shared_ptr<SamplerState>> DirectXObjectPool::samplerStates;
 map<string, shared_ptr<ConstantBuffer>> DirectXObjectPool::constantBuffers;
 
 
@@ -53,6 +54,14 @@ void DirectXObjectPool::SetRasterizerState(string key, shared_ptr<RasterizerStat
 	if(rasterizerState.get() != nullptr)
 	{
 		rasterizerStates[key] = rasterizerState;
+	}
+}
+
+void DirectXObjectPool::SetSamplerState(string key, shared_ptr<SamplerState> samplerState)
+{
+	if(samplerState.get() != nullptr)
+	{
+		samplerStates[key] = samplerState;
 	}
 }
 
@@ -116,6 +125,20 @@ shared_ptr<RasterizerState> DirectXObjectPool::GetRasterizerState(string key)
 	auto it = rasterizerStates.find(key);
 
 	if(it != rasterizerStates.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+shared_ptr<SamplerState> DirectXObjectPool::GetSamplerState(string key)
+{
+	auto it = samplerStates.find(key);
+
+	if(it != samplerStates.end())
 	{
 		return it->second;
 	}

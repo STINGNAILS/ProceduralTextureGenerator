@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AtomicFunctions.h" />
+    <ClInclude Include="BackgroundGrid.h" />
     <ClInclude Include="BRDFLUTRenderer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Camera2D.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="GeometryHelper.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="NoiseFunctions.h" />
+    <ClInclude Include="NormalFunctions.h" />
     <ClInclude Include="OutputPin.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="PolygonMesh.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="RadianceMapRenderer.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderableObject.h" />
+    <ClInclude Include="SamplerState.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="stdafx.h" />
@@ -189,10 +192,12 @@
     <ClInclude Include="TextureFrame.h" />
     <ClInclude Include="TextureMemory.h" />
     <ClInclude Include="TextureQuad.h" />
+    <ClInclude Include="UtilityFunctions.h" />
     <ClInclude Include="VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AtomicFunctions.cpp" />
+    <ClCompile Include="BackgroundGrid.cpp" />
     <ClCompile Include="BRDFLUTRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Camera2D.cpp" />
@@ -226,6 +231,7 @@
     <ClCompile Include="GeometryHelper.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="NoiseFunctions.cpp" />
+    <ClCompile Include="NormalFunctions.cpp" />
     <ClCompile Include="OutputPin.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PolygonMesh.cpp" />
@@ -234,6 +240,7 @@
     <ClCompile Include="RadianceMapRenderer.cpp" />
     <ClCompile Include="RasterizerState.cpp" />
     <ClCompile Include="RenderableObject.cpp" />
+    <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -245,6 +252,7 @@
     <ClCompile Include="TextureFrame.cpp" />
     <ClCompile Include="TextureMemory.cpp" />
     <ClCompile Include="TextureQuad.cpp" />
+    <ClCompile Include="UtilityFunctions.cpp" />
     <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

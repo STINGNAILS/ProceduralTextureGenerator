@@ -68,5 +68,14 @@ namespace ProceduralTextureGenerator
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewProcess")]
 		public static extern void GraphViewProcess();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ResetFunctionGraph")]
+		public static extern void ResetFunctionGraph();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SaveFunctionGraphToFile")]
+		public static extern void SaveFunctionGraphToFile([MarshalAs(UnmanagedType.LPStr)] string fileName);
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadFunctionGraphFromFile")]
+		public static extern void LoadFunctionGraphFromFile([MarshalAs(UnmanagedType.LPStr)] string fileName);
 	}
 }

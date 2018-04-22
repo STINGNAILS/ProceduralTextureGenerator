@@ -22,9 +22,10 @@ struct VertexOut
 cbuffer cbCamera : register(b0)
 {
 	float4x4 viewProj;
+	float4x4 viewProjInverse;
 	float4x4 viewProjCentered;
 	float3 cameraPosW;
-	int aligner1;
+	float scale;
 };
 
 
@@ -33,8 +34,8 @@ cbuffer cbInputPin : register(b1)
 	float4x4 world;
 	float state;
 	float ratio;
-	float aligner2;
-	float aligner3;
+	float aligner4;
+	float aligner5;
 };
 
 

@@ -11,24 +11,20 @@ struct VertexOut
 };
 
 
-SamplerState basicSampler
-{
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
-
 cbuffer cbCamera : register(b0)
 {
 	float4x4 viewProj;
+	float4x4 viewProjInverse;
 	float4x4 viewProjCentered;
 	float3 cameraPosW;
-	int aligner1;
+	float scale;
 };
 
 
-TextureCube cubeMap : register(t0);
+SamplerState basicSampler : register(s1);
+
+
+TextureCube cubeMap : register(t2);
 
 
 VertexOut VS(VertexIn vertexIn)

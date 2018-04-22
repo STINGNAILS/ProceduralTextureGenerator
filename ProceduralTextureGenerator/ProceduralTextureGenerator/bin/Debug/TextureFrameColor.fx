@@ -12,20 +12,13 @@ struct VertexOut
 };
 
 
-SamplerState basicSampler
-{
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
-
 cbuffer cbCamera : register(b0)
 {
 	float4x4 viewProj;
+	float4x4 viewProjInverse;
 	float4x4 viewProjCentered;
 	float3 cameraPosW;
-	int aligner1;
+	float scale;
 };
 
 
@@ -33,10 +26,13 @@ cbuffer cbFunctionNode : register(b1)
 {
 	float4x4 world;
 	float isSelected;
-	int aligner2;
-	int aligner3;
 	int aligner4;
+	int aligner5;
+	int aligner6;
 };
+
+
+SamplerState basicSampler : register(s0);
 
 
 Texture2D functionTexture : register(t0);

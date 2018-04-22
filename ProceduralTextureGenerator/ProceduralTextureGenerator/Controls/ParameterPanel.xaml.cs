@@ -211,6 +211,14 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void AddHeightToNormalParameters(int heightIndex)
+		{
+			parameterStackPanel.Children.Add(new CategoryName("Height To Normal Parameters"));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Height", heightIndex, 0.0f, 1.0f));
+		}
+
+
 		public void Update()
 		{
 			parameterStackPanel.Children.Clear();
@@ -410,6 +418,19 @@ namespace ProceduralTextureGenerator
 					AddNodeName("Metal Reflectance");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
 					AddMetalReflectanceParameters(metalIndex);
+
+					break;
+				}
+				//Height To Normal
+				case 15:
+				{
+					int textureResolutionIndex = 0;
+					int bpcIndex = 1;
+					int heightIndex = 0;
+
+					AddNodeName("Height To Normal");
+					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddHeightToNormalParameters(heightIndex);
 
 					break;
 				}

@@ -15,15 +15,6 @@ struct VertexOut
 };
 
 
-SamplerState anisotropicSampler
-{
-	Filter = ANISOTROPIC;
-	MaxAnisotropy = 16;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
-
 cbuffer cbRadianceMap : register(b0)
 {
 	float roughness;
@@ -31,6 +22,9 @@ cbuffer cbRadianceMap : register(b0)
 	int aligner1;
 	int aligner2;
 };
+
+
+SamplerState anisotropicSampler : register(s0);
 
 
 TextureCube environmentMap : register(t0);

@@ -32,14 +32,14 @@ FunctionNode::FunctionNode(int functionIndex_)
 
 		inputPinPtrs[i] = make_shared<OutputPin>();
 		inputPinPtrs[i]->Init();
-		inputPinPtrs[i]->SetLocalPosition(-64.0f + 128 * ((i + 1.0f) / (functionInputNodesNum + 1.0f)), 64.0f);
+		inputPinPtrs[i]->SetLocalPosition(-31.0f + 62.0f * ((i + 1.0f) / (functionInputNodesNum + 1.0f)), 31.0f);
 	}
 
 	if(functionIndex > 4)
 	{
 		outputPinPtr = make_shared<OutputPin>();
 		outputPinPtr->Init();
-		outputPinPtr->SetLocalPosition(0.0f, -64.0f);
+		outputPinPtr->SetLocalPosition(0.0f, -31.0f);
 	}
 }
 
@@ -137,9 +137,9 @@ void FunctionNode::SetTextureMemory(TextureMemoryPtr textureMemoryPtr_)
 
 void FunctionNode::SetPosition(float xParent, float yParent)
 {
-	xGlobal = xParent;
-	yGlobal = yParent;
-
+	xGlobal = 32.0f * roundf(xParent / 32.0f);
+	yGlobal = 32.0f * roundf(yParent / 32.0f);
+	
 	textureFramePtr->SetPosition(xGlobal, yGlobal);
 	for(int i = 0; i < inputPinPtrs.size(); i++)
 	{

@@ -27,29 +27,13 @@ struct VertexOut
 };
 
 
-SamplerState basicSampler
-{
-	Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-};
-
-
-SamplerState anisotropicSampler
-{
-	Filter = ANISOTROPIC;
-	MaxAnisotropy = 16;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
-
 cbuffer cbCamera : register(b0)
 {
 	float4x4 viewProj;
+	float4x4 viewProjInverse;
 	float4x4 viewProjCentered;
 	float3 cameraPosW;
-	int aligner1;
+	float scale;
 };
 
 
@@ -57,10 +41,14 @@ cbuffer cbEnvironment : register(b1)
 {
 	int directionalLightsNum;
 	int radianceMapMipLevelsFactor;
-	int aligner2;
-	int aligner3;
+	int aligner4;
+	int aligner5;
 	DirectionalLight directionalLights[4];
 };
+
+
+SamplerState anisotropicSampler : register(s0);
+SamplerState basicSampler : register(s1);
 
 
 TextureCube radianceMap : register(t0);
@@ -161,7 +149,7 @@ float4 PS(VertexOut vertexOut) : SV_Target
 {
 	const float3 albedo = SRGBToLinear(albedoMap.Sample(basicSampler, vertexOut.uv).xyz);
 	const float metallic = saturate(1.190476f * metallicMap.Sample(basicSampler, vertexOut.uv) - 0.095238f);
-	const float roughness = max(pow(roughnessMap.Sample(basicSampler, vertexOut.uv), 2.2), 0.01f);
+	const float roughness = max(roughnessMap.Sample(basicSampler, vertexOut.uv), 0.01f);
 	const float3 normal = 2.0f * normalMap.Sample(basicSampler, vertexOut.uv).rgb - 1.0f;
 
 	const float3 diffuse = lerp(albedo, float3(0.0f, 0.0f, 0.0f), metallic);

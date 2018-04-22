@@ -26,6 +26,7 @@
                     <MenuItem Header="Blur" Click="AddBlurNode"></MenuItem>
                     <MenuItem Header="Directional Blur" Click="AddDirectionalBlurNode"></MenuItem>
                     <MenuItem Header="Metal Reflectance" Click="AddMetalReflectanceNode"></MenuItem>
+                    <MenuItem Header="Height To Normal" Click="AddHeightToNormalNode"></MenuItem>
                 </ContextMenu>
             </ContentControl.ContextMenu>
         </ContentControl>
