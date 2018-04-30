@@ -9,7 +9,6 @@ FunctionLink::FunctionLink()
 	inputPinIndex = -1;
 
 	polylinePtr = make_shared<PolyLine>();
-	polylinePtr->Init();
 
 	isSelected = false;
 }

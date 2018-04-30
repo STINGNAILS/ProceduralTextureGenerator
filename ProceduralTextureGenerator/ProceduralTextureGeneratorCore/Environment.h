@@ -36,8 +36,6 @@ class Environment
 {
 	private:
 
-	bool isInitialized;
-
 	shared_ptr<PolygonMesh> polygonMesh;
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
@@ -46,7 +44,7 @@ class Environment
 	shared_ptr<SamplerState> basicSamplerState;
 	shared_ptr<ConstantBuffer> constantBuffer;
 
-	bool environmentIsInitialized;
+	bool environmentMappingIsEnabled;
 
 	shared_ptr<DirectXTexture> environmentMap;
 	shared_ptr<DirectXTexture> radianceMap;
@@ -61,10 +59,8 @@ class Environment
 	public:
 
 	Environment();
+	Environment(LPCWSTR fileName);
 	~Environment();
-
-	HRESULT Init();
-	HRESULT InitEnvironment(LPCWSTR fileName);
 
 	int AddDirectionalLight(DirectionalLight dirLight);
 	int AddPunctualLight(PunctualLight punctualLight);

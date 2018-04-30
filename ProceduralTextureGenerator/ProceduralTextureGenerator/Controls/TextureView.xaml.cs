@@ -23,12 +23,8 @@ namespace ProceduralTextureGenerator
         public TextureView()
         {
             InitializeComponent();
-		}
 
-
-		private void OnLoaded(object sender, RoutedEventArgs e)
-		{
-			view.Init(3);
+			view.Bind(3);
 		}
 
 

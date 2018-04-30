@@ -36,18 +36,28 @@ namespace ProceduralTextureGenerator
 		{
 			InitializeComponent();
 
-			CoreDll.Init();
-
-			CompositionTarget.Rendering += Update;
-
+			int result = CoreDll.Init();
+			if(result == 1)
+			{
+				MessageBox.Show("Initialization error; the program will be shut down");
+				Close();
+			}
+			
 			graphView.SetParameterPanel(parameterPannel);
 
 			frameTime = new Stopwatch();
-			frameTime.Start();
 
 			functionGraphName = "";
 
 			progressIsSaved = true;
+		}
+
+
+		private void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			CompositionTarget.Rendering += Update;
+
+			frameTime.Start();
 		}
 
 

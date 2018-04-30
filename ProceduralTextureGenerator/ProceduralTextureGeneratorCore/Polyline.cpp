@@ -13,10 +13,14 @@ struct LineVertex
 
 PolyLine::PolyLine()
 {
-	isInitialized = false;
 	pointsAreSet = false;
-
 	isSelected = false;
+
+	vertexShader = DirectXObjectPool::GetVertexShader("Polyline");
+	linesPixelShader = DirectXObjectPool::GetPixelShader("PolylineLines");
+	pointsPixelShader = DirectXObjectPool::GetPixelShader("PolylinePoints");
+	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
+	constantBuffer = DirectXObjectPool::GetConstantBuffer("Polyline");
 }
 
 
@@ -26,100 +30,8 @@ PolyLine::~PolyLine()
 }
 
 
-HRESULT PolyLine::Init()
+void PolyLine::SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType)
 {
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	vertexShader = DirectXObjectPool::GetVertexShader("Polyline");
-	if(vertexShader.get() == nullptr)
-	{
-		vertexShader = make_shared<VertexShader>();
-
-		D3D11_INPUT_ELEMENT_DESC layout[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
-
-		hr = vertexShader->Init(L"Polyline.fx", layout, ARRAYSIZE(layout));
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetVertexShader("Polyline", vertexShader);
-	}
-
-	linesPixelShader = DirectXObjectPool::GetPixelShader("PolylineLines");
-	if(linesPixelShader.get() == nullptr)
-	{
-		linesPixelShader = make_shared<PixelShader>();
-
-		hr = linesPixelShader->Init(L"Polyline.fx");
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetPixelShader("PolylineLines", linesPixelShader);
-	}
-
-	pointsPixelShader = DirectXObjectPool::GetPixelShader("PolylinePoints");
-	if(pointsPixelShader.get() == nullptr)
-	{
-		pointsPixelShader = make_shared<PixelShader>();
-
-		hr = pointsPixelShader->Init(L"PolylinePoints.fx");
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetPixelShader("PolylinePoints", pointsPixelShader);
-	}
-
-	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
-	if(rasterizerState.get() == nullptr)
-	{
-		rasterizerState = make_shared<RasterizerState>();
-
-		hr = rasterizerState->Init(D3D11_FILL_SOLID, D3D11_CULL_BACK);
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
-	}
-
-	constantBuffer = DirectXObjectPool::GetConstantBuffer("Polyline");
-	if(constantBuffer.get() == nullptr)
-	{
-		constantBuffer = make_shared<ConstantBuffer>();
-
-		hr = constantBuffer->Init(sizeof(PolyLineCB));
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetConstantBuffer("Polyline", constantBuffer);
-	}
-
-	isInitialized = true;
-
-	return hr;
-}
-
-
-HRESULT PolyLine::SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType)
-{
-	HRESULT hr = S_OK;
-
 	pointsAreSet = false;
 
 	points.resize(4);
@@ -127,9 +39,6 @@ HRESULT PolyLine::SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType)
 	points[1] = XMFLOAT2(p0.x, p0.y - max(16.0f, 0.25f * (p0.y - p1.y)));
 	points[2] = XMFLOAT2(p1.x, p1.y + max(16.0f, 0.25f * (p0.y - p1.y)));
 	points[3] = p1;
-
-	linesPolygonMesh = make_shared<PolygonMesh>();
-	pointsPolygonMesh = make_shared<PolygonMesh>();
 
 	vector<LineVertex> lineVertices(12);
 	vector<UINT> lineIndices(18);
@@ -161,11 +70,7 @@ HRESULT PolyLine::SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType)
 		lineIndices[i * 6 + 5] = i * 4 + 2;
 	}
 
-	hr = linesPolygonMesh->Init((void*) &lineVertices[0], sizeof(LineVertex), lineVertices.size(), &lineIndices[0], lineIndices.size());
-	if(FAILED(hr))
-	{
-		return hr;
-	}
+	linesPolygonMesh = make_shared<PolygonMesh>((void*) &lineVertices[0], sizeof(LineVertex), lineVertices.size(), &lineIndices[0], lineIndices.size());
 
 	vector<LineVertex> pointVertices(16);
 	vector<UINT> pointIndices(24);
@@ -187,15 +92,9 @@ HRESULT PolyLine::SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType)
 		pointIndices[i * 6 + 5] = i * 4 + 2;
 	}
 
-	hr = pointsPolygonMesh->Init((void*) &pointVertices[0], sizeof(LineVertex), pointVertices.size(), &pointIndices[0], pointIndices.size());
-	if(FAILED(hr))
-	{
-		return hr;
-	}
+	pointsPolygonMesh = make_shared<PolygonMesh>((void*) &pointVertices[0], sizeof(LineVertex), pointVertices.size(), &pointIndices[0], pointIndices.size());
 
 	pointsAreSet = true;
-
-	return hr;
 }
 
 
@@ -251,7 +150,7 @@ void PolyLine::RenderPoints()
 
 void PolyLine::Render()
 {
-	if(isInitialized && pointsAreSet)
+	if(pointsAreSet)
 	{
 		RenderLines();
 		RenderPoints();

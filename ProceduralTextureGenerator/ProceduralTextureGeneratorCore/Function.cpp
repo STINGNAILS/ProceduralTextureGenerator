@@ -167,6 +167,30 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return HeightToNormal(inputTexturePtr, resolution, bpc, height);
 		}
+		case SHAPE:
+		{
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			int shapeIndex = intParameters[2];
+			int sidesNum = intParameters[3];
+
+			return Shape(resolution, bpc, shapeIndex, sidesNum);
+		}
+		case TRANSFORM:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			int tilingMode = intParameters[2];
+			float xScale = floatParameters[0];
+			float yScale = floatParameters[1];
+			float rotation = floatParameters[2];
+			float xTransform = floatParameters[3];
+			float yTransform = floatParameters[4];
+
+			return Transform(inputTexturePtr, resolution, bpc, tilingMode, xScale, yScale, rotation, xTransform, yTransform);
+		}
 		default:
 		{
 			return nullptr;
@@ -240,6 +264,14 @@ int FunctionInputNodesNum(int functionIndex)
 			return 0;
 		}
 		case HEIGHT_TO_NORMAL:
+		{
+			return 1;
+		}
+		case SHAPE:
+		{
+			return 0;
+		}
+		case TRANSFORM:
 		{
 			return 1;
 		}
@@ -394,6 +426,25 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
+		case SHAPE:
+		{
+			vector<int> intParameters(4);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+			intParameters[2] = 0;
+			intParameters[3] = 4;
+
+			return intParameters;
+		}
+		case TRANSFORM:
+		{
+			vector<int> intParameters(3);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+			intParameters[2] = 0;
+
+			return intParameters;
+		}
 		default:
 		{
 			vector<int> intParameters(2);
@@ -520,6 +571,23 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 		{
 			vector<float> floatParameters(1);
 			floatParameters[0] = 0.01f;
+
+			return floatParameters;
+		}
+		case SHAPE:
+		{
+			vector<float> floatParameters(0);
+
+			return floatParameters;
+		}
+		case TRANSFORM:
+		{
+			vector<float> floatParameters(5);
+			floatParameters[0] = 1.0f;
+			floatParameters[1] = 1.0f;
+			floatParameters[2] = 0.0f;
+			floatParameters[3] = 0.0f;
+			floatParameters[4] = 0.0f;
 
 			return floatParameters;
 		}

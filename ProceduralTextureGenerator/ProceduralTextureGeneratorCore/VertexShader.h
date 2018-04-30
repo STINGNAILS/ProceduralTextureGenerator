@@ -8,8 +8,6 @@ class VertexShader
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -18,10 +16,8 @@ class VertexShader
 
 	public:
 
-	VertexShader();
+	VertexShader(LPCWSTR name, D3D11_INPUT_ELEMENT_DESC *layout, UINT arraysize);
 	~VertexShader();
-
-	HRESULT Init(LPCWSTR name, D3D11_INPUT_ELEMENT_DESC *layout, UINT arraysize);
 
 	void Set();
 };

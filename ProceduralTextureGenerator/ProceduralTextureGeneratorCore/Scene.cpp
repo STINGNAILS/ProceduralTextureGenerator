@@ -6,6 +6,7 @@ Scene::Scene()
 {
 	view = nullptr;
 	camera = nullptr;
+	backgroundGrid = nullptr;
 	environment = nullptr;
 
 	isInitialized = false;

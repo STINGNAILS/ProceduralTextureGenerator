@@ -2,35 +2,19 @@
 #include "SamplerState.h"
 
 
-SamplerState::SamplerState()
+SamplerState::SamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressMode, UINT maxAnisotropy)
 {
 	samplerState = nullptr;
 
-	isInitialized = false;
-}
-
-
-SamplerState::~SamplerState()
-{
-
-}
-
-
-HRESULT SamplerState::Init(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressMode, UINT maxAnisotropy)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(samplerState) samplerState->Release();
-
 	if(!DirectXDevice::IsInitialized())
 	{
-		return E_FAIL;
+		throw "Device wasn't initialized";
 	}
 
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
+
+	HRESULT hr = S_OK;
 
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
@@ -46,20 +30,19 @@ HRESULT SamplerState::Init(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addre
 	hr = device->CreateSamplerState(&samplerDesc, &samplerState);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create sampler state";
 	}
+}
 
-	isInitialized = true;
 
-	return hr;
+SamplerState::~SamplerState()
+{
+
 }
 
 
 void SamplerState::Set(int slot)
 {
-	if(isInitialized)
-	{
-		painter->VSSetSamplers(slot, 1, &samplerState);
-		painter->PSSetSamplers(slot, 1, &samplerState);
-	}
+	painter->VSSetSamplers(slot, 1, &samplerState);
+	painter->PSSetSamplers(slot, 1, &samplerState);
 }

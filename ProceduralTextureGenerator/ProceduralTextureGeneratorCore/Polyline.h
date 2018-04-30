@@ -21,7 +21,6 @@ class PolyLine : public RenderableObject
 {
 	private:
 
-	bool isInitialized;
 	bool pointsAreSet;
 
 	shared_ptr<PolygonMesh> linesPolygonMesh;
@@ -46,8 +45,7 @@ class PolyLine : public RenderableObject
 	PolyLine();
 	~PolyLine();
 
-	HRESULT Init();
-	HRESULT SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType);
+	void SetPoints(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType);
 
 	vector<XMFLOAT2> GetVertices();
 

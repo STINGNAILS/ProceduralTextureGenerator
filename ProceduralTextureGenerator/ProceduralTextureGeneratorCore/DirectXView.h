@@ -11,8 +11,6 @@ class DirectXView
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -26,10 +24,8 @@ class DirectXView
 
 	public:
 	
-	DirectXView();
+	DirectXView(void *viewResource);
 	~DirectXView();
-
-	HRESULT Init(void *viewResource);
 
 	UINT GetWidth();
 	UINT GetHeight();

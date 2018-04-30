@@ -2,12 +2,42 @@
 #include "VertexShader.h"
 
 
-VertexShader::VertexShader()
+VertexShader::VertexShader(LPCWSTR name, D3D11_INPUT_ELEMENT_DESC *layout, UINT arraysize)
 {
 	inputLayout = nullptr;
 	vertexShader = nullptr;
 
-	isInitialized = false;
+	if(!DirectXDevice::IsInitialized())
+	{
+		throw "Device wasn't initialized";
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
+	
+	HRESULT hr = S_OK;
+
+	ID3DBlob *shaderBlob = 0;
+
+	hr = CompileShaderFromFile(name, "VS", "vs_5_0", &shaderBlob);
+	if(FAILED(hr))
+	{
+		throw "Couldn't compile vertex shader";
+	}
+
+	hr = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &vertexShader);
+	if(FAILED(hr))
+	{
+		shaderBlob->Release();
+		throw "Couldn't create vertex shader";
+	}
+
+	hr = device->CreateInputLayout(layout, arraysize, shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &inputLayout);
+	shaderBlob->Release();
+	if(FAILED(hr))
+	{
+		throw "Couldn't create input layout";
+	}
 }
 
 
@@ -18,56 +48,8 @@ VertexShader::~VertexShader()
 }
 
 
-HRESULT VertexShader::Init(LPCWSTR name, D3D11_INPUT_ELEMENT_DESC *layout, UINT arraysize)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(inputLayout) inputLayout->Release();
-	if(vertexShader) vertexShader->Release();
-
-	if(!DirectXDevice::IsInitialized())
-	{
-		return E_FAIL;
-	}
-
-	device = DirectXDevice::GetDevice();
-	painter = DirectXDevice::GetPainter();
-
-	ID3DBlob *shaderBlob = 0;
-
-	hr = CompileShaderFromFile(name, "VS", "vs_5_0", &shaderBlob);
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	hr = device->CreateVertexShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &vertexShader);
-	if(FAILED(hr))
-	{
-		shaderBlob->Release();
-		return hr;
-	}
-
-	hr = device->CreateInputLayout(layout, arraysize, shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), &inputLayout);
-	shaderBlob->Release();
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	isInitialized = true;
-
-	return hr;
-}
-
-
 void VertexShader::Set()
 {
-	if(isInitialized)
-	{
-		painter->IASetInputLayout(inputLayout);
-		painter->VSSetShader(vertexShader, 0, 0);
-	}
+	painter->IASetInputLayout(inputLayout);
+	painter->VSSetShader(vertexShader, 0, 0);
 }

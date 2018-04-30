@@ -1251,3 +1251,243 @@ TextureMemoryPtr MetalReflectance(TextureResolution resolution, BitsPerChannel b
 		}
 	}
 }
+
+
+TextureMemoryPtr Transform(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, int tilingMode, float xScale, float yScale, float rotation, float xTranslate, float yTranslate)
+{
+	if(inputTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	TextureType textureType = inputTexturePtr->GetTextureType();
+
+	TextureMemoryPtr transformedTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+
+	double s = sin(rotation * _Pi / 180.0);
+	double c = cos(rotation * _Pi / 180.0);
+
+	switch(textureType)
+	{
+		case GRAYSCALE:
+		{
+			switch(tilingMode)
+			{
+				//Wrap
+				case 0:
+				{
+					#pragma omp parallel for
+					for(int i = 0; i < resolution; i++)
+					{
+						double y = 0.5 - (double) i / (resolution - 1);
+						for(int j = 0; j < resolution; j++)
+						{
+							double x = (double) j / (resolution - 1) - 0.5;
+
+							double x_ = (c * (x - xTranslate) + s * (y - yTranslate)) / xScale;
+							double y_ = (-s * (x - xTranslate) + c * (y - yTranslate)) / yScale;
+
+							x_ -= floor(x_ + 0.5);
+							y_ -= floor(y_ + 0.5);
+
+							int i0 = (int) floor((0.5 - y_) * (resolution - 1));
+							int i1 = i0 + 1;
+							int j0 = (int) floor((x_ + 0.5) * (resolution - 1));
+							int j1 = j0 + 1;
+							i0 = (i0 >= 0) ? (i0 < resolution ? i0 : (i0 - resolution)) : (resolution + i0);
+							i1 = (i1 >= 0) ? (i1 < resolution ? i1 : (i1 - resolution)) : (resolution + i1);
+							j0 = (j0 >= 0) ? (j0 < resolution ? j0 : (j0 - resolution)) : (resolution + j0);
+							j1 = (j1 >= 0) ? (j1 < resolution ? j1 : (j1 - resolution)) : (resolution + j1);
+
+							double x0 = (double) j0 / (resolution - 1) - 0.5;
+							double x1 = (double) j1 / (resolution - 1) - 0.5;
+							double y0 = 0.5 - (double) i0 / (resolution - 1);
+							double y1 = 0.5 - (double) i1 / (resolution - 1);
+
+							double kx = (x_ - x0) / (x1 - x0);
+							double ky = (y_ - y0) / (y1 - y0);
+
+							float value00 = inputTexturePtr->SampleGrayscale(i0, j0, resolution).x;
+							float value01 = inputTexturePtr->SampleGrayscale(i0, j1, resolution).x;
+							float value10 = inputTexturePtr->SampleGrayscale(i1, j0, resolution).x;
+							float value11 = inputTexturePtr->SampleGrayscale(i1, j1, resolution).x;
+
+							transformedTexturePtr->SetValue(i, j, XMFLOAT2((1.0 - kx) * (1.0 - ky) * value00 + kx * (1.0 - ky) * value01 + (1.0 - kx) * ky * value10 + kx * ky * value11, 1.0f));
+						}
+					}
+
+					break;
+				}
+				//Clamp
+				case 1:
+				{
+					#pragma omp parallel for
+					for(int i = 0; i < resolution; i++)
+					{
+						double y = 0.5 - (double) i / (resolution - 1);
+						for(int j = 0; j < resolution; j++)
+						{
+							double x = (double) j / (resolution - 1) - 0.5;
+
+							double x_ = (c * (x - xTranslate) + s * (y - yTranslate)) / xScale;
+							double y_ = (-s * (x - xTranslate) + c * (y - yTranslate)) / yScale;
+
+							if(x_ < -0.5 || x_ > 0.5 || y_ < -0.5 || y_ > 0.5)
+							{
+								transformedTexturePtr->SetValue(i, j, XMFLOAT2(0.0f, 1.0f));
+							}
+							else
+							{
+								int i0 = (int) floor((0.5 - y_) * (resolution - 1));
+								int i1 = i0 + 1;
+								int j0 = (int) floor((x_ + 0.5) * (resolution - 1));
+								int j1 = j0 + 1;
+								i0 = (i0 >= 0) ? (i0 < resolution ? i0 : (i0 - resolution)) : (resolution + i0);
+								i1 = (i1 >= 0) ? (i1 < resolution ? i1 : (i1 - resolution)) : (resolution + i1);
+								j0 = (j0 >= 0) ? (j0 < resolution ? j0 : (j0 - resolution)) : (resolution + j0);
+								j1 = (j1 >= 0) ? (j1 < resolution ? j1 : (j1 - resolution)) : (resolution + j1);
+
+								double x0 = (double) j0 / (resolution - 1) - 0.5;
+								double x1 = (double) j1 / (resolution - 1) - 0.5;
+								double y0 = 0.5 - (double) i0 / (resolution - 1);
+								double y1 = 0.5 - (double) i1 / (resolution - 1);
+
+								double kx = (x_ - x0) / (x1 - x0);
+								double ky = (y_ - y0) / (y1 - y0);
+
+								float value00 = inputTexturePtr->SampleGrayscale(i0, j0, resolution).x;
+								float value01 = inputTexturePtr->SampleGrayscale(i0, j1, resolution).x;
+								float value10 = inputTexturePtr->SampleGrayscale(i1, j0, resolution).x;
+								float value11 = inputTexturePtr->SampleGrayscale(i1, j1, resolution).x;
+
+								transformedTexturePtr->SetValue(i, j, XMFLOAT2((1.0 - kx) * (1.0 - ky) * value00 + kx * (1.0 - ky) * value01 + (1.0 - kx) * ky * value10 + kx * ky * value11, 1.0f));
+							}
+						}
+					}
+
+					break;
+				}
+			}
+
+			break;
+		}
+		case COLOR:
+		{
+			switch(tilingMode)
+			{
+				//Wrap
+				case 0:
+				{
+					#pragma omp parallel for
+					for(int i = 0; i < resolution; i++)
+					{
+						double y = 0.5 - (double) i / (resolution - 1);
+						for(int j = 0; j < resolution; j++)
+						{
+							double x = (double) j / (resolution - 1) - 0.5;
+
+							double x_ = (c * (x - xTranslate) + s * (y - yTranslate)) / xScale;
+							double y_ = (-s * (x - xTranslate) + c * (y - yTranslate)) / yScale;
+
+							x_ -= floor(x_ + 0.5);
+							y_ -= floor(y_ + 0.5);
+
+							int i0 = (int) floor((0.5 - y_) * (resolution - 1));
+							int i1 = i0 + 1;
+							int j0 = (int) floor((x_ + 0.5) * (resolution - 1));
+							int j1 = j0 + 1;
+							i0 = (i0 >= 0) ? (i0 < resolution ? i0 : (i0 - resolution)) : (resolution + i0);
+							i1 = (i1 >= 0) ? (i1 < resolution ? i1 : (i1 - resolution)) : (resolution + i1);
+							j0 = (j0 >= 0) ? (j0 < resolution ? j0 : (j0 - resolution)) : (resolution + j0);
+							j1 = (j1 >= 0) ? (j1 < resolution ? j1 : (j1 - resolution)) : (resolution + j1);
+
+							double x0 = (double) j0 / (resolution - 1) - 0.5;
+							double x1 = (double) j1 / (resolution - 1) - 0.5;
+							double y0 = 0.5 - (double) i0 / (resolution - 1);
+							double y1 = 0.5 - (double) i1 / (resolution - 1);
+
+							double kx = (x_ - x0) / (x1 - x0);
+							double ky = (y_ - y0) / (y1 - y0);
+
+							XMVECTOR value00V = XMLoadFloat4(&inputTexturePtr->SampleColor(i0, j0, resolution));
+							XMVECTOR value01V = XMLoadFloat4(&inputTexturePtr->SampleColor(i0, j1, resolution));
+							XMVECTOR value10V = XMLoadFloat4(&inputTexturePtr->SampleColor(i1, j0, resolution));
+							XMVECTOR value11V = XMLoadFloat4(&inputTexturePtr->SampleColor(i1, j1, resolution));
+
+							XMVECTOR value0V = XMVectorLerp(value00V, value01V, kx);
+							XMVECTOR value1V = XMVectorLerp(value10V, value11V, kx);
+
+							XMVECTOR valueV = XMVectorLerp(value0V, value1V, ky);
+
+							XMFLOAT4 value;
+							XMStoreFloat4(&value, valueV);
+							transformedTexturePtr->SetValue(i, j, value);
+						}
+					}
+
+					break;
+				}
+				//Clamp
+				case 1:
+				{
+					#pragma omp parallel for
+					for(int i = 0; i < resolution; i++)
+					{
+						double y = 0.5 - (double) i / (resolution - 1);
+						for(int j = 0; j < resolution; j++)
+						{
+							double x = (double) j / (resolution - 1) - 0.5;
+
+							double x_ = (c * (x - xTranslate) + s * (y - yTranslate)) / xScale;
+							double y_ = (-s * (x - xTranslate) + c * (y - yTranslate)) / yScale;
+
+							if(x_ < -0.5 || x_ > 0.5 || y_ < -0.5 || y_ > 0.5)
+							{
+								transformedTexturePtr->SetValue(i, j, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+							}
+							else
+							{
+								int i0 = (int) floor((0.5 - y_) * (resolution - 1));
+								int i1 = i0 + 1;
+								int j0 = (int) floor((x_ + 0.5) * (resolution - 1));
+								int j1 = j0 + 1;
+								i0 = (i0 >= 0) ? (i0 < resolution ? i0 : (i0 - resolution)) : (resolution + i0);
+								i1 = (i1 >= 0) ? (i1 < resolution ? i1 : (i1 - resolution)) : (resolution + i1);
+								j0 = (j0 >= 0) ? (j0 < resolution ? j0 : (j0 - resolution)) : (resolution + j0);
+								j1 = (j1 >= 0) ? (j1 < resolution ? j1 : (j1 - resolution)) : (resolution + j1);
+
+								double x0 = (double) j0 / (resolution - 1) - 0.5;
+								double x1 = (double) j1 / (resolution - 1) - 0.5;
+								double y0 = 0.5 - (double) i0 / (resolution - 1);
+								double y1 = 0.5 - (double) i1 / (resolution - 1);
+
+								double kx = (x_ - x0) / (x1 - x0);
+								double ky = (y_ - y0) / (y1 - y0);
+
+								XMVECTOR value00V = XMLoadFloat4(&inputTexturePtr->SampleColor(i0, j0, resolution));
+								XMVECTOR value01V = XMLoadFloat4(&inputTexturePtr->SampleColor(i0, j1, resolution));
+								XMVECTOR value10V = XMLoadFloat4(&inputTexturePtr->SampleColor(i1, j0, resolution));
+								XMVECTOR value11V = XMLoadFloat4(&inputTexturePtr->SampleColor(i1, j1, resolution));
+
+								XMVECTOR value0V = XMVectorLerp(value00V, value01V, kx);
+								XMVECTOR value1V = XMVectorLerp(value10V, value11V, kx);
+
+								XMVECTOR valueV = XMVectorLerp(value0V, value1V, ky);
+
+								XMFLOAT4 value;
+								XMStoreFloat4(&value, valueV);
+								transformedTexturePtr->SetValue(i, j, value);
+							}
+						}
+					}
+
+					break;
+				}
+			}
+
+			break;
+		}
+	}
+	
+	return transformedTexturePtr;
+}

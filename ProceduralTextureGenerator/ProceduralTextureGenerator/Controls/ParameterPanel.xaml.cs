@@ -219,6 +219,44 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void AddShapeParameters(int shapeIndex, int sidesNumIndex)
+		{
+			parameterStackPanel.Children.Add(new CategoryName("Shape Parameters"));
+
+			KeyValuePair<string, int>[] shapeSelections = new KeyValuePair<string, int>[2]
+			{
+				new KeyValuePair<string, int>("Polygon", 0),
+				new KeyValuePair<string, int>("Disc", 1),
+			};
+			parameterStackPanel.Children.Add(new SelectionParameter("Shape", shapeIndex, shapeSelections));
+
+			parameterStackPanel.Children.Add(new IntegerParameter("Number of sides", sidesNumIndex, 3, 32));
+		}
+
+
+		private void AddTransformParameters(int tilingModeIndex, int xScaleIndex, int yScaleIndex, int rotationIndex, int xTranslateIndex, int yTranslateIndex)
+		{
+			parameterStackPanel.Children.Add(new CategoryName("Transform Parameters"));
+
+			KeyValuePair<string, int>[] tilingModeSelections = new KeyValuePair<string, int>[2]
+			{
+				new KeyValuePair<string, int>("Wrap", 0),
+				new KeyValuePair<string, int>("Clamp", 1),
+			};
+			parameterStackPanel.Children.Add(new SelectionParameter("Tiling Mode", tilingModeIndex, tilingModeSelections));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Stretch X", xScaleIndex, -100.0f, 100.0f));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Stretch Y", yScaleIndex, -100.0f, 100.0f));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Rotation", rotationIndex, 0.0f, 360.0f));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Offset X", xTranslateIndex, -1000000.0f, 1000000.0f));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Offset Y", yTranslateIndex, -1000000.0f, 1000000.0f));
+		}
+
+
 		public void Update()
 		{
 			parameterStackPanel.Children.Clear();
@@ -431,6 +469,38 @@ namespace ProceduralTextureGenerator
 					AddNodeName("Height To Normal");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
 					AddHeightToNormalParameters(heightIndex);
+
+					break;
+				}
+				//Shape
+				case 16:
+				{
+					int textureResolutionIndex = 0;
+					int bpcIndex = 1;
+					int shapeIndex = 2;
+					int sidesNumIndex = 3;
+
+					AddNodeName("Shape");
+					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddShapeParameters(shapeIndex, sidesNumIndex);
+
+					break;
+				}
+				//Transform
+				case 17:
+				{
+					int textureResolutionIndex = 0;
+					int bpcIndex = 1;
+					int tilingModeIndex = 2;
+					int xScaleIndex = 0;
+					int yScaleIndex = 1;
+					int rotationIndex = 2;
+					int xTranslateIndex = 3;
+					int yTranslateIndex = 4;
+
+					AddNodeName("Transform");
+					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddTransformParameters(tilingModeIndex, xScaleIndex, yScaleIndex, rotationIndex, xTranslateIndex, yTranslateIndex);
 
 					break;
 				}

@@ -2,18 +2,25 @@
 #include "RadianceMapRenderer.h"
 
 
-struct RadianceMapVertex
+RadianceMapRenderer::RadianceMapRenderer(shared_ptr<DirectXTexture> environmentMap_, int size_)
 {
-	XMFLOAT3 pos;
-	XMFLOAT2 tex;
-};
+	if(!DirectXDevice::IsInitialized())
+	{
+		throw "Device wasn't initialized";
+	}
 
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
 
-RadianceMapRenderer::RadianceMapRenderer()
-{
-	isInitialized = false;
+	environmentMap = environmentMap_;
+	size = size_;
 
-	size = 0;
+	vertexShader = DirectXObjectPool::GetVertexShader("RadianceMap");
+	pixelShader = DirectXObjectPool::GetPixelShader("RadianceMap");
+	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
+	samplerState = DirectXObjectPool::GetSamplerState("Anisotropic");
+	constantBuffer = DirectXObjectPool::GetConstantBuffer("RadianceMap");
+	polygonMesh = DirectXObjectPool::GetPolygonMesh("TextureRenderer");
 }
 
 
@@ -59,143 +66,9 @@ int RadianceMapRenderer::MipLevelsNum(int size)
 }
 
 
-HRESULT RadianceMapRenderer::Init(shared_ptr<DirectXTexture> environmentMap_, int size_)
-{
-	HRESULT hr;
-
-	isInitialized = false;
-
-	if(!DirectXDevice::IsInitialized())
-	{
-		return E_FAIL;
-	}
-
-	device = DirectXDevice::GetDevice();
-	painter = DirectXDevice::GetPainter();
-
-	environmentMap = environmentMap_;
-	size = size_;
-
-	vertexShader = DirectXObjectPool::GetVertexShader("RadianceMap");
-	if(vertexShader.get() == nullptr)
-	{
-		vertexShader = make_shared<VertexShader>();
-
-		D3D11_INPUT_ELEMENT_DESC layout[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		};
-
-		hr = vertexShader->Init(L"RadianceMapShader.fx", layout, ARRAYSIZE(layout));
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetVertexShader("RadianceMap", vertexShader);
-	}
-
-	pixelShader = DirectXObjectPool::GetPixelShader("RadianceMap");
-	if(pixelShader.get() == nullptr)
-	{
-		pixelShader = make_shared<PixelShader>();
-
-		hr = pixelShader->Init(L"RadianceMapShader.fx");
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetPixelShader("RadianceMap", pixelShader);
-	}
-
-	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
-	if(rasterizerState.get() == nullptr)
-	{
-		rasterizerState = make_shared<RasterizerState>();
-
-		hr = rasterizerState->Init(D3D11_FILL_SOLID, D3D11_CULL_BACK);
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetRasterizerState("Basic", rasterizerState);
-	}
-
-	samplerState = DirectXObjectPool::GetSamplerState("Anisotropic");
-	if(samplerState.get() == nullptr)
-	{
-		samplerState = make_shared<SamplerState>();
-
-		hr = samplerState->Init(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP, 16);
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetSamplerState("Anisotropic", samplerState);
-	}
-
-	constantBuffer = DirectXObjectPool::GetConstantBuffer("RadianceMap");
-	if(constantBuffer.get() == nullptr)
-	{
-		constantBuffer = make_shared<ConstantBuffer>();
-
-		hr = constantBuffer->Init(sizeof(RadianceMapCB));
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetConstantBuffer("RadianceMap", constantBuffer);
-	}
-
-	polygonMesh = DirectXObjectPool::GetPolygonMesh("RadianceMap");
-	if(polygonMesh.get() == nullptr)
-	{
-		polygonMesh = make_shared<PolygonMesh>();
-
-		vector<RadianceMapVertex> radianceMapVertices(4);
-
-		radianceMapVertices[0] = { XMFLOAT3(-1.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) };
-		radianceMapVertices[1] = { XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) };
-		radianceMapVertices[2] = { XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) };
-		radianceMapVertices[3] = { XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) };
-
-		vector<UINT> radianceMapIndices(6);
-
-		radianceMapIndices[0] = 0;
-		radianceMapIndices[1] = 1;
-		radianceMapIndices[2] = 2;
-		radianceMapIndices[3] = 1;
-		radianceMapIndices[4] = 3;
-		radianceMapIndices[5] = 2;
-
-		hr = polygonMesh->Init((void*) &radianceMapVertices[0], sizeof(RadianceMapVertex), radianceMapVertices.size(), &radianceMapIndices[0], radianceMapIndices.size());
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetPolygonMesh("RadianceMap", polygonMesh);
-	}
-
-	isInitialized = true;
-
-	return hr;
-}
-
-
 HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 {
 	HRESULT hr;
-
-	if(!isInitialized)
-	{
-		return E_FAIL;
-	}
 
 	int mipLevelsNum = MipLevelsNum(size);
 

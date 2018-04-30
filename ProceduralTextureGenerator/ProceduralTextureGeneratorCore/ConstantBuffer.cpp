@@ -2,35 +2,19 @@
 #include "ConstantBuffer.h"
 
 
-ConstantBuffer::ConstantBuffer()
+ConstantBuffer::ConstantBuffer(UINT byteWidth)
 {
 	constantBuffer = nullptr;
 
-	isInitialized = false;
-}
-
-
-ConstantBuffer::~ConstantBuffer()
-{
-	if(constantBuffer) constantBuffer->Release();
-}
-
-
-HRESULT ConstantBuffer::Init(UINT byteWidth)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(constantBuffer) constantBuffer->Release();
-
 	if(!DirectXDevice::IsInitialized())
 	{
-		return E_FAIL;
+		throw "Device wasn't initialized";
 	}
 
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
+
+	HRESULT hr = S_OK;
 
 	D3D11_BUFFER_DESC bufferDesc;
 	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
@@ -42,29 +26,25 @@ HRESULT ConstantBuffer::Init(UINT byteWidth)
 	hr = device->CreateBuffer(&bufferDesc, 0, &constantBuffer);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create constant buffer";
 	}
+}
 
-	isInitialized = true;
 
-	return hr;
+ConstantBuffer::~ConstantBuffer()
+{
+	if(constantBuffer) constantBuffer->Release();
 }
 
 
 void ConstantBuffer::Update(void *cbData)
 {
-	if(isInitialized)
-	{
-		painter->UpdateSubresource(constantBuffer, 0, 0, cbData, 0, 0);
-	}
+	painter->UpdateSubresource(constantBuffer, 0, 0, cbData, 0, 0);
 }
 
 
 void ConstantBuffer::Set(int slot)
 {
-	if(isInitialized)
-	{
-		painter->VSSetConstantBuffers(slot, 1, &constantBuffer);
-		painter->PSSetConstantBuffers(slot, 1, &constantBuffer);
-	}
+	painter->VSSetConstantBuffers(slot, 1, &constantBuffer);
+	painter->PSSetConstantBuffers(slot, 1, &constantBuffer);
 }

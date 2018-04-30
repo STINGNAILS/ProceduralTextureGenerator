@@ -26,8 +26,6 @@ class Camera
 {
 	protected:
 
-	bool isInitialized;
-
 	shared_ptr<ConstantBuffer> constantBuffer;
 
 	XMFLOAT3 position;
@@ -48,8 +46,6 @@ class Camera
 
 	Camera();
 	~Camera();
-
-	HRESULT Init();
 
 	virtual void Resize(float width, float height) = 0;
 

@@ -7,8 +7,6 @@ class PolygonMesh
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -22,10 +20,8 @@ class PolygonMesh
 
 	public:
 
-	PolygonMesh();
+	PolygonMesh(void *vertexData, UINT stride_, UINT vertexNum_, UINT *indexData, UINT indexNum_);
 	~PolygonMesh();
-
-	HRESULT Init(void *vertexData, UINT stride_, UINT vertexNum_, UINT *indexData, UINT indexNum_);
 
 	void Render();
 };

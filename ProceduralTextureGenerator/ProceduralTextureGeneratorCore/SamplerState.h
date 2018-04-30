@@ -7,8 +7,6 @@ class SamplerState
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -16,10 +14,8 @@ class SamplerState
 
 	public:
 
-	SamplerState();
+	SamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressMode, UINT maxAnisotropy);
 	~SamplerState();
-
-	HRESULT Init(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressMode, UINT maxAnisotropy);
 
 	void Set(int slot);
 };

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProceduralTextureGenerator"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Background="Transparent" Loaded="OnLoaded" MouseDown="OnMouseDown" MouseMove="OnMouseMove" MouseUp="OnMouseUp" MouseDoubleClick="OnMouseDoubleClick" KeyDown="OnKeyDown">
+             d:DesignHeight="300" d:DesignWidth="300" Background="Transparent" MouseDown="OnMouseDown" MouseMove="OnMouseMove" MouseUp="OnMouseUp" MouseDoubleClick="OnMouseDoubleClick" KeyDown="OnKeyDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
@@ -27,6 +27,8 @@
                     <MenuItem Header="Directional Blur" Click="AddDirectionalBlurNode"></MenuItem>
                     <MenuItem Header="Metal Reflectance" Click="AddMetalReflectanceNode"></MenuItem>
                     <MenuItem Header="Height To Normal" Click="AddHeightToNormalNode"></MenuItem>
+                    <MenuItem Header="Shape" Click="AddShapeNode"></MenuItem>
+                    <MenuItem Header="Transform" Click="AddTransformNode"></MenuItem>
                 </ContextMenu>
             </ContentControl.ContextMenu>
         </ContentControl>

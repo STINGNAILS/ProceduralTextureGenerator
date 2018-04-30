@@ -2,14 +2,11 @@
 
 #include "RenderableObject.h"
 #include "DirectXTexture.h"
-#include "GeometryHelper.h"
 
 
 class Cube : public RenderableObject
 {
 	private:
-
-	bool isInitialized;
 
 	shared_ptr<PolygonMesh> polygonMesh;
 	shared_ptr<VertexShader> vertexShader;
@@ -26,8 +23,6 @@ class Cube : public RenderableObject
 
 	Cube();
 	~Cube();
-
-	HRESULT Init();
 
 	void SetBaseColorMap(shared_ptr<DirectXTexture> baseColorMap_);
 	void SetMetallicMap(shared_ptr<DirectXTexture> metallicMap_);

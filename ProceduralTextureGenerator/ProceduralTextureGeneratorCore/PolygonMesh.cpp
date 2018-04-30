@@ -2,40 +2,22 @@
 #include "PolygonMesh.h"
 
 
-PolygonMesh::PolygonMesh()
+PolygonMesh::PolygonMesh(void *vertexData, UINT stride_, UINT vertexNum_, UINT *indexData, UINT indexNum_)
 {
 	vertexBuffer = nullptr;
 	indexBuffer = nullptr;
 
-	isInitialized = false;
-
 	indexNum = 0;
-}
-
-
-PolygonMesh::~PolygonMesh()
-{
-	if(vertexBuffer) vertexBuffer->Release();
-	if(indexBuffer) indexBuffer->Release();
-}
-
-
-HRESULT PolygonMesh::Init(void *vertexData, UINT stride_, UINT vertexNum_, UINT *indexData, UINT indexNum_)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(vertexBuffer) vertexBuffer->Release();
-	if(indexBuffer) indexBuffer->Release();
 
 	if(!DirectXDevice::IsInitialized())
 	{
-		return E_FAIL;
+		throw "Device wasn't initialized";
 	}
 
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
+
+	HRESULT hr = S_OK;
 
 	indexNum = indexNum_;
 
@@ -56,7 +38,7 @@ HRESULT PolygonMesh::Init(void *vertexData, UINT stride_, UINT vertexNum_, UINT 
 	hr = device->CreateBuffer(&vbDesc, &vbData, &vertexBuffer);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create vertex buffer";
 	}
 
 	D3D11_BUFFER_DESC ibDesc;
@@ -73,23 +55,23 @@ HRESULT PolygonMesh::Init(void *vertexData, UINT stride_, UINT vertexNum_, UINT 
 	hr = device->CreateBuffer(&ibDesc, &ibData, &indexBuffer);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create index buffer";
 	}
+}
 
-	isInitialized = true;
 
-	return hr;
+PolygonMesh::~PolygonMesh()
+{
+	if(vertexBuffer) vertexBuffer->Release();
+	if(indexBuffer) indexBuffer->Release();
 }
 
 
 void PolygonMesh::Render()
 {
-	if(isInitialized)
-	{
-		painter->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		painter->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-		painter->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	painter->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	painter->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	painter->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		painter->DrawIndexed(indexNum, 0, 0);
-	}
+	painter->DrawIndexed(indexNum, 0, 0);
 }

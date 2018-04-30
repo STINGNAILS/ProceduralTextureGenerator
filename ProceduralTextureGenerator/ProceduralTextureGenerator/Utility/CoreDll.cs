@@ -10,13 +10,10 @@ namespace ProceduralTextureGenerator
 	class CoreDll
 	{
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Init")]
-		public static extern void Init();
+		public static extern int Init();
 
-		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "BindView")]
-		public static extern void BindView(int viewIndex);
-
-		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "OverrideView")]
-		public static extern void OverrideView(int viewIndex, IntPtr viewResource);
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ResizeView")]
+		public static extern int ResizeView(int viewIndex, IntPtr viewResource);
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Navigate")]
 		public static extern void Navigate(int viewIndex, float dx, float dy, float dt);

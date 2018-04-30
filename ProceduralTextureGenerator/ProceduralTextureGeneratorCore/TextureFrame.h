@@ -22,8 +22,6 @@ class TextureFrame : public RenderableObject
 {
 	private:
 
-	bool isInitialized;
-
 	shared_ptr<PolygonMesh> polygonMesh;
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
@@ -45,8 +43,6 @@ class TextureFrame : public RenderableObject
 
 	TextureFrame();
 	~TextureFrame();
-
-	HRESULT Init();
 
 	void SetLocalPosition(float xLocal_, float yLocal_);
 	void SetPosition(float xParent, float yParent);

@@ -9,8 +9,6 @@ class BRDFLUTRenderer : public DirectXRenderer
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -23,10 +21,8 @@ class BRDFLUTRenderer : public DirectXRenderer
 
 	public:
 
-	BRDFLUTRenderer();
+	BRDFLUTRenderer(int size_);
 	~BRDFLUTRenderer();
-
-	HRESULT Init(int size_);
 
 	HRESULT Render(ID3D11Texture2D **brdfLUT);
 };

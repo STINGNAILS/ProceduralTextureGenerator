@@ -5,10 +5,6 @@
 
 class DirectXRenderer
 {
-	protected:
-
-	shared_ptr<DirectXDevice> device;
-
 	public:
 
 	DirectXRenderer();

@@ -31,13 +31,9 @@ namespace ProceduralTextureGenerator
         {
             InitializeComponent();
 
+			view.Bind(2);
+
 			isInteracting = false;
-		}
-
-
-		private void OnLoaded(object sender, RoutedEventArgs e)
-		{
-			view.Init(2);
 		}
 
 
@@ -128,6 +124,18 @@ namespace ProceduralTextureGenerator
 		private void AddHeightToNormalNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(15, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+		}
+
+
+		private void AddShapeNode(object sender, RoutedEventArgs e)
+		{
+			CoreDll.GraphViewAddNode(16, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+		}
+
+
+		private void AddTransformNode(object sender, RoutedEventArgs e)
+		{
+			CoreDll.GraphViewAddNode(17, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
 		}
 
 

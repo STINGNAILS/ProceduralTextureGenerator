@@ -6,11 +6,9 @@
 #include "UtilityFunctions.h"
 
 
-class BackgroundGrid : public RenderableObject
+class BackgroundGrid
 {
 	private:
-
-	bool isInitialized;
 
 	shared_ptr<PolygonMesh> polygonMesh;
 	shared_ptr<VertexShader> vertexShader;
@@ -24,8 +22,6 @@ class BackgroundGrid : public RenderableObject
 
 	BackgroundGrid();
 	~BackgroundGrid();
-
-	HRESULT Init();
 
 	void Render();
 };

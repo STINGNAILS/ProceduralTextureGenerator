@@ -149,14 +149,22 @@
     <ClInclude Include="TextureQuad.h">
       <Filter>Graphics\Renderable</Filter>
     </ClInclude>
-    <ClInclude Include="BackgroundGrid.h" />
     <ClInclude Include="UtilityFunctions.h">
       <Filter>MapGeneration</Filter>
     </ClInclude>
-    <ClInclude Include="SamplerState.h" />
     <ClInclude Include="NormalFunctions.h">
       <Filter>MapGeneration</Filter>
     </ClInclude>
+    <ClInclude Include="SamplerState.h">
+      <Filter>Graphics\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundGrid.h">
+      <Filter>Graphics\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceInitializer.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderCompiler.cpp">
@@ -265,13 +273,21 @@
     <ClCompile Include="TextureQuad.cpp">
       <Filter>Graphics\Renderable</Filter>
     </ClCompile>
-    <ClCompile Include="BackgroundGrid.cpp" />
     <ClCompile Include="UtilityFunctions.cpp">
       <Filter>MapGeneration</Filter>
     </ClCompile>
-    <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="NormalFunctions.cpp">
       <Filter>MapGeneration</Filter>
     </ClCompile>
+    <ClCompile Include="SamplerState.cpp">
+      <Filter>Graphics\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundGrid.cpp">
+      <Filter>Graphics\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceInitializer.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="PatternFunctions.cpp" />
   </ItemGroup>
 </Project>

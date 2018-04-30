@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProceduralTextureGenerator"
         mc:Ignorable="d"
-        Title="Procedural Texture Generator" Height="840" Width="1600" Closing="OnClosing" Closed="OnExit" KeyDown="OnKeyDown">
+        Title="Procedural Texture Generator" Height="840" Width="1600" Loaded="OnLoaded" Closing="OnClosing" Closed="OnExit" KeyDown="OnKeyDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>

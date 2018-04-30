@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ProceduralTextureGenerator"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" IsHitTestVisible="True" Background="Transparent" Loaded="OnLoaded">
+             d:DesignHeight="300" d:DesignWidth="300" IsHitTestVisible="True" Background="Transparent">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>

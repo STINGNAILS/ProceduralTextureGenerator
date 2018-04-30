@@ -178,12 +178,14 @@
     <ClInclude Include="NoiseFunctions.h" />
     <ClInclude Include="NormalFunctions.h" />
     <ClInclude Include="OutputPin.h" />
+    <ClInclude Include="PatternFunctions.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="PolygonMesh.h" />
     <ClInclude Include="Polyline.h" />
     <ClInclude Include="RadianceMapRenderer.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderableObject.h" />
+    <ClInclude Include="ResourceInitializer.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderCompiler.h" />
@@ -233,6 +235,7 @@
     <ClCompile Include="NoiseFunctions.cpp" />
     <ClCompile Include="NormalFunctions.cpp" />
     <ClCompile Include="OutputPin.cpp" />
+    <ClCompile Include="PatternFunctions.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PolygonMesh.cpp" />
     <ClCompile Include="Polyline.cpp" />
@@ -240,6 +243,7 @@
     <ClCompile Include="RadianceMapRenderer.cpp" />
     <ClCompile Include="RasterizerState.cpp" />
     <ClCompile Include="RenderableObject.cpp" />
+    <ClCompile Include="ResourceInitializer.cpp" />
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />

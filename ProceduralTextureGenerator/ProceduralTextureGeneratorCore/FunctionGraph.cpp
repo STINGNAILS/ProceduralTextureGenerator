@@ -374,10 +374,13 @@ void FunctionGraph::RemoveSelectedNode()
 
 	Validate(functionNodesCopyPtr, functionLinksCopyPtr);
 
+	if(trackedNodeIndex == selectedNodeIndex)
+	{
+		trackedNodeIndex = 0;
+	}
+
 	selectedNodeIndex = -1;
 	selectedLinkIndex = -1;
-
-	trackedNodeIndex = 0;
 }
 
 

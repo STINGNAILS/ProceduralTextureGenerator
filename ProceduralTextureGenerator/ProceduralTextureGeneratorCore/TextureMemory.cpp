@@ -2,12 +2,6 @@
 #include "TextureMemory.h"
 
 
-TextureMemory::TextureMemory()
-{
-	
-}
-
-
 TextureMemory::TextureMemory(TextureType textureType_, TextureResolution textureResolution_, BitsPerChannel bitsPerChannel_)
 {
 	textureType = textureType_;

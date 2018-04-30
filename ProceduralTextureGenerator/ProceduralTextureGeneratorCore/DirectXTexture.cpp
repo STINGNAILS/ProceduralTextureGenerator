@@ -2,11 +2,139 @@
 #include "DirectXTexture.h"
 
 
-DirectXTexture::DirectXTexture()
+DirectXTexture::DirectXTexture(TextureMemoryPtr textureMemoryPtr)
 {
 	textureSRV = nullptr;
 
-	isInitialized = false;
+	if(!DirectXDevice::IsInitialized())
+	{
+		throw "Device wasn't initialized";
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
+
+	textureType = textureMemoryPtr->GetTextureType();
+	BitsPerChannel bpc = textureMemoryPtr->GetFormat();
+
+	switch(textureType)
+	{
+		case GRAYSCALE:
+		{
+			switch(bpc)
+			{
+				case BPC8:
+				{
+					InitGrayscale8(textureMemoryPtr);
+					break;
+				}
+				case BPC16:
+				{
+					InitGrayscale16(textureMemoryPtr);
+					break;
+				}
+				case BPC32:
+				{
+					InitGrayscale32(textureMemoryPtr);
+					break;
+				}
+			}
+
+			break;
+		}
+		case COLOR:
+		{
+			switch(bpc)
+			{
+				case BPC8:
+				{
+					InitColor8(textureMemoryPtr);
+					break;
+				}
+				case BPC16:
+				{
+					InitColor16(textureMemoryPtr);
+					break;
+				}
+				case BPC32:
+				{
+					InitColor32(textureMemoryPtr);
+					break;
+				}
+			}
+
+			break;
+		}
+	}
+}
+
+
+DirectXTexture::DirectXTexture(LPCWSTR fileName)
+{
+	textureSRV = nullptr;
+
+	if(!DirectXDevice::IsInitialized())
+	{
+		throw "Device wasn't initialized";
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
+
+	HRESULT hr = S_OK;
+
+	textureType = COLOR;
+
+	ID3D11Resource *resource;
+	hr = CreateDDSTextureFromFile(device, fileName, &resource, &textureSRV);
+	if(resource) resource->Release();
+	if(FAILED(hr))
+	{
+		throw "Couldn't create texture from file";
+	}
+}
+
+
+DirectXTexture::DirectXTexture(shared_ptr<DirectXRenderer> renderer)
+{
+	textureSRV = nullptr;
+
+	if(!DirectXDevice::IsInitialized())
+	{
+		throw "Device wasn't initialized";
+	}
+
+	device = DirectXDevice::GetDevice();
+	painter = DirectXDevice::GetPainter();
+
+	HRESULT hr = S_OK;
+
+	textureType = COLOR;
+
+	ID3D11Texture2D *texture = nullptr;
+	hr = renderer->Render(&texture);
+	if(FAILED(hr))
+	{
+		if(texture) texture->Release();
+		throw "Couldn't create texture by rendering";
+	}
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	texture->GetDesc(&textureDesc);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = (textureDesc.MiscFlags & D3D11_RESOURCE_MISC_TEXTURECUBE) ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.TextureCube.MostDetailedMip = 0;
+	srvDesc.TextureCube.MipLevels = textureDesc.MipLevels;
+
+	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
+	texture->Release();
+	if(FAILED(hr))
+	{
+		throw "Couldn't create shader resource view";
+	}
 }
 
 
@@ -31,7 +159,7 @@ int DirectXTexture::GetMipLevelsNum(int textureSize)
 }
 
 
-HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
+void DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -85,7 +213,7 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create texture";
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -96,14 +224,15 @@ HRESULT DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MipLevels = -1;
 
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
-
 	texture->Release();
-
-	return hr;
+	if(FAILED(hr))
+	{
+		throw "Couldn't create shader resource view";
+	}
 }
 
 
-HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
+void DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -157,7 +286,7 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create texture";
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -168,14 +297,15 @@ HRESULT DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MipLevels = -1;
 
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
-
 	texture->Release();
-
-	return hr;
+	if(FAILED(hr))
+	{
+		throw "Couldn't create shader resource view";
+	}
 }
 
 
-HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
+void DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -229,7 +359,7 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create texture";
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -240,14 +370,15 @@ HRESULT DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MipLevels = -1;
 
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
-
 	texture->Release();
-
-	return hr;
+	if(FAILED(hr))
+	{
+		throw "Couldn't create shader resource view";
+	}
 }
 
 
-HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
+void DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -301,7 +432,7 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create texture";
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -312,14 +443,15 @@ HRESULT DirectXTexture::InitColor8(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MipLevels = -1;
 
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
-
 	texture->Release();
-
-	return hr;
+	if(FAILED(hr))
+	{
+		throw "Couldn't create shader resource view";
+	}
 }
 
 
-HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
+void DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -373,7 +505,7 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create texture";
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -384,14 +516,15 @@ HRESULT DirectXTexture::InitColor16(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MipLevels = -1;
 
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
-
 	texture->Release();
-
-	return hr;
+	if(FAILED(hr))
+	{
+		throw "Couldn't create shader resource view";
+	}
 }
 
 
-HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
+void DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 {
 	HRESULT hr = S_OK;
 
@@ -445,7 +578,7 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	hr = device->CreateTexture2D(&textureDesc, &textureData[0], &texture);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create texture";
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -456,170 +589,11 @@ HRESULT DirectXTexture::InitColor32(TextureMemoryPtr textureMemoryPtr)
 	srvDesc.Texture2D.MipLevels = -1;
 
 	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
-
-	texture->Release();
-
-	return hr;
-}
-
-
-HRESULT DirectXTexture::InitFromMemory(TextureMemoryPtr textureMemoryPtr)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(textureSRV) textureSRV->Release();
-
-	if(!DirectXDevice::IsInitialized())
-	{
-		return E_FAIL;
-	}
-
-	device = DirectXDevice::GetDevice();
-	painter = DirectXDevice::GetPainter();
-
-	textureType = textureMemoryPtr->GetTextureType();
-	BitsPerChannel bpc = textureMemoryPtr->GetFormat();
-
-	switch(textureType)
-	{
-		case GRAYSCALE:
-		{
-			switch(bpc)
-			{
-				case BPC8:
-				{
-					hr = InitGrayscale8(textureMemoryPtr);
-					break;
-				}
-				case BPC16:
-				{
-					hr = InitGrayscale16(textureMemoryPtr);
-					break;
-				}
-				case BPC32:
-				{
-					hr = InitGrayscale32(textureMemoryPtr);
-					break;
-				}
-			}
-
-			break;
-		}
-		case COLOR:
-		{
-			switch(bpc)
-			{
-				case BPC8:
-				{
-					hr = InitColor8(textureMemoryPtr);
-					break;
-				}
-				case BPC16:
-				{
-					hr = InitColor16(textureMemoryPtr);
-					break;
-				}
-				case BPC32:
-				{
-					hr = InitColor32(textureMemoryPtr);
-					break;
-				}
-			}
-
-			break;
-		}
-	}
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-
-	isInitialized = true;
-
-	return hr;
-}
-
-
-HRESULT DirectXTexture::InitFromFile(LPCWSTR fileName)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(textureSRV) textureSRV->Release();
-
-	if(!DirectXDevice::IsInitialized())
-	{
-		return E_FAIL;
-	}
-
-	device = DirectXDevice::GetDevice();
-	painter = DirectXDevice::GetPainter();
-
-	textureType = COLOR;
-
-	ID3D11Resource *resource;
-	hr = CreateDDSTextureFromFile(device, fileName, &resource, &textureSRV);
-	if(resource) resource->Release();
-	if(FAILED(hr))
-	{
-		return hr;
-	}
-	
-	isInitialized = true;
-	
-	return hr;
-}
-
-
-HRESULT DirectXTexture::InitFromRenderer(shared_ptr<DirectXRenderer> renderer)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(textureSRV) textureSRV->Release();
-
-	if(!DirectXDevice::IsInitialized())
-	{
-		return E_FAIL;
-	}
-
-	device = DirectXDevice::GetDevice();
-	painter = DirectXDevice::GetPainter();
-
-	textureType = COLOR;
-
-	ID3D11Texture2D *texture = nullptr;
-	hr = renderer->Render(&texture);
-	if(FAILED(hr))
-	{
-		if(texture) texture->Release();
-		return hr;
-	}
-
-	D3D11_TEXTURE2D_DESC textureDesc;
-	texture->GetDesc(&textureDesc);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = textureDesc.Format;
-	srvDesc.ViewDimension = (textureDesc.MiscFlags & D3D11_RESOURCE_MISC_TEXTURECUBE) ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = textureDesc.MipLevels;
-	
-	hr = device->CreateShaderResourceView(texture, &srvDesc, &textureSRV);
 	texture->Release();
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create shader resource view";
 	}
-
-	isInitialized = true;
-
-	return hr;
 }
 
 
@@ -631,9 +605,6 @@ TextureType DirectXTexture::GetTextureType()
 
 void DirectXTexture::Set(int slot)
 {
-	if(isInitialized)
-	{
-		painter->VSSetShaderResources(slot, 1, &textureSRV);
-		painter->PSSetShaderResources(slot, 1, &textureSRV);
-	}
+	painter->VSSetShaderResources(slot, 1, &textureSRV);
+	painter->PSSetShaderResources(slot, 1, &textureSRV);
 }

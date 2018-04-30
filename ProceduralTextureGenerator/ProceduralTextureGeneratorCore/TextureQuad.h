@@ -8,8 +8,6 @@ class TextureQuad : public RenderableObject
 {
 	private:
 
-	bool isInitialized;
-
 	shared_ptr<PolygonMesh> polygonMesh;
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
@@ -22,8 +20,6 @@ class TextureQuad : public RenderableObject
 
 	TextureQuad();
 	~TextureQuad();
-
-	HRESULT Init();
 
 	void SetTexture(shared_ptr<DirectXTexture> texture_);
 

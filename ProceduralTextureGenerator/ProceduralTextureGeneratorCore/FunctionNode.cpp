@@ -19,7 +19,6 @@ FunctionNode::FunctionNode(int functionIndex_)
 	floatParameters = FunctionFloatParametersBase(functionIndex);
 
 	textureFramePtr = make_shared<TextureFrame>();
-	textureFramePtr->Init();
 	textureFramePtr->SetLocalPosition(0.0f, 0.0f);
 
 	int functionInputNodesNum = FunctionInputNodesNum(functionIndex);
@@ -31,14 +30,12 @@ FunctionNode::FunctionNode(int functionIndex_)
 		inputLinkIndices[i] = -1;
 
 		inputPinPtrs[i] = make_shared<OutputPin>();
-		inputPinPtrs[i]->Init();
 		inputPinPtrs[i]->SetLocalPosition(-31.0f + 62.0f * ((i + 1.0f) / (functionInputNodesNum + 1.0f)), 31.0f);
 	}
 
 	if(functionIndex > 4)
 	{
 		outputPinPtr = make_shared<OutputPin>();
-		outputPinPtr->Init();
 		outputPinPtr->SetLocalPosition(0.0f, -31.0f);
 	}
 }
@@ -128,8 +125,7 @@ void FunctionNode::SetTextureMemory(TextureMemoryPtr textureMemoryPtr_)
 {
 	textureMemoryPtr = textureMemoryPtr_;
 
-	directXTexturePtr = make_shared<DirectXTexture>();
-	directXTexturePtr->InitFromMemory(textureMemoryPtr);
+	directXTexturePtr = make_shared<DirectXTexture>(textureMemoryPtr);
 
 	textureFramePtr->SetTexture(directXTexturePtr);
 }

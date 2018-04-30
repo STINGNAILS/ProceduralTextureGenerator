@@ -34,6 +34,8 @@ namespace ProceduralTextureGenerator
 		{
 			InitializeComponent();
 
+			directXView.OnRender = OnRender;
+
 			isNavigating = false;
 		}
 
@@ -41,7 +43,6 @@ namespace ProceduralTextureGenerator
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			directXView.WindowOwner = (new System.Windows.Interop.WindowInteropHelper(MainWindow.GetWindow(this))).Handle;
-			directXView.OnRender = OnRender;
 		}
 
 
@@ -65,17 +66,21 @@ namespace ProceduralTextureGenerator
 		{
 			if(isNewSurface)
 			{
-				CoreDll.OverrideView(viewIndex, surface);
+				int result = CoreDll.ResizeView(viewIndex, surface);
+				if(result == 1)
+				{
+					MessageBox.Show("View initialization error; the program will be shut down");
+					ParentHelper.GetParentMainWindow(this).Close();
+				}
 			}
 
 			CoreDll.Render(viewIndex);
 		}
 
 
-		public void Init(int viewIndex_)
+		public void Bind(int viewIndex_)
 		{
 			viewIndex = viewIndex_;
-			CoreDll.BindView(viewIndex);
 		}
 
 

@@ -20,8 +20,6 @@ class OutputPin : public RenderableObject
 {
 	private:
 
-	bool isInitialized;
-
 	shared_ptr<PolygonMesh> polygonMesh;
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
@@ -36,15 +34,13 @@ class OutputPin : public RenderableObject
 	float xGlobal;
 	float yGlobal;
 
-	const float r0 = 6.0f;
-	const float r1 = 1.732051f * 2.0f;
-
 	public:
+
+	static const float r0;
+	static const float r1;
 
 	OutputPin();
 	~OutputPin();
-
-	HRESULT Init();
 
 	XMFLOAT2 GetPosition();
 

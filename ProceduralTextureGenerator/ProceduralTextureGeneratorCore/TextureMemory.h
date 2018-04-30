@@ -54,7 +54,6 @@ class TextureMemory
 
 	public:
 
-	TextureMemory();
 	TextureMemory(TextureType textureType_, TextureResolution textureResolution_, BitsPerChannel bitsPerChannel_);
 	~TextureMemory();
 

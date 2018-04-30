@@ -8,8 +8,6 @@ class PixelShader
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -17,10 +15,8 @@ class PixelShader
 
 	public:
 
-	PixelShader();
+	PixelShader(LPCWSTR name);
 	~PixelShader();
-
-	HRESULT Init(LPCWSTR name);
 
 	void Set();
 };

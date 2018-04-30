@@ -2,35 +2,19 @@
 #include "RasterizerState.h"
 
 
-RasterizerState::RasterizerState()
+RasterizerState::RasterizerState(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode)
 {
 	rasterizerState = nullptr;
 
-	isInitialized = false;
-}
-
-
-RasterizerState::~RasterizerState()
-{
-	if(rasterizerState) rasterizerState->Release();
-}
-
-
-HRESULT RasterizerState::Init(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(rasterizerState) rasterizerState->Release();
-
 	if(!DirectXDevice::IsInitialized())
 	{
-		return E_FAIL;
+		throw "Device wasn't initialized";
 	}
 
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
+
+	HRESULT hr = S_OK;
 
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
@@ -42,19 +26,18 @@ HRESULT RasterizerState::Init(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode
 	hr = device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create rasterizer state";
 	}
+}
 
-	isInitialized = true;
 
-	return hr;
+RasterizerState::~RasterizerState()
+{
+	if(rasterizerState) rasterizerState->Release();
 }
 
 
 void RasterizerState::Set()
 {
-	if(isInitialized)
-	{
-		painter->RSSetState(rasterizerState);
-	}
+	painter->RSSetState(rasterizerState);
 }

@@ -13,8 +13,6 @@ class DirectXTexture
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 	
@@ -24,21 +22,19 @@ class DirectXTexture
 
 	int GetMipLevelsNum(int textureSize);
 
-	HRESULT InitGrayscale8(TextureMemoryPtr textureMemoryPtr);
-	HRESULT InitGrayscale16(TextureMemoryPtr textureMemoryPtr);
-	HRESULT InitGrayscale32(TextureMemoryPtr textureMemoryPtr);
-	HRESULT InitColor8(TextureMemoryPtr textureMemoryPtr);
-	HRESULT InitColor16(TextureMemoryPtr textureMemoryPtr);
-	HRESULT InitColor32(TextureMemoryPtr textureMemoryPtr);
+	void InitGrayscale8(TextureMemoryPtr textureMemoryPtr);
+	void InitGrayscale16(TextureMemoryPtr textureMemoryPtr);
+	void InitGrayscale32(TextureMemoryPtr textureMemoryPtr);
+	void InitColor8(TextureMemoryPtr textureMemoryPtr);
+	void InitColor16(TextureMemoryPtr textureMemoryPtr);
+	void InitColor32(TextureMemoryPtr textureMemoryPtr);
 
 	public:
 
-	DirectXTexture();
+	DirectXTexture(TextureMemoryPtr textureMemoryPtr);
+	DirectXTexture(LPCWSTR fileName);
+	DirectXTexture(shared_ptr<DirectXRenderer> renderer);
 	~DirectXTexture();
-
-	HRESULT InitFromMemory(TextureMemoryPtr textureMemoryPtr);
-	HRESULT InitFromFile(LPCWSTR fileName);
-	HRESULT InitFromRenderer(shared_ptr<DirectXRenderer> renderer);
 
 	TextureType GetTextureType();
 

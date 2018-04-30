@@ -8,39 +8,13 @@ Camera::Camera()
 	position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	velocity = 1.0f;
 
-	isInitialized = false;
+	constantBuffer = DirectXObjectPool::GetConstantBuffer("Camera");
 }
 
 
 Camera::~Camera()
 {
 
-}
-
-
-HRESULT Camera::Init()
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-	
-	constantBuffer = DirectXObjectPool::GetConstantBuffer("Camera");
-	if(constantBuffer.get() == nullptr)
-	{
-		constantBuffer = make_shared<ConstantBuffer>();
-
-		hr = constantBuffer->Init(sizeof(CameraCB));
-		if(FAILED(hr))
-		{
-			return hr;
-		}
-
-		DirectXObjectPool::SetConstantBuffer("Camera", constantBuffer);
-	}
-
-	isInitialized = true;
-
-	return hr;
 }
 
 
@@ -82,16 +56,13 @@ const XMMATRIX Camera::ViewProjCentered()
 
 void Camera::Set()
 {
-	if(isInitialized)
-	{
-		CameraCB cameraCB;
-		XMStoreFloat4x4(&cameraCB.viewProj, XMMatrixTranspose(ViewProj()));
-		XMStoreFloat4x4(&cameraCB.viewProjInverse, XMMatrixTranspose(XMMatrixInverse(nullptr, ViewProj())));
-		XMStoreFloat4x4(&cameraCB.viewProjCentered, XMMatrixTranspose(ViewProjCentered()));
-		cameraCB.cameraPosW = position;
-		cameraCB.scale = zoom;
+	CameraCB cameraCB;
+	XMStoreFloat4x4(&cameraCB.viewProj, XMMatrixTranspose(ViewProj()));
+	XMStoreFloat4x4(&cameraCB.viewProjInverse, XMMatrixTranspose(XMMatrixInverse(nullptr, ViewProj())));
+	XMStoreFloat4x4(&cameraCB.viewProjCentered, XMMatrixTranspose(ViewProjCentered()));
+	cameraCB.cameraPosW = position;
+	cameraCB.scale = zoom;
 
-		constantBuffer->Update(&cameraCB);
-		constantBuffer->Set(0);
-	}
+	constantBuffer->Update(&cameraCB);
+	constantBuffer->Set(0);
 }

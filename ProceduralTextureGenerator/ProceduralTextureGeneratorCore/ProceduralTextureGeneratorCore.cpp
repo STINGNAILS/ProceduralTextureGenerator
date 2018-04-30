@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "DirectXDevice.h"
 #include "DirectXView.h"
+#include "ResourceInitializer.h"
 #include "Scene.h"
 #include "Camera2D.h"
 #include "Camera3D.h"
@@ -28,99 +29,105 @@ shared_ptr<Cube> cube1;
 
 shared_ptr<TextureQuad> textureQuad;
 
+string errorMessage;
 
-CPP_API void Init()
+
+CPP_API int Init()
 {
-	DirectXDevice::Init();
+	try
+	{
+		DirectXDevice::Init();
+		ResourceInitializer::InitializeRecources();
 
-	scenes[1] = make_shared<Scene>();
-	scenes[2] = make_shared<Scene>();
-	scenes[3] = make_shared<Scene>();
+		scenes[1] = make_shared<Scene>();
+		scenes[2] = make_shared<Scene>();
+		scenes[3] = make_shared<Scene>();
 
-	shared_ptr<Camera3D> camera1 = make_shared<Camera3D>();
-	camera1->Init();
-	camera1->SetYFOV(0.785398f);
-	camera1->SetZNEAR(0.1f);
-	camera1->SetZFAR(1000.0f);
-	camera1->SetPosition(XMFLOAT3(0.0f, 5.0f, 0.0f));
-	camera1->SetRotation(XMFLOAT2(-1.57f, 3.14f));
-	camera1->SetVelocity(5.0f);
+		shared_ptr<Camera3D> camera1 = make_shared<Camera3D>();
+		camera1->SetYFOV(0.785398f);
+		camera1->SetZNEAR(0.1f);
+		camera1->SetZFAR(1000.0f);
+		camera1->SetPosition(XMFLOAT3(0.0f, 5.0f, 0.0f));
+		camera1->SetRotation(XMFLOAT2(-1.57f, 3.14f));
+		camera1->SetVelocity(5.0f);
 
-	scenes[1]->SetCamera(camera1);
-
-
-	shared_ptr<Environment> environment1 = make_shared<Environment>();
-	environment1->Init();
-	environment1->InitEnvironment(L"Cubemap.dds");
-
-	DirectionalLight dirLight1;
-	dirLight1.intensity = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	dirLight1.direction = XMFLOAT4(0.4f, -0.824621f, -0.4f, 0.0f);
-	environment1->AddDirectionalLight(dirLight1);
-
-	scenes[1]->SetEnvironment(environment1);
+		scenes[1]->SetCamera(camera1);
 
 
-	shared_ptr<BackgroundGrid> backgroundGrid = make_shared<BackgroundGrid>();
-	backgroundGrid->Init();
+		shared_ptr<Environment> environment1 = make_shared<Environment>(L"Cubemap.dds");
 
-	scenes[2]->SetBackground(backgroundGrid);
+		DirectionalLight dirLight1;
+		dirLight1.intensity = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		dirLight1.direction = XMFLOAT4(0.4f, -0.824621f, -0.4f, 0.0f);
+		environment1->AddDirectionalLight(dirLight1);
 
-
-	functionGraph = make_shared<FunctionGraph>();
-
-	scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
-
-
-	cube1 = make_shared<Cube>();
-	cube1->Init();
-	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-	cube1->SetNormalMap(functionGraph->GetNormalTexture());
-
-	scenes[1]->AddRenderableObject(cube1, "Cube1");
+		scenes[1]->SetEnvironment(environment1);
 
 
-	shared_ptr<Camera2D> camera2 = make_shared<Camera2D>();
-	camera2->Init();
-	camera2->SetPosition(XMFLOAT2(0.0f, 0.0f));
-	camera2->SetVelocity(5.0f);
+		shared_ptr<BackgroundGrid> backgroundGrid = make_shared<BackgroundGrid>();
 
-	scenes[2]->SetCamera(camera2);
+		scenes[2]->SetBackground(backgroundGrid);
 
 
-	shared_ptr<Camera2D> camera3 = make_shared<Camera2D>();
-	camera3->Init();
-	camera3->SetPosition(XMFLOAT2(0.0f, 0.0f));
-	camera3->SetVelocity(10.0f);
+		functionGraph = make_shared<FunctionGraph>();
 
-	scenes[3]->SetCamera(camera3);
+		scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
 
 
-	textureQuad = make_shared<TextureQuad>();
-	textureQuad->Init();
-	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+		cube1 = make_shared<Cube>();
+		cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
+		cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
+		cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
+		cube1->SetNormalMap(functionGraph->GetNormalTexture());
 
-	scenes[3]->AddRenderableObject(textureQuad, "TextureQuad");
+		scenes[1]->AddRenderableObject(cube1, "Cube1");
+
+
+		shared_ptr<Camera2D> camera2 = make_shared<Camera2D>();
+		camera2->SetPosition(XMFLOAT2(0.0f, 0.0f));
+		camera2->SetVelocity(5.0f);
+
+		scenes[2]->SetCamera(camera2);
+
+
+		shared_ptr<Camera2D> camera3 = make_shared<Camera2D>();
+		camera3->SetPosition(XMFLOAT2(0.0f, 0.0f));
+		camera3->SetVelocity(10.0f);
+
+		scenes[3]->SetCamera(camera3);
+
+
+		textureQuad = make_shared<TextureQuad>();
+		textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+
+		scenes[3]->AddRenderableObject(textureQuad, "TextureQuad");
+	}
+	catch(string e)
+	{
+		errorMessage = e;
+		return 1;
+	}
+
+	return 0;
 }
 
 
-CPP_API void BindView(int viewIndex)
+CPP_API int ResizeView(int viewIndex, void *viewResource)
 {
-	shared_ptr<DirectXView> view = make_shared<DirectXView>();
+	try
+	{
+		shared_ptr<DirectXView> view = make_shared<DirectXView>(viewResource);
 
-	scenes[viewIndex]->SetView(view);
-}
+		scenes[viewIndex]->SetView(view);
+		scenes[viewIndex]->GetCamera()->Resize(view->GetWidth(), view->GetHeight());
+	}
+	catch(string e)
+	{
+		errorMessage = e;
+		return 1;
+	}
 
-
-CPP_API void OverrideView(int viewIndex, void *viewResource)
-{
-	shared_ptr<DirectXView> view = scenes[viewIndex]->GetView();
-	shared_ptr<Camera> camera = scenes[viewIndex]->GetCamera();
-
-	view->Init(viewResource);
-	camera->Resize(view->GetWidth(), view->GetHeight());
+	return 0;
 }
 
 
@@ -144,6 +151,10 @@ CPP_API void Render(int viewIndex)
 
 CPP_API void Release()
 {
+	cube1 = nullptr;
+	textureQuad = nullptr;
+	functionGraph = nullptr;
+
 	scenes.clear();
 
 	/*ID3D11Debug* debug = 0;
@@ -153,12 +164,17 @@ CPP_API void Release()
 }
 
 
+//CPP_API string GetErrorMessage()
+//{
+//	return errorMessage;
+//}
+
+
 CPP_API void GraphViewAddNode(int functionIndex, float x, float y)
 {
 	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 
 	functionGraph->AddNode(functionIndex, world.x, world.y);
-	functionGraph->Process();
 }
 
 

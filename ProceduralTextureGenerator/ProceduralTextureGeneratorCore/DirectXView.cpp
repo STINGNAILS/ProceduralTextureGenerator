@@ -2,7 +2,7 @@
 #include "DirectXView.h"
 
 
-DirectXView::DirectXView()
+DirectXView::DirectXView(void *viewResource)
 {
 	renderTargetView = nullptr;
 	depthStencilView = nullptr;
@@ -10,39 +10,15 @@ DirectXView::DirectXView()
 	depthStencilBuffer = nullptr;
 	depthStencilState = nullptr;
 
-	isInitialized = false;
-}
-
-
-DirectXView::~DirectXView()
-{
-	if(depthStencilState) depthStencilState->Release();
-	if(viewBuffer) viewBuffer->Release();
-	if(depthStencilBuffer) depthStencilBuffer->Release();
-	if(renderTargetView) renderTargetView->Release();
-	if(depthStencilView) depthStencilView->Release();
-}
-
-
-HRESULT DirectXView::Init(void *viewResource)
-{
-	HRESULT hr = S_OK;
-
-	isInitialized = false;
-
-	if(depthStencilState) depthStencilState->Release();
-	if(viewBuffer) viewBuffer->Release();
-	if(depthStencilBuffer) depthStencilBuffer->Release();
-	if(renderTargetView) renderTargetView->Release();
-	if(depthStencilView) depthStencilView->Release();
-	
 	if(!DirectXDevice::IsInitialized())
 	{
-		return E_FAIL;
+		throw "Device wasn't initialized";
 	}
 
 	device = DirectXDevice::GetDevice();
 	painter = DirectXDevice::GetPainter();
+
+	HRESULT hr = S_OK;
 
 	IUnknown *unknownResource = (IUnknown*) viewResource;
 
@@ -50,7 +26,7 @@ HRESULT DirectXView::Init(void *viewResource)
 	hr = unknownResource->QueryInterface(__uuidof(IDXGIResource), (void**) (&dxgiResource));
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't query view resource as DXGI";
 	}
 
 	HANDLE sharedHandle;
@@ -58,7 +34,7 @@ HRESULT DirectXView::Init(void *viewResource)
 	dxgiResource->Release();
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't get shared handle of DXGI resource";
 	}
 
 
@@ -66,23 +42,23 @@ HRESULT DirectXView::Init(void *viewResource)
 	hr = device->OpenSharedResource(sharedHandle, __uuidof(ID3D11Resource), (void**) (&tempResource));
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't open shared resource";
 	}
 
 	hr = tempResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**) (&viewBuffer));
 	tempResource->Release();
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't query shared resource as texture";
 	}
-	
+
 	IDXGISurface *dxgiSurface;
 	hr = viewBuffer->QueryInterface(__uuidof(IDXGISurface), (void**) (&dxgiSurface));
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't query texture as DXGI surface";
 	}
-	
+
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
 	rtvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
@@ -91,7 +67,7 @@ HRESULT DirectXView::Init(void *viewResource)
 	hr = device->CreateRenderTargetView(viewBuffer, &rtvDesc, &renderTargetView);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create render target view";
 	}
 
 	D3D11_TEXTURE2D_DESC viewDesc;
@@ -114,13 +90,13 @@ HRESULT DirectXView::Init(void *viewResource)
 	hr = device->CreateTexture2D(&depthStencilDesc, 0, &depthStencilBuffer);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create depth stencil buffer";
 	}
 
 	hr = device->CreateDepthStencilView(depthStencilBuffer, 0, &depthStencilView);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create depth stencil view";
 	}
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
@@ -132,7 +108,7 @@ HRESULT DirectXView::Init(void *viewResource)
 	hr = device->CreateDepthStencilState(&depthStencilStateDesc, &depthStencilState);
 	if(FAILED(hr))
 	{
-		return hr;
+		throw "Couldn't create depth stencil state";
 	}
 
 	viewport.Width = (float) viewDesc.Width;
@@ -141,10 +117,16 @@ HRESULT DirectXView::Init(void *viewResource)
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
+}
 
-	isInitialized = true;
 
-	return hr;
+DirectXView::~DirectXView()
+{
+	if(depthStencilState) depthStencilState->Release();
+	if(viewBuffer) viewBuffer->Release();
+	if(depthStencilBuffer) depthStencilBuffer->Release();
+	if(renderTargetView) renderTargetView->Release();
+	if(depthStencilView) depthStencilView->Release();
 }
 
 
@@ -162,23 +144,17 @@ UINT DirectXView::GetHeight()
 
 void DirectXView::BeginRender()
 {
-	if(isInitialized)
-	{
-		const float clearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
-		painter->ClearRenderTargetView(renderTargetView, clearColor);
-		painter->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		
-		painter->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
-		painter->OMSetDepthStencilState(depthStencilState, 1);
-		painter->RSSetViewports(1, &viewport);
-	}
+	const float clearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	painter->ClearRenderTargetView(renderTargetView, clearColor);
+	painter->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	
+	painter->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+	painter->OMSetDepthStencilState(depthStencilState, 1);
+	painter->RSSetViewports(1, &viewport);
 }
 
 
 void DirectXView::FinishRender()
 {
-	if(isInitialized)
-	{
-		painter->Flush();
-	}
+	painter->Flush();
 }

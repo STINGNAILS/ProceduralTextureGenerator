@@ -7,8 +7,6 @@ class RasterizerState
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -16,10 +14,8 @@ class RasterizerState
 
 	public:
 
-	RasterizerState();
+	RasterizerState(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode);
 	~RasterizerState();
-
-	HRESULT Init(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode);
 
 	void Set();
 };

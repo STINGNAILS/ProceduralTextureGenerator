@@ -7,8 +7,6 @@ class ConstantBuffer
 {
 	private:
 
-	bool isInitialized;
-
 	ID3D11Device *device;
 	ID3D11DeviceContext *painter;
 
@@ -16,10 +14,8 @@ class ConstantBuffer
 
 	public:
 
-	ConstantBuffer();
+	ConstantBuffer(UINT byteWidth);
 	~ConstantBuffer();
-
-	HRESULT Init(UINT byteWidth);
 
 	void Update(void *cbData);
 	void Set(int slot);
