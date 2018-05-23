@@ -27,3 +27,19 @@ TextureMemoryPtr BackgroundGridTexture()
 
 	return backgroundGridTexturePtr;
 }
+
+
+TextureMemoryPtr NotProcessedTexture()
+{
+	TextureMemoryPtr notProcessedTexturePtr = make_shared<TextureMemory>(GRAYSCALE, RES16, BPC8);
+
+	for(int i = 0; i < RES16; i++)
+	{
+		for(int j = 0; j < RES16; j++)
+		{
+			notProcessedTexturePtr->SetValue(i, j, XMFLOAT2(0.0f, 1.0f));
+		}
+	}
+
+	return notProcessedTexturePtr;
+}

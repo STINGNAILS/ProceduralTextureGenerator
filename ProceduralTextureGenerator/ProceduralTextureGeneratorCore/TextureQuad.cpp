@@ -7,7 +7,7 @@ TextureQuad::TextureQuad()
 	vertexShader = DirectXObjectPool::GetVertexShader("TextureQuad");
 	pixelShader = DirectXObjectPool::GetPixelShader("TextureQuadColor");
 	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
-	samplerState = DirectXObjectPool::GetSamplerState("Basic");
+	samplerState = DirectXObjectPool::GetSamplerState("LinearClamp");
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("TextureQuad");
 }
 

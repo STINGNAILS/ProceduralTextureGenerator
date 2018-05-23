@@ -6,18 +6,26 @@
 #include "FunctionLink.h"
 #include "Function.h"
 #include "TextureFrame.h"
-#include "OutputPin.h"
+#include "Port.h"
+#include "UtilityFunctions.h"
 
 
 #define FunctionNodePtr shared_ptr<FunctionNode>
+
+
+enum CalculatedState
+{
+	NOT_CALCULATED,
+	BEING_CALCULATED,
+	CALCULATED
+};
 
 
 class FunctionNode
 {
 	private:
 
-	bool isSelected;
-	bool isCalculated;
+	CalculatedState calculatedState;
 
 	vector<int> inputLinkIndices;
 	vector<int> outputLinkIndices;
@@ -27,6 +35,8 @@ class FunctionNode
 
 	int functionIndex;
 
+	bool isSelected;
+
 	TextureMemoryPtr textureMemoryPtr;
 	DirectXTexturePtr directXTexturePtr;
 
@@ -34,8 +44,8 @@ class FunctionNode
 	float yGlobal;
 
 	TextureFramePtr textureFramePtr;
-	vector<OutputPinPtr> inputPinPtrs;
-	OutputPinPtr outputPinPtr;
+	vector<PortPtr> inputPortPtrs;
+	PortPtr outputPortPtr;
 
 	public:
 
@@ -51,19 +61,19 @@ class FunctionNode
 	TextureMemoryPtr GetTextureMemory();
 	DirectXTexturePtr GetDirectXTexture();
 	XMFLOAT2 GetPosition();
-	vector<XMFLOAT2> GetInputPinPositions();
-	XMFLOAT2 GetOutputPinPosition();
+	vector<XMFLOAT2> GetInputPortPositions();
+	XMFLOAT2 GetOutputPortPosition();
 
 	void SetTextureMemory(TextureMemoryPtr textureMemoryPtr_);
+	void SetInputPortTextureType(int inputPortIndex, TextureType textureType);
 	void SetPosition(float xParent, float yParent);
 	void SetIntParameter(int parameterIndex, int value);
 	void SetFloatParameter(int parameterIndex, float value);
 
-	bool IsCalculated();
-	void RequestCalculation();
-	void MarkAsCalculated();
+	CalculatedState GetCalculatedState();
+	void SetCalculatedState(CalculatedState calculatedState_);
 
-	void AddInputLink(int inputPinIndex, int inputLinkIndex);
+	void AddInputLink(int inputPortIndex, int inputLinkIndex);
 	void AddOutputLink(int outputLinkIndex);
 
 	void RemoveInputLink(int inputLinkIndex);

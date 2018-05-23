@@ -56,6 +56,7 @@ void Scene::SetEnvironment(shared_ptr<Environment> environment_)
 
 void Scene::AddRenderableObject(shared_ptr<RenderableObject> renderableObject, string name)
 {
+	lock_guard<mutex> lock(renderableObjectsMutex);
 	renderableObjects[name] = renderableObject;
 }
 
@@ -109,11 +110,12 @@ void Scene::Render()
 			environment->Set();
 		}
 
+		unique_lock<mutex> lock(renderableObjectsMutex);
 		for(auto it = renderableObjects.begin(); it != renderableObjects.end(); it++)
 		{
 			it->second->Render();
 		}
-
+		lock.unlock();
 
 		view->FinishRender();
 	}

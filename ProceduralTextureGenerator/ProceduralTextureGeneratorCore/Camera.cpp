@@ -8,6 +8,9 @@ Camera::Camera()
 	position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	velocity = 1.0f;
 
+	w = 1.0f;
+	h = 1.0f;
+
 	constantBuffer = DirectXObjectPool::GetConstantBuffer("Camera");
 }
 

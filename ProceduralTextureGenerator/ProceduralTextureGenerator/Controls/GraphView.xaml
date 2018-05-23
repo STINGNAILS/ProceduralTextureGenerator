@@ -5,32 +5,50 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProceduralTextureGenerator"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Background="Transparent" MouseDown="OnMouseDown" MouseMove="OnMouseMove" MouseUp="OnMouseUp" MouseDoubleClick="OnMouseDoubleClick" KeyDown="OnKeyDown">
+             d:DesignHeight="300" d:DesignWidth="300" Background="Transparent" MouseDown="OnMouseDown" MouseMove="OnMouseMove" MouseUp="OnMouseUp" MouseDoubleClick="OnMouseDoubleClick" MouseWheel="OnMouseWheel" KeyDown="OnKeyDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
+        <StackPanel Orientation="Horizontal" Background="#BF404040" Panel.ZIndex="2">
+            <TextBlock x:Name="ObjectViewTitleName" Text="Graph View" FontFamily="Segoe UI Semibold" FontSize="14" HorizontalAlignment="Left" Foreground="White" Margin="15,2,15,0" Grid.Row="0"/>
+            <Border Height="24" BorderThickness="1,0,1,0" BorderBrush="White"/>
+            <Menu Panel.ZIndex="2" Background="{x:Null}" Margin="2,0,0,0">
+                <MenuItem Header="_Scope" Click="ScopeGraph" FontFamily="Segoe UI" FontSize="14" Foreground="Silver" Padding="1,0,3,0" Margin="0,1,0,0">
+                    <MenuItem.Icon>
+                        <Path Width="15" Height="15" Stretch="Uniform" Fill="DarkRed" Data="{StaticResource Encompass}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </Menu>
+        </StackPanel>
+
         <ContentControl Grid.RowSpan="2">
             <local:View x:Name="view"/>
             <ContentControl.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Uniform Color" Click="AddUniformColorNode"></MenuItem>
-                    <MenuItem Header="Blend" Click="AddBlendNode"></MenuItem>
-                    <MenuItem Header="Remap" Click="AddRemapNode"></MenuItem>
-                    <MenuItem Header="Gradient" Click="AddGradientNode"></MenuItem>
-                    <MenuItem Header="Perlin Noise" Click="AddPerlinNoiseNode"></MenuItem>
-                    <MenuItem Header="Worley Noise" Click="AddWorleyNoiseNode"></MenuItem>
-                    <MenuItem Header="Normal Color" Click="AddNormalColorNode"></MenuItem>
-                    <MenuItem Header="Blur" Click="AddBlurNode"></MenuItem>
-                    <MenuItem Header="Directional Blur" Click="AddDirectionalBlurNode"></MenuItem>
-                    <MenuItem Header="Metal Reflectance" Click="AddMetalReflectanceNode"></MenuItem>
-                    <MenuItem Header="Height To Normal" Click="AddHeightToNormalNode"></MenuItem>
-                    <MenuItem Header="Shape" Click="AddShapeNode"></MenuItem>
-                    <MenuItem Header="Transform" Click="AddTransformNode"></MenuItem>
+                <ContextMenu Style="{StaticResource ContextMenuStyle}">
+                    <MenuItem Header="Uniform Color" Style="{StaticResource ContextMenuItemStyle}" Click="AddUniformColorNode"></MenuItem>
+                    <MenuItem Header="Blend" Style="{StaticResource ContextMenuItemStyle}" Click="AddBlendNode"></MenuItem>
+                    <MenuItem Header="Remap" Style="{StaticResource ContextMenuItemStyle}" Click="AddRemapNode"></MenuItem>
+                    <MenuItem Header="Gradient" Style="{StaticResource ContextMenuItemStyle}" Click="AddGradientNode"></MenuItem>
+                    <MenuItem Header="Perlin Noise" Style="{StaticResource ContextMenuItemStyle}" Click="AddPerlinNoiseNode"></MenuItem>
+                    <MenuItem Header="Worley Noise" Style="{StaticResource ContextMenuItemStyle}" Click="AddWorleyNoiseNode"></MenuItem>
+                    <MenuItem Header="Normal Color" Style="{StaticResource ContextMenuItemStyle}" Click="AddNormalColorNode"></MenuItem>
+                    <MenuItem Header="Blur" Style="{StaticResource ContextMenuItemStyle}" Click="AddBlurNode"></MenuItem>
+                    <MenuItem Header="Directional Blur" Style="{StaticResource ContextMenuItemStyle}" Click="AddDirectionalBlurNode"></MenuItem>
+                    <MenuItem Header="Metal Reflectance" Style="{StaticResource ContextMenuItemStyle}" Click="AddMetalReflectanceNode"></MenuItem>
+                    <MenuItem Header="Height To Normal" Style="{StaticResource ContextMenuItemStyle}" Click="AddHeightToNormalNode"></MenuItem>
+                    <MenuItem Header="Shape" Style="{StaticResource ContextMenuItemStyle}" Click="AddShapeNode"></MenuItem>
+                    <MenuItem Header="Transform" Style="{StaticResource ContextMenuItemStyle}" Click="AddTransformNode"></MenuItem>
+                    <MenuItem Header="Warp" Style="{StaticResource ContextMenuItemStyle}" Click="AddWarpNode"></MenuItem>
+                    <MenuItem Header="Slope Blur" Style="{StaticResource ContextMenuItemStyle}" Click="AddSlopeBlurNode"></MenuItem>
                 </ContextMenu>
             </ContentControl.ContextMenu>
         </ContentControl>
+
+        <Canvas x:Name="hoveredPortNameCanvas" Grid.RowSpan="2">
+            <local:HoveredPortName x:Name="hoveredPortName" Visibility="Collapsed" Panel.ZIndex="1"/>
+        </Canvas>
     </Grid>
 </UserControl>

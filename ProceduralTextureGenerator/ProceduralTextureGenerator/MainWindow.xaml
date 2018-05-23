@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProceduralTextureGenerator"
         mc:Ignorable="d"
-        Title="Procedural Texture Generator" Height="840" Width="1600" Loaded="OnLoaded" Closing="OnClosing" Closed="OnExit" KeyDown="OnKeyDown">
+        Title="Procedural Texture Generator" Background="#FF202020" Height="840" Width="1600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
@@ -37,7 +37,7 @@
             </MenuItem>
             <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_Open" Click="OpenFunctionGraph">
                 <MenuItem.Icon>
-                    <Path Width="16" Height="16" Stretch="Fill" Fill="DarkRed" Data="{StaticResource OpenFunctionGraph}" />
+                    <Path Width="16" Height="16" Stretch="Uniform" Fill="DarkRed" Data="{StaticResource OpenFunctionGraph}" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_Save" Click="SaveFunctionGraph">

@@ -37,7 +37,7 @@ SamplerState::SamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addre
 
 SamplerState::~SamplerState()
 {
-
+	if(samplerState) samplerState->Release();
 }
 
 

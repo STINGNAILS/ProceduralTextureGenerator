@@ -13,7 +13,7 @@ BackgroundGrid::BackgroundGrid()
 	vertexShader = DirectXObjectPool::GetVertexShader("BackgroundGrid");
 	pixelShader = DirectXObjectPool::GetPixelShader("BackgroundGrid");
 	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
-	samplerState = DirectXObjectPool::GetSamplerState("Basic");
+	samplerState = DirectXObjectPool::GetSamplerState("LinearWrap");
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("BackgroundGrid");
 
 	texture = make_shared<DirectXTexture>(BackgroundGridTexture());

@@ -57,13 +57,14 @@ namespace ProceduralTextureGenerator
 				if(selections[i].Key == (string)((ComboBox)sender).SelectedItem)
 				{
 					CoreDll.GraphViewSetSelectedNodeIntParameter(index, selections[i].Value);
-					CoreDll.GraphViewProcess();
 
 					break;
 				}
 			}
 
-			ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 			ParentHelper.GetParentParameterPanel(this)?.Update();
 		}
 	}

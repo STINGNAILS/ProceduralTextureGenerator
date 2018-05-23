@@ -60,9 +60,10 @@ namespace ProceduralTextureGenerator
 				if(value != previousValue)
 				{
 					CoreDll.GraphViewSetSelectedNodeIntParameter(index, value);
-					CoreDll.GraphViewProcess();
 
-					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+					MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+					mainWindow?.OnFunctionGraphChanged();
+					mainWindow?.InvalidateSaving();
 
 					previousValue = value;
 				}

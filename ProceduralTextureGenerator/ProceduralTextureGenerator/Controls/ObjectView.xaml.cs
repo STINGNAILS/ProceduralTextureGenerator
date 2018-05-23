@@ -38,5 +38,53 @@ namespace ProceduralTextureGenerator
         {
             view.Render();
         }
-    }
+
+
+		private void ChangeObject(object sender, RoutedEventArgs e)
+		{
+			ObjectDialog objectDialog = new ObjectDialog()
+			{
+				Owner = Application.Current.MainWindow,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner
+			};
+
+			if(objectDialog.ShowDialog() == true)
+			{
+				CoreDll.ObjectViewSetObjectType(objectDialog.ObjectType);
+			}
+		}
+
+
+		private void ChangeLighting(object sender, RoutedEventArgs e)
+		{
+			LightingDialog lightingDialog = new LightingDialog()
+			{
+				Owner = Application.Current.MainWindow,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner
+			};
+
+			lightingDialog.ShowDialog();
+		}
+
+
+		private void ChangeEnvironment(object sender, RoutedEventArgs e)
+		{
+			EnvironmentDialog environmentDialog = new EnvironmentDialog()
+			{
+				Owner = Application.Current.MainWindow,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner
+			};
+
+			if(environmentDialog.ShowDialog() == true)
+			{
+				CoreDll.ObjectViewSetEnvironmentMap(environmentDialog.EnvironmentIndex);
+			}
+		}
+
+
+		private void ScopeObject(object sender, RoutedEventArgs e)
+		{
+			CoreDll.ObjectViewScope();
+		}
+	}
 }

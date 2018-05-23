@@ -38,5 +38,11 @@ namespace ProceduralTextureGenerator
 		{
 			view.Render();
 		}
+
+
+		private void ScopeTexture(object sender, RoutedEventArgs e)
+		{
+			CoreDll.TextureViewScope();
+		}
 	}
 }

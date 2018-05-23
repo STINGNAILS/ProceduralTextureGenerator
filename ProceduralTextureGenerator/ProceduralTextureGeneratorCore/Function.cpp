@@ -42,15 +42,6 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return Normal(inputTexturePtr, resolution, bpc);
 		}
-		case HEIGHT:
-		{
-			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
-
-			TextureResolution resolution = (TextureResolution) intParameters[0];
-			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
-
-			return Height(inputTexturePtr, resolution, bpc);
-		}
 		case UNIFORM_COLOR:
 		{
 			TextureResolution resolution = (TextureResolution) intParameters[0];
@@ -95,8 +86,10 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			TextureResolution resolution = (TextureResolution) intParameters[0];
 			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			int gradientSize = intParameters[2];
+			vector<float> &gradient = floatParameters;
 
-			return Gradient(inputTexturePtr, resolution, bpc);
+			return Gradient(inputTexturePtr, resolution, bpc, gradientSize, gradient);
 		}
 		case PERLIN_NOISE:
 		{
@@ -191,6 +184,29 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return Transform(inputTexturePtr, resolution, bpc, tilingMode, xScale, yScale, rotation, xTransform, yTransform);
 		}
+		case WARP:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+			TextureMemoryPtr slopeTexturePtr = inputTexturePtrs[1];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			float intensity = floatParameters[0];
+
+			return Warp(inputTexturePtr, slopeTexturePtr, resolution, bpc, intensity);
+		}
+		case SLOPE_BLUR:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+			TextureMemoryPtr slopeTexturePtr = inputTexturePtrs[1];
+
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			int samplesNum = intParameters[2];
+			float intensity = floatParameters[0];
+
+			return SlopeBlur(inputTexturePtr, slopeTexturePtr, resolution, bpc, intensity, samplesNum);
+		}
 		default:
 		{
 			return nullptr;
@@ -199,85 +215,218 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 }
 
 
-int FunctionInputNodesNum(int functionIndex)
+vector<InputSlotDescriptor> FunctionInputSlotDescriptors(int functionIndex)
 {
 	switch(functionIndex)
 	{
 		case BASE_COLOR:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { COLOR, true };
+
+			return inputSlotDescriptors;
 		}
 		case METALLIC:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { GRAYSCALE, true };
+
+			return inputSlotDescriptors;
 		}
 		case ROUGHNESS:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { GRAYSCALE, true };
+
+			return inputSlotDescriptors;
 		}
 		case NORMAL:
 		{
-			return 1;
-		}
-		case HEIGHT:
-		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { COLOR, true };
+
+			return inputSlotDescriptors;
 		}
 		case UNIFORM_COLOR:
 		{
-			return 0;
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
 		}
 		case BLEND:
 		{
-			return 3;
+			vector<InputSlotDescriptor> inputSlotDescriptors(3);
+			inputSlotDescriptors[0] = { COLOR, true };
+			inputSlotDescriptors[1] = { COLOR, true };
+			inputSlotDescriptors[2] = { GRAYSCALE, false };
+
+			return inputSlotDescriptors;
 		}
 		case REMAP:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { COLOR, true };
+
+			return inputSlotDescriptors;
 		}
 		case GRADIENT:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { GRAYSCALE, true };
+
+			return inputSlotDescriptors;
 		}
 		case PERLIN_NOISE:
 		{
-			return 0;
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
 		}
 		case WORLEY_NOISE:
 		{
-			return 0;
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
 		}
 		case NORMAL_COLOR:
 		{
-			return 0;
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
 		}
 		case BLUR:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { COLOR, true };
+
+			return inputSlotDescriptors;
 		}
 		case DIRECTIONAL_BLUR:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { COLOR, true };
+
+			return inputSlotDescriptors;
 		}
 		case METAL_REFLECTANCE:
 		{
-			return 0;
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
 		}
 		case HEIGHT_TO_NORMAL:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { GRAYSCALE, false };
+
+			return inputSlotDescriptors;
 		}
 		case SHAPE:
 		{
-			return 0;
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
 		}
 		case TRANSFORM:
 		{
-			return 1;
+			vector<InputSlotDescriptor> inputSlotDescriptors(1);
+			inputSlotDescriptors[0] = { COLOR, true };
+
+			return inputSlotDescriptors;
+		}
+		case WARP:
+		{
+			vector<InputSlotDescriptor> inputSlotDescriptors(2);
+			inputSlotDescriptors[0] = { COLOR, true };
+			inputSlotDescriptors[1] = { GRAYSCALE, true };
+
+			return inputSlotDescriptors;
+		}
+		case SLOPE_BLUR:
+		{
+			vector<InputSlotDescriptor> inputSlotDescriptors(2);
+			inputSlotDescriptors[0] = { COLOR, true };
+			inputSlotDescriptors[1] = { GRAYSCALE, true };
+
+			return inputSlotDescriptors;
 		}
 		default:
 		{
-			return 0;
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
+		}
+	}
+}
+
+
+TextureType FunctionOutputSlotTextureType(int functionIndex)
+{
+	switch(functionIndex)
+	{
+		case UNIFORM_COLOR:
+		{
+			return COLOR;
+		}
+		case BLEND:
+		{
+			return COLOR;
+		}
+		case REMAP:
+		{
+			return COLOR;
+		}
+		case GRADIENT:
+		{
+			return COLOR;
+		}
+		case PERLIN_NOISE:
+		{
+			return GRAYSCALE;
+		}
+		case WORLEY_NOISE:
+		{
+			return GRAYSCALE;
+		}
+		case NORMAL_COLOR:
+		{
+			return COLOR;
+		}
+		case BLUR:
+		{
+			return COLOR;
+		}
+		case DIRECTIONAL_BLUR:
+		{
+			return COLOR;
+		}
+		case METAL_REFLECTANCE:
+		{
+			return COLOR;
+		}
+		case HEIGHT_TO_NORMAL:
+		{
+			return COLOR;
+		}
+		case SHAPE:
+		{
+			return GRAYSCALE;
+		}
+		case TRANSFORM:
+		{
+			return COLOR;
+		}
+		case WARP:
+		{
+			return COLOR;
+		}
+		case SLOPE_BLUR:
+		{
+			return COLOR;
+		}
+		default:
+		{
+			return COLOR;
 		}
 	}
 }
@@ -319,14 +468,6 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
-		case HEIGHT:
-		{
-			vector<int> intParameters(2);
-			intParameters[0] = 1024;
-			intParameters[1] = 8;
-
-			return intParameters;
-		}
 		case UNIFORM_COLOR:
 		{
 			vector<int> intParameters(3);
@@ -356,9 +497,10 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 		}
 		case GRADIENT:
 		{
-			vector<int> intParameters(2);
+			vector<int> intParameters(3);
 			intParameters[0] = 1024;
 			intParameters[1] = 16;
+			intParameters[2] = 2;
 
 			return intParameters;
 		}
@@ -445,6 +587,23 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
+		case WARP:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
+		case SLOPE_BLUR:
+		{
+			vector<int> intParameters(3);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+			intParameters[2] = 8;
+
+			return intParameters;
+		}
 		default:
 		{
 			vector<int> intParameters(2);
@@ -485,12 +644,6 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 
 			return floatParameters;
 		}
-		case HEIGHT:
-		{
-			vector<float> floatParameters(0);
-
-			return floatParameters;
-		}
 		case UNIFORM_COLOR:
 		{
 			vector<float> floatParameters(4);
@@ -522,7 +675,11 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 		}
 		case GRADIENT:
 		{
-			vector<float> floatParameters(0);
+			vector<float> floatParameters(400, 0.0f);
+			floatParameters[4] = 1.0f;
+			floatParameters[5] = 1.0f;
+			floatParameters[6] = 1.0f;
+			floatParameters[7] = 1.0f;
 
 			return floatParameters;
 		}
@@ -588,6 +745,20 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 			floatParameters[2] = 0.0f;
 			floatParameters[3] = 0.0f;
 			floatParameters[4] = 0.0f;
+
+			return floatParameters;
+		}
+		case WARP:
+		{
+			vector<float> floatParameters(1);
+			floatParameters[0] = 1.0f;
+
+			return floatParameters;
+		}
+		case SLOPE_BLUR:
+		{
+			vector<float> floatParameters(1);
+			floatParameters[0] = 8.0f;
 
 			return floatParameters;
 		}

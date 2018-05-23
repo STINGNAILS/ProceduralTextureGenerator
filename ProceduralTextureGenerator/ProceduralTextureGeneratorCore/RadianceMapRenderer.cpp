@@ -18,7 +18,7 @@ RadianceMapRenderer::RadianceMapRenderer(shared_ptr<DirectXTexture> environmentM
 	vertexShader = DirectXObjectPool::GetVertexShader("RadianceMap");
 	pixelShader = DirectXObjectPool::GetPixelShader("RadianceMap");
 	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
-	samplerState = DirectXObjectPool::GetSamplerState("Anisotropic");
+	samplerState = DirectXObjectPool::GetSamplerState("AnisotropicWrap");
 	constantBuffer = DirectXObjectPool::GetConstantBuffer("RadianceMap");
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("TextureRenderer");
 }
@@ -144,6 +144,7 @@ HRESULT RadianceMapRenderer::Render(ID3D11Texture2D **radianceMap)
 	}
 
 	painter->RSSetState(0);
+	painter->Flush();
 
 	return hr;
 }

@@ -6,7 +6,7 @@ FunctionLink::FunctionLink()
 {
 	inputNodeIndex = -1;
 	outputNodeIndex = -1;
-	inputPinIndex = -1;
+	inputPortIndex = -1;
 
 	polylinePtr = make_shared<PolyLine>();
 
@@ -32,9 +32,9 @@ int FunctionLink::GetOutputNodeIndex()
 }
 
 
-int FunctionLink::GetInputPinIndex()
+int FunctionLink::GetInputPortIndex()
 {
-	return inputPinIndex;
+	return inputPortIndex;
 }
 
 
@@ -56,9 +56,9 @@ void FunctionLink::SetOutputNodeIndex(int outputNodeIndex_)
 }
 
 
-void FunctionLink::SetInputPinIndex(int inputPinIndex_)
+void FunctionLink::SetInputPortIndex(int inputPortIndex_)
 {
-	inputPinIndex = inputPinIndex_;
+	inputPortIndex = inputPortIndex_;
 }
 
 

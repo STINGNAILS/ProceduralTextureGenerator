@@ -162,3 +162,14 @@ shared_ptr<ConstantBuffer> DirectXObjectPool::GetConstantBuffer(string key)
 		return nullptr;
 	}
 }
+
+
+void DirectXObjectPool::Release()
+{
+	polygonMeshes.clear();
+	vertexShaders.clear();
+	pixelShaders.clear();
+	rasterizerStates.clear();
+	samplerStates.clear();
+	constantBuffers.clear();
+}

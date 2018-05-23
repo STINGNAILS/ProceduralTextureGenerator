@@ -21,10 +21,11 @@ namespace ProceduralTextureGenerator
     /// </summary>
     public partial class GraphView : UserControl
     {
-		private bool isInteracting;
 		private Point rmbClickCoords;
 
-		ParameterPanel parameterPanel;
+		private ParameterPanel parameterPanel;
+
+		private float scale;
 
 
 		public GraphView()
@@ -33,7 +34,7 @@ namespace ProceduralTextureGenerator
 
 			view.Bind(2);
 
-			isInteracting = false;
+			scale = 1.0f;
 		}
 
 
@@ -64,78 +65,150 @@ namespace ProceduralTextureGenerator
 		private void AddUniformColorNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(5, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddBlendNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(6, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddRemapNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(7, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddGradientNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(8, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddPerlinNoiseNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(9, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddWorleyNoiseNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(10, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddNormalColorNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(11, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddBlurNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(12, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddDirectionalBlurNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(13, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddMetalReflectanceNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(14, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddHeightToNormalNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(15, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddShapeNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(16, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
 		private void AddTransformNode(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewAddNode(17, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
+		}
+
+
+		private void AddWarpNode(object sender, RoutedEventArgs e)
+		{
+			CoreDll.GraphViewAddNode(18, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
+		}
+
+
+		private void AddSlopeBlurNode(object sender, RoutedEventArgs e)
+		{
+			CoreDll.GraphViewAddNode(19, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 		}
 
 
@@ -148,18 +221,19 @@ namespace ProceduralTextureGenerator
 				Point lmbClickCoords = e.GetPosition(this);
 				CoreDll.GraphViewOnMouseDown((float)(lmbClickCoords.X / ActualWidth), (float)(1.0 - lmbClickCoords.Y / ActualHeight));
 				ModifyStackPanel();
-				isInteracting = true;
 			}
 		}
 
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			if(isInteracting)
-			{
-				Point mouseCoords = e.GetPosition(this);
-				CoreDll.GraphViewOnMouseMove((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
-			}
+			Point mouseCoords = e.GetPosition(this);
+			CoreDll.GraphViewOnMouseMove((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
+
+			HoveredPortDescriptor hoveredPortDescriptor = CoreDll.GraphViewGetHoveredPointDescriptor();
+			hoveredPortName.Update(hoveredPortDescriptor);
+			Canvas.SetLeft(hoveredPortName, hoveredPortDescriptor.x * ActualWidth - hoveredPortName.ActualWidth * scale / 2.0);
+			Canvas.SetTop(hoveredPortName, (1.0 - hoveredPortDescriptor.y) * ActualHeight - hoveredPortName.ActualHeight * scale / 2.0);
 		}
 
 
@@ -169,12 +243,14 @@ namespace ProceduralTextureGenerator
 			{
 				rmbClickCoords = e.GetPosition(this);
 			}
-
-			if(isInteracting)
+			
+			Point mouseCoords = e.GetPosition(this);
+			CoreDll.GraphViewOnMouseUp((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
+			if(CoreDll.GraphViewGraphWasChanged() == 1)
 			{
-				Point mouseCoords = e.GetPosition(this);
-				CoreDll.GraphViewOnMouseUp((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
-				isInteracting = false;
+				MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+				mainWindow?.OnFunctionGraphChanged();
+				mainWindow?.InvalidateSaving();
 			}
 		}
 
@@ -189,12 +265,36 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			scale *= ((float) Math.Pow(1.15, e.Delta / 120.0));
+
+			HoveredPortDescriptor hoveredPortDescriptor = CoreDll.GraphViewGetHoveredPointDescriptor();
+			hoveredPortName.Update(hoveredPortDescriptor);
+			Canvas.SetLeft(hoveredPortName, hoveredPortDescriptor.x * ActualWidth - hoveredPortName.ActualWidth * scale / 2.0);
+			Canvas.SetTop(hoveredPortName, (1.0 - hoveredPortDescriptor.y) * ActualHeight - hoveredPortName.ActualHeight * scale / 2.0);
+			hoveredPortName.RenderTransform = new ScaleTransform(scale, scale);
+		}
+
+
 		private void OnKeyDown(object sender, KeyEventArgs e)
 		{
 			if(e.Key == Key.Delete)
 			{
 				CoreDll.GraphViewRemoveSelected();
+				if(CoreDll.GraphViewGraphWasChanged() == 1)
+				{
+					MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+					mainWindow?.OnFunctionGraphChanged();
+					mainWindow?.InvalidateSaving();
+				}
 			}
+		}
+
+
+		private void ScopeGraph(object sender, RoutedEventArgs e)
+		{
+			CoreDll.GraphViewScope();
 		}
 	}
 }

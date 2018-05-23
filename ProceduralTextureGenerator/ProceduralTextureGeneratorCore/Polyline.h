@@ -35,7 +35,7 @@ class PolyLine : public RenderableObject
 
 	vector<XMFLOAT2> points;
 
-	const float width = 1.732051f * 2.0f;
+	const float width = 2.0f;
 
 	void RenderLines();
 	void RenderPoints();

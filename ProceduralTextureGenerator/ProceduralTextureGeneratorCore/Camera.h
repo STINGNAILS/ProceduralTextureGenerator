@@ -58,9 +58,11 @@ class Camera
 	const XMMATRIX ViewProjCentered();
 
 	virtual XMFLOAT3 ScreenToWorld(float x, float y) = 0;
+	virtual XMFLOAT3 WorldToScreen(float x, float y) = 0;
 
 	virtual void Navigate(float dx, float dy, float dt) = 0;
 	virtual void Zoom(float x, float y, float dz) = 0;
+	virtual void Scope(float xMin, float yMin, float xMax, float yMax) = 0;
 
 	void Set();
 };

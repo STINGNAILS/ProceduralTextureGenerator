@@ -282,9 +282,9 @@ namespace ProceduralTextureGenerator
 				CoreDll.GraphViewSetSelectedNodeFloatParameter(y2Index, (float)(1.0 - (Canvas.GetTop(x2Drag) + 5.0) / 140.0));
 			}
 
-			CoreDll.GraphViewProcess();
-
-			ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
 			ParentHelper.GetParentParameterPanel(this)?.Update();
 		}
 	}

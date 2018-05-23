@@ -4,3 +4,4 @@
 
 
 TextureMemoryPtr BackgroundGridTexture();
+TextureMemoryPtr NotProcessedTexture();

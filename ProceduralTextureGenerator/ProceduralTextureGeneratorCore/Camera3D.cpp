@@ -147,6 +147,11 @@ XMFLOAT3 Camera3D::ScreenToWorld(float x, float y)
 	return XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
 
+XMFLOAT3 Camera3D::WorldToScreen(float x, float y)
+{
+	return XMFLOAT3(0.0f, 0.0f, 0.0f);
+}
+
 
 void Camera3D::Navigate(float dx, float dy, float dt)
 {
@@ -220,4 +225,10 @@ void Camera3D::Navigate(float dx, float dy, float dt)
 void Camera3D::Zoom(float x, float y, float dz)
 {
 	//а вот нет зума для такой камеры
+}
+
+
+void Camera3D::Scope(float xMin, float yMin, float xMax, float yMax)
+{
+	//и скопа нет
 }

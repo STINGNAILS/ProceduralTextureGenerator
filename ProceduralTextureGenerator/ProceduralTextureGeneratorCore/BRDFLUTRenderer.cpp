@@ -57,16 +57,16 @@ HRESULT BRDFLUTRenderer::Render(ID3D11Texture2D **brdfLUT)
 	brdfLUTRTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	brdfLUTRTVDesc.Texture2DArray.MipSlice = 0;
 
-	ID3D11RenderTargetView *mipLevelRTV;
-	hr = device->CreateRenderTargetView(*brdfLUT, &brdfLUTRTVDesc, &mipLevelRTV);
+	ID3D11RenderTargetView *brdfLUTRTV;
+	hr = device->CreateRenderTargetView(*brdfLUT, &brdfLUTRTVDesc, &brdfLUTRTV);
 	if(FAILED(hr))
 	{
 		return hr;
 	}
 
 	const float clearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	painter->ClearRenderTargetView(mipLevelRTV, clearColor);
-	painter->OMSetRenderTargets(1, &mipLevelRTV, nullptr);
+	painter->ClearRenderTargetView(brdfLUTRTV, clearColor);
+	painter->OMSetRenderTargets(1, &brdfLUTRTV, nullptr);
 
 	CD3D11_VIEWPORT viewport(0.0f, 0.0f, (float) size, (float) size);
 	painter->RSSetViewports(1, &viewport);
@@ -77,7 +77,10 @@ HRESULT BRDFLUTRenderer::Render(ID3D11Texture2D **brdfLUT)
 
 	polygonMesh->Render();
 
-	mipLevelRTV->Release();
+	brdfLUTRTV->Release();
+
+	painter->RSSetState(0);
+	painter->Flush();
 
 	return hr;
 }

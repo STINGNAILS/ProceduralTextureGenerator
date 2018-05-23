@@ -37,5 +37,7 @@ class DirectXObjectPool
 	static shared_ptr<RasterizerState> GetRasterizerState(string key);
 	static shared_ptr<SamplerState> GetSamplerState(string key);
 	static shared_ptr<ConstantBuffer> GetConstantBuffer(string key);
+
+	static void Release();
 };
 

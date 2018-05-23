@@ -3,7 +3,6 @@
 #include "DirectXDevice.h"
 #include "DirectXRenderer.h"
 #include "DirectXTexture.h"
-#include "ShaderCompiler.h"
 
 
 struct RadianceMapCB

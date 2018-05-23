@@ -9,7 +9,7 @@ TextureFrame::TextureFrame()
 	vertexShader = DirectXObjectPool::GetVertexShader("TextureFrame");
 	pixelShader = DirectXObjectPool::GetPixelShader("TextureFrameColor");
 	rasterizerState = DirectXObjectPool::GetRasterizerState("Basic");
-	samplerState = DirectXObjectPool::GetSamplerState("Basic");
+	samplerState = DirectXObjectPool::GetSamplerState("LinearClamp");
 	constantBuffer = DirectXObjectPool::GetConstantBuffer("TextureFrame");
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("TextureFrame");
 }

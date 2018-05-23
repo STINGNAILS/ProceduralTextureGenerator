@@ -12,6 +12,18 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <StackPanel Orientation="Horizontal" Background="#BF404040" Panel.ZIndex="2">
+            <TextBlock x:Name="ObjectViewTitleName" Text="Texture View" FontFamily="Segoe UI Semibold" FontSize="14" HorizontalAlignment="Left" Foreground="White" Margin="15,2,15,0" Grid.Row="0"/>
+            <Border Height="24" BorderThickness="1,0,1,0" BorderBrush="White"/>
+            <Menu Panel.ZIndex="2" Background="{x:Null}" Margin="2,0,0,0">
+                <MenuItem Header="_Scope" Click="ScopeTexture" FontFamily="Segoe UI" FontSize="14" Foreground="Silver" Padding="1,0,3,0" Margin="0,1,0,0">
+                    <MenuItem.Icon>
+                        <Path Width="15" Height="15" Stretch="Uniform" Fill="DarkRed" Data="{StaticResource Encompass}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </Menu>
+        </StackPanel>
+
         <ContentControl Grid.RowSpan="2">
             <local:View x:Name="view"/>
         </ContentControl>

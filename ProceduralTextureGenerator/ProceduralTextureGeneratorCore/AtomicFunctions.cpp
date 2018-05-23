@@ -760,7 +760,7 @@ TextureMemoryPtr Remap(TextureMemoryPtr inputTexturePtr, TextureResolution resol
 }
 
 
-TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel)
+TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, int gradientSize, vector<float> gradient)
 {
 	if(inputTexturePtr.get() == nullptr)
 	{
@@ -769,9 +769,51 @@ TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution re
 
 	TextureMemoryPtr gradientTexturePtr = make_shared<TextureMemory>(COLOR, resolution, bitsPerChannel);
 
-	Grad gradient[72] =
+	#pragma omp parallel for
+	for(int i = 0; i < resolution; i++)
 	{
-		Grad(145, 97, 77, 0.00f),
+		for(int j = 0; j < resolution; j++)
+		{
+			float inputSample = inputTexturePtr->SampleGrayscale(i, j, resolution).x;
+
+			int gradientIndex = 0;
+			for(; gradientIndex < gradientSize; gradientIndex++)
+			{
+				if(gradient[gradientIndex * 4] >= inputSample)
+				{
+					break;
+				}
+			}
+
+			if(gradientIndex == 0)
+			{
+				gradientTexturePtr->SetValue(i, j, XMFLOAT4(gradient[1], gradient[2], gradient[3], 1.0f));
+			}
+			else if(gradientIndex >= gradientSize)
+			{
+				int offset = (gradientSize - 1) * 4;
+				gradientTexturePtr->SetValue(i, j, XMFLOAT4(gradient[offset + 1], gradient[offset + 2], gradient[offset + 3], 1.0f));
+			}
+			else
+			{
+				int offset1 = (gradientIndex - 1) * 4;
+				int offset2 = gradientIndex * 4;
+
+				float k = (inputSample - gradient[offset1]) / (gradient[offset2] - gradient[offset1]);
+
+				XMVECTOR gradientColor1V = XMVectorSet(gradient[offset1 + 1], gradient[offset1 + 2], gradient[offset1 + 3], 1.0f);
+				XMVECTOR gradientColor2V = XMVectorSet(gradient[offset2 + 1], gradient[offset2 + 2], gradient[offset2 + 3], 1.0f);
+
+				XMVECTOR valueV = XMVectorLerp(gradientColor1V, gradientColor2V, k);
+
+				XMFLOAT4 value;
+				XMStoreFloat4(&value, valueV);
+				gradientTexturePtr->SetValue(i, j, value);
+			}
+		}
+	}
+
+	/*Grad(145, 97, 77, 0.00f),
 		Grad(153, 110, 94, 0.01f),
 		Grad(133, 94, 79, 0.02f),
 		Grad(142, 107, 91, 0.04f),
@@ -842,45 +884,7 @@ TextureMemoryPtr Gradient(TextureMemoryPtr inputTexturePtr, TextureResolution re
 		Grad(107, 28, 9, 0.95f),
 		Grad(87, 9, 0, 0.96f),
 		Grad(135, 59, 35, 0.98f),
-		Grad(110, 35, 12, 1.00f)
-	};
-
-	#pragma omp parallel for
-	for(int i = 0; i < resolution; i++)
-	{
-		for(int j = 0; j < resolution; j++)
-		{
-			float inputSample = inputTexturePtr->SampleGrayscale(i, j, resolution).x;
-
-			int gradientIndex = 0;
-			while(gradient[gradientIndex].value < inputSample)
-			{
-				gradientIndex++;
-			}
-
-			if(gradientIndex == 0)
-			{
-				gradientTexturePtr->SetValue(i, j, gradient[0].color);
-			}
-			else if(gradientIndex > 71)
-			{
-				gradientTexturePtr->SetValue(i, j, gradient[71].color);
-			}
-			else
-			{
-				float k = (gradient[gradientIndex].value - inputSample) / (gradient[gradientIndex].value - gradient[gradientIndex - 1].value);
-
-				XMVECTOR gradientColor1V = XMLoadFloat4(&gradient[gradientIndex - 1].color);
-				XMVECTOR gradientColor2V = XMLoadFloat4(&gradient[gradientIndex].color);
-
-				XMVECTOR valueV = XMVectorLerp(gradientColor1V, gradientColor2V, k);
-
-				XMFLOAT4 value;
-				XMStoreFloat4(&value, valueV);
-				gradientTexturePtr->SetValue(i, j, value);
-			}
-		}
-	}
+		Grad(110, 35, 12, 1.00f)*/
 
 	return gradientTexturePtr;
 }
@@ -1490,4 +1494,228 @@ TextureMemoryPtr Transform(TextureMemoryPtr inputTexturePtr, TextureResolution r
 	}
 	
 	return transformedTexturePtr;
+}
+
+
+TextureMemoryPtr Warp(TextureMemoryPtr inputTexturePtr, TextureMemoryPtr slopeTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity)
+{
+	if(inputTexturePtr.get() == nullptr || slopeTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	TextureType textureType = inputTexturePtr->GetTextureType();
+
+	TextureMemoryPtr warpedTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+
+	float factor = intensity * resolution / 256.0f;
+
+	switch(textureType)
+	{
+		case GRAYSCALE:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				int i1 = (i == 0) ? (resolution - 1) : (i - 1);
+				float u = (float) i / (resolution - 1);
+				for(int j = 0; j < resolution; j++)
+				{
+					int j1 = (j == 0) ? (resolution - 1) : (j - 1);
+					float v = (float) j / (resolution - 1);
+
+					float slopeXY0 = slopeTexturePtr->SampleGrayscale(i, j, resolution).x;
+					float slopeX1 = slopeTexturePtr->SampleGrayscale(i, j1, resolution).x;
+					float slopeY1 = slopeTexturePtr->SampleGrayscale(i1, j, resolution).x;
+
+					float uWarped = u + (slopeXY0 - slopeY1) * factor;
+					float vWarped = v + (slopeXY0 - slopeX1) * factor;
+
+					float uWarpedNormalized = uWarped - floor(uWarped);
+					float vWarpedNormalized = vWarped - floor(vWarped);
+
+					int iWarped = (int) floor(uWarpedNormalized * (resolution - 1));
+					int jWarped = (int) floor(vWarpedNormalized * (resolution - 1));
+
+					XMFLOAT2 value = inputTexturePtr->SampleGrayscale(iWarped, jWarped, resolution);
+
+					warpedTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			break;
+		}
+		case COLOR:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				int i1 = (i == 0) ? (resolution - 1) : (i - 1);
+				float u = (float) i / (resolution - 1);
+				for(int j = 0; j < resolution; j++)
+				{
+					int j1 = (j == 0) ? (resolution - 1) : (j - 1);
+					float v = (float) j / (resolution - 1);
+
+					float slopeXY0 = slopeTexturePtr->SampleGrayscale(i, j, resolution).x;
+					float slopeX1 = slopeTexturePtr->SampleGrayscale(i, j1, resolution).x;
+					float slopeY1 = slopeTexturePtr->SampleGrayscale(i1, j, resolution).x;
+
+					float uWarped = u + (slopeXY0 - slopeY1) * factor;
+					float vWarped = v + (slopeXY0 - slopeX1) * factor;
+
+					float uWarpedNormalized = uWarped - floor(uWarped);
+					float vWarpedNormalized = vWarped - floor(vWarped);
+
+					int iWarped = (int) floor(uWarpedNormalized * (resolution - 1));
+					int jWarped = (int) floor(vWarpedNormalized * (resolution - 1));
+
+					XMFLOAT4 value = inputTexturePtr->SampleColor(iWarped, jWarped, resolution);
+
+					warpedTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			break;
+		}
+	}
+
+	return warpedTexturePtr;
+}
+
+
+TextureMemoryPtr SlopeBlur(TextureMemoryPtr inputTexturePtr, TextureMemoryPtr slopeTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity, int samplesNum)
+{
+	if(inputTexturePtr.get() == nullptr || slopeTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	TextureType textureType = inputTexturePtr->GetTextureType();
+
+	TextureMemoryPtr blurredTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+
+	float intensityWar = (samplesNum != 0) ? (intensity / samplesNum) : 0.0f;
+	float factor = intensityWar * resolution / 256.0f;
+
+	switch(textureType)
+	{
+		case GRAYSCALE:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				int i1 = (i == 0) ? (resolution - 1) : (i - 1);
+				float u = (float) i / (resolution - 1);
+				for(int j = 0; j < resolution; j++)
+				{
+					int j1 = (j == 0) ? (resolution - 1) : (j - 1);
+					float v = (float) j / (resolution - 1);
+
+					float slopeXY0 = slopeTexturePtr->SampleGrayscale(i, j, resolution).x;
+					float slopeX1 = slopeTexturePtr->SampleGrayscale(i, j1, resolution).x;
+					float slopeY1 = slopeTexturePtr->SampleGrayscale(i1, j, resolution).x;
+
+					float uWarped = u + (slopeXY0 - slopeY1) * factor;
+					float vWarped = v + (slopeXY0 - slopeX1) * factor;
+
+					uWarped -= floor(uWarped);
+					vWarped -= floor(vWarped);
+
+					int iWarped = (int) floor(uWarped * (resolution - 1));
+					int jWarped = (int) floor(vWarped * (resolution - 1));
+
+					float value = inputTexturePtr->SampleGrayscale(iWarped, jWarped, resolution).x;
+
+					for(int k = 1; k < samplesNum; k++)
+					{
+						int iWarped1 = (iWarped == 0) ? (resolution - 1) : (iWarped - 1);
+						int jWarped1 = (jWarped == 0) ? (resolution - 1) : (jWarped - 1);
+
+						slopeXY0 = slopeTexturePtr->SampleGrayscale(iWarped, jWarped, resolution).x;
+						slopeX1 = slopeTexturePtr->SampleGrayscale(iWarped, jWarped1, resolution).x;
+						slopeY1 = slopeTexturePtr->SampleGrayscale(iWarped1, jWarped, resolution).x;
+
+						uWarped += (slopeXY0 - slopeY1) * factor;
+						vWarped += (slopeXY0 - slopeX1) * factor;
+
+						uWarped -= floor(uWarped);
+						vWarped -= floor(vWarped);
+
+						iWarped = (int) floor(uWarped * (resolution - 1));
+						jWarped = (int) floor(vWarped * (resolution - 1));
+
+						float blendFactor = 1.0f / (1.0f + k);
+
+						value = (1.0f - blendFactor) * value + blendFactor * inputTexturePtr->SampleGrayscale(iWarped, jWarped, resolution).x;
+					}
+
+					blurredTexturePtr->SetValue(i, j, XMFLOAT2(value, 1.0f));
+				}
+			}
+
+			break;
+		}
+		case COLOR:
+		{
+			#pragma omp parallel for
+			for(int i = 0; i < resolution; i++)
+			{
+				int i1 = (i == 0) ? (resolution - 1) : (i - 1);
+				float u = (float) i / (resolution - 1);
+				for(int j = 0; j < resolution; j++)
+				{
+					int j1 = (j == 0) ? (resolution - 1) : (j - 1);
+					float v = (float) j / (resolution - 1);
+
+					float slopeXY0 = slopeTexturePtr->SampleGrayscale(i, j, resolution).x;
+					float slopeX1 = slopeTexturePtr->SampleGrayscale(i, j1, resolution).x;
+					float slopeY1 = slopeTexturePtr->SampleGrayscale(i1, j, resolution).x;
+
+					float uWarped = u + (slopeXY0 - slopeY1) * factor;
+					float vWarped = v + (slopeXY0 - slopeX1) * factor;
+
+					uWarped -= floor(uWarped);
+					vWarped -= floor(vWarped);
+
+					int iWarped = (int) floor(uWarped * (resolution - 1));
+					int jWarped = (int) floor(vWarped * (resolution - 1));
+
+					XMVECTOR valueV = XMLoadFloat4(&inputTexturePtr->SampleColor(iWarped, jWarped, resolution));
+
+					for(int k = 1; k < samplesNum; k++)
+					{
+						int iWarped1 = (iWarped == 0) ? (resolution - 1) : (iWarped - 1);
+						int jWarped1 = (jWarped == 0) ? (resolution - 1) : (jWarped - 1);
+
+						slopeXY0 = slopeTexturePtr->SampleGrayscale(iWarped, jWarped, resolution).x;
+						slopeX1 = slopeTexturePtr->SampleGrayscale(iWarped, jWarped1, resolution).x;
+						slopeY1 = slopeTexturePtr->SampleGrayscale(iWarped1, jWarped, resolution).x;
+
+						uWarped += (slopeXY0 - slopeY1) * factor;
+						vWarped += (slopeXY0 - slopeX1) * factor;
+
+						uWarped -= floor(uWarped);
+						vWarped -= floor(vWarped);
+
+						iWarped = (int) floor(uWarped * (resolution - 1));
+						jWarped = (int) floor(vWarped * (resolution - 1));
+
+						float blendFactor = 1.0f / (1.0f + k);
+
+						XMVECTOR value1V = XMLoadFloat4(&inputTexturePtr->SampleColor(iWarped, jWarped, resolution));
+						valueV = XMVectorLerp(valueV, value1V, blendFactor);
+					}
+
+					XMFLOAT4 value;
+					XMStoreFloat4(&value, valueV);
+					blurredTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			break;
+		}
+	}
+
+	return blurredTexturePtr;
 }

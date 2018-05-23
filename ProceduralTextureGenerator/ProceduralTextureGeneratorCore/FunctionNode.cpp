@@ -13,7 +13,7 @@ FunctionNode::FunctionNode(int functionIndex_)
 	functionIndex = functionIndex_;
 
 	isSelected = false;
-	isCalculated = false;
+	calculatedState = NOT_CALCULATED;
 
 	intParameters = FunctionIntParametersBase(functionIndex);
 	floatParameters = FunctionFloatParametersBase(functionIndex);
@@ -21,23 +21,33 @@ FunctionNode::FunctionNode(int functionIndex_)
 	textureFramePtr = make_shared<TextureFrame>();
 	textureFramePtr->SetLocalPosition(0.0f, 0.0f);
 
-	int functionInputNodesNum = FunctionInputNodesNum(functionIndex);
+	vector<InputSlotDescriptor> inputSlotDescriptors = FunctionInputSlotDescriptors(functionIndex);
+	int functionInputNodesNum = inputSlotDescriptors.size();
 	inputLinkIndices.resize(functionInputNodesNum);
-	inputPinPtrs.resize(functionInputNodesNum);
+	inputPortPtrs.resize(functionInputNodesNum);
 
 	for(int i = 0; i < functionInputNodesNum; i++)
 	{
 		inputLinkIndices[i] = -1;
 
-		inputPinPtrs[i] = make_shared<OutputPin>();
-		inputPinPtrs[i]->SetLocalPosition(-31.0f + 62.0f * ((i + 1.0f) / (functionInputNodesNum + 1.0f)), 31.0f);
+		inputPortPtrs[i] = make_shared<Port>();
+		inputPortPtrs[i]->SetTextureType(inputSlotDescriptors[i].textureType);
+		inputPortPtrs[i]->SetMandatoryNotLinked(inputSlotDescriptors[i].isMandatory);
+		inputPortPtrs[i]->SetLocalPosition(-31.0f + 62.0f * ((i + 1.0f) / (functionInputNodesNum + 1.0f)), 31.0f);
 	}
 
 	if(functionIndex > 4)
 	{
-		outputPinPtr = make_shared<OutputPin>();
-		outputPinPtr->SetLocalPosition(0.0f, -31.0f);
+		TextureType textureType = FunctionOutputSlotTextureType(functionIndex);
+
+		outputPortPtr = make_shared<Port>();
+		outputPortPtr->SetTextureType(textureType);
+		outputPortPtr->SetMandatoryNotLinked(false);
+		outputPortPtr->SetLocalPosition(0.0f, -31.0f);
 	}
+
+	directXTexturePtr = make_shared<DirectXTexture>(NotProcessedTexture());
+	textureFramePtr->SetTexture(directXTexturePtr);
 }
 
 
@@ -95,24 +105,24 @@ XMFLOAT2 FunctionNode::GetPosition()
 }
 
 
-vector<XMFLOAT2> FunctionNode::GetInputPinPositions()
+vector<XMFLOAT2> FunctionNode::GetInputPortPositions()
 {
-	vector<XMFLOAT2> inputPinPositions(inputPinPtrs.size());
+	vector<XMFLOAT2> inputPortPositions(inputPortPtrs.size());
 
-	for(int i = 0; i < inputPinPositions.size(); i++)
+	for(int i = 0; i < inputPortPositions.size(); i++)
 	{
-		inputPinPositions[i] = inputPinPtrs[i]->GetPosition();
+		inputPortPositions[i] = inputPortPtrs[i]->GetPosition();
 	}
 
-	return inputPinPositions;
+	return inputPortPositions;
 }
 
 
-XMFLOAT2 FunctionNode::GetOutputPinPosition()
+XMFLOAT2 FunctionNode::GetOutputPortPosition()
 {
 	if(functionIndex > 4)
 	{
-		return outputPinPtr->GetPosition();
+		return outputPortPtr->GetPosition();
 	}
 	else
 	{
@@ -126,8 +136,26 @@ void FunctionNode::SetTextureMemory(TextureMemoryPtr textureMemoryPtr_)
 	textureMemoryPtr = textureMemoryPtr_;
 
 	directXTexturePtr = make_shared<DirectXTexture>(textureMemoryPtr);
-
 	textureFramePtr->SetTexture(directXTexturePtr);
+
+	if(functionIndex > 4)
+	{
+		outputPortPtr->SetTextureType(textureMemoryPtr->GetTextureType());
+	}
+}
+
+
+void FunctionNode::SetInputPortTextureType(int inputPortIndex, TextureType textureType)
+{
+	if(inputPortIndex >= 0 && inputPortIndex < inputPortPtrs.size())
+	{
+		vector<InputSlotDescriptor> inputSlotDescriptors = FunctionInputSlotDescriptors(functionIndex);
+
+		if(inputSlotDescriptors[inputPortIndex].textureType == COLOR)
+		{
+			inputPortPtrs[inputPortIndex]->SetTextureType(textureType);
+		}
+	}
 }
 
 
@@ -137,14 +165,14 @@ void FunctionNode::SetPosition(float xParent, float yParent)
 	yGlobal = 32.0f * roundf(yParent / 32.0f);
 	
 	textureFramePtr->SetPosition(xGlobal, yGlobal);
-	for(int i = 0; i < inputPinPtrs.size(); i++)
+	for(int i = 0; i < inputPortPtrs.size(); i++)
 	{
-		inputPinPtrs[i]->SetPosition(xGlobal, yGlobal);
+		inputPortPtrs[i]->SetPosition(xGlobal, yGlobal);
 	}
 
 	if(functionIndex > 4)
 	{
-		outputPinPtr->SetPosition(xGlobal, yGlobal);
+		outputPortPtr->SetPosition(xGlobal, yGlobal);
 	}
 }
 
@@ -154,7 +182,7 @@ void FunctionNode::SetIntParameter(int parameterIndex, int value)
 	if(parameterIndex >= 0 && parameterIndex < intParameters.size())
 	{
 		intParameters[parameterIndex] = value;
-		isCalculated = false;
+		calculatedState = NOT_CALCULATED;
 	}
 }
 
@@ -164,33 +192,33 @@ void FunctionNode::SetFloatParameter(int parameterIndex, float value)
 	if(parameterIndex >= 0 && parameterIndex < floatParameters.size())
 	{
 		floatParameters[parameterIndex] = value;
-		isCalculated = false;
+		calculatedState = NOT_CALCULATED;
 	}
 }
 
 
-bool FunctionNode::IsCalculated()
+CalculatedState FunctionNode::GetCalculatedState()
 {
-	return isCalculated;
+	return calculatedState;
 }
 
 
-void FunctionNode::RequestCalculation()
+void FunctionNode::SetCalculatedState(CalculatedState calculatedState_)
 {
-	isCalculated = false;
+	calculatedState = calculatedState_;
 }
 
 
-void FunctionNode::MarkAsCalculated()
+void FunctionNode::AddInputLink(int inputPortIndex, int inputLinkIndex)
 {
-	isCalculated = true;
-}
+	if(inputPortIndex >= 0 && inputPortIndex < inputLinkIndices.size())
+	{
+		inputLinkIndices[inputPortIndex] = inputLinkIndex;
 
+		inputPortPtrs[inputPortIndex]->SetMandatoryNotLinked(false);
 
-void FunctionNode::AddInputLink(int inputPinIndex, int inputLinkIndex)
-{
-	inputLinkIndices[inputPinIndex] = inputLinkIndex;
-	isCalculated = false;
+		calculatedState = NOT_CALCULATED;
+	}
 }
 
 
@@ -207,7 +235,12 @@ void FunctionNode::RemoveInputLink(int inputLinkIndex)
 		if(inputLinkIndices[i] == inputLinkIndex)
 		{
 			inputLinkIndices[i] = -1;
-			isCalculated = false;
+
+			InputSlotDescriptor inputSlotDescriptor = FunctionInputSlotDescriptors(functionIndex)[i];
+			inputPortPtrs[i]->SetTextureType(inputSlotDescriptor.textureType);
+			inputPortPtrs[i]->SetMandatoryNotLinked(inputSlotDescriptor.isMandatory);
+
+			calculatedState = NOT_CALCULATED;
 		}
 	}
 }
@@ -223,6 +256,7 @@ void FunctionNode::RemoveOutputLink(int outputLinkIndex)
 		}
 	}
 }
+
 
 void FunctionNode::Select()
 {
@@ -243,13 +277,13 @@ void FunctionNode::Unselect()
 void FunctionNode::Render()
 {
 	textureFramePtr->Render();
-	for(int i = 0; i < inputPinPtrs.size(); i++)
+	for(int i = 0; i < inputPortPtrs.size(); i++)
 	{
-		inputPinPtrs[i]->Render();
+		inputPortPtrs[i]->Render();
 	}
 
 	if(functionIndex > 4)
 	{
-		outputPinPtr->Render();
+		outputPortPtr->Render();
 	}
 }

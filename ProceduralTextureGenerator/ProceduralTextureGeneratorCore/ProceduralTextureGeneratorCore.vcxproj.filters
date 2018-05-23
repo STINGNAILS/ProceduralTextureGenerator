@@ -38,6 +38,9 @@
     <Filter Include="Graph">
       <UniqueIdentifier>{09bd4c66-c37d-4441-a011-373907661ed8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TextureMemory">
+      <UniqueIdentifier>{4a6401b5-0aa5-48de-abef-1c85cf76ec30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -55,16 +58,10 @@
     <ClInclude Include="BRDFLUTRenderer.h">
       <Filter>Graphics\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="RadianceMapRenderer.h">
-      <Filter>Graphics\Renderers</Filter>
-    </ClInclude>
     <ClInclude Include="Environment.h">
       <Filter>Graphics\Environment</Filter>
     </ClInclude>
     <ClInclude Include="RenderableObject.h">
-      <Filter>Graphics\Renderable</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
       <Filter>Graphics\Renderable</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -91,7 +88,6 @@
     <ClInclude Include="Camera2D.h">
       <Filter>Graphics\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="TextureMemory.h" />
     <ClInclude Include="DirectXTexture.h">
       <Filter>Graphics\DirectX</Filter>
     </ClInclude>
@@ -105,9 +101,6 @@
       <Filter>MapGeneration</Filter>
     </ClInclude>
     <ClInclude Include="TextureFrame.h">
-      <Filter>Graphics\Renderable</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputPin.h">
       <Filter>Graphics\Renderable</Filter>
     </ClInclude>
     <ClInclude Include="Polyline.h">
@@ -164,7 +157,33 @@
     <ClInclude Include="ResourceInitializer.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="PatternFunctions.h" />
+    <ClInclude Include="RadianceMapRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="IrradianceMultiMapRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="IrradianceSmoothMapRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="IrradianceRoughMapRenderer.h">
+      <Filter>Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternFunctions.h">
+      <Filter>MapGeneration</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyObject.h">
+      <Filter>Graphics\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="Port.h">
+      <Filter>Graphics\Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvironmentTaskQueue.h">
+      <Filter>Graphics\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureMemory.h">
+      <Filter>TextureMemory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderCompiler.cpp">
@@ -179,16 +198,10 @@
     <ClCompile Include="BRDFLUTRenderer.cpp">
       <Filter>Graphics\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="RadianceMapRenderer.cpp">
-      <Filter>Graphics\Renderers</Filter>
-    </ClCompile>
     <ClCompile Include="Environment.cpp">
       <Filter>Graphics\Environment</Filter>
     </ClCompile>
     <ClCompile Include="RenderableObject.cpp">
-      <Filter>Graphics\Renderable</Filter>
-    </ClCompile>
-    <ClCompile Include="Cube.cpp">
       <Filter>Graphics\Renderable</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
@@ -215,7 +228,6 @@
     <ClCompile Include="Camera2D.cpp">
       <Filter>Graphics\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="TextureMemory.cpp" />
     <ClCompile Include="DirectXTexture.cpp">
       <Filter>Graphics\DirectX</Filter>
     </ClCompile>
@@ -229,9 +241,6 @@
       <Filter>MapGeneration</Filter>
     </ClCompile>
     <ClCompile Include="TextureFrame.cpp">
-      <Filter>Graphics\Renderable</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputPin.cpp">
       <Filter>Graphics\Renderable</Filter>
     </ClCompile>
     <ClCompile Include="Polyline.cpp">
@@ -288,6 +297,32 @@
     <ClCompile Include="ResourceInitializer.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="PatternFunctions.cpp" />
+    <ClCompile Include="RadianceMapRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="IrradianceMultiMapRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="IrradianceSmoothMapRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="IrradianceRoughMapRenderer.cpp">
+      <Filter>Graphics\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="PatternFunctions.cpp">
+      <Filter>MapGeneration</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyObject.cpp">
+      <Filter>Graphics\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="Port.cpp">
+      <Filter>Graphics\Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvironmentTaskQueue.cpp">
+      <Filter>Graphics\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureMemory.cpp">
+      <Filter>TextureMemory</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -6,29 +6,56 @@
 #include "DirectXTexture.h"
 #include "RadianceMapRenderer.h"
 #include "BRDFLUTRenderer.h"
+#include "IrradianceSmoothMapRenderer.h"
+#include "IrradianceRoughMapRenderer.h"
+#include "IrradianceMultiMapRenderer.h"
 
 
 struct DirectionalLight
 {
-	XMFLOAT4 intensity;
-	XMFLOAT4 direction;
+	XMFLOAT3 color;
+	float intensity;
+	XMFLOAT2 direction;
+	int isEnabled;
 };
 
 
-struct PunctualLight
+struct SphereLight
+{
+	XMFLOAT3 color;
+	float intensity;
+	XMFLOAT3 position;
+	float lightRadius;
+	float sourceRadius;
+	int isEnabled;
+};
+
+
+struct DirectionalLightCB
 {
 	XMFLOAT4 intensity;
-	XMFLOAT4 position;
+	XMFLOAT3 direction;
+	int isEnabled;
+};
+
+
+struct SphereLightCB
+{
+	XMFLOAT3 intensity;
+	float lightRadius;
+	XMFLOAT3 position;
+	float sourceRadius;
 };
 
 
 struct EnvironmentCB
 {
-	int directionalLightsNum;
+	int sphereLightsNum;
 	int radianceMapMipLevelsFactor;
 	int aligner1;
 	int aligner2;
-	DirectionalLight directionalLights[4];
+	DirectionalLightCB directionalLight;
+	SphereLightCB sphereLights[4];
 };
 
 
@@ -40,36 +67,39 @@ class Environment
 	shared_ptr<VertexShader> vertexShader;
 	shared_ptr<PixelShader> pixelShader;
 	shared_ptr<RasterizerState> rasterizerState;
-	shared_ptr<SamplerState> anistotropicSamplerState;
-	shared_ptr<SamplerState> basicSamplerState;
+	shared_ptr<SamplerState> anistotropicWrapSamplerState;
+	shared_ptr<SamplerState> linearClampSamplerState;
+	shared_ptr<SamplerState> linearWrapSamplerState;
 	shared_ptr<ConstantBuffer> constantBuffer;
 
 	bool environmentMappingIsEnabled;
 
+	int environmentMapIndex;
+
 	shared_ptr<DirectXTexture> environmentMap;
+
 	shared_ptr<DirectXTexture> radianceMap;
 	shared_ptr<DirectXTexture> brdfLUT;
 
-	int lastDirectionalLightNum;
-	int lastPunctualLightNum;
+	shared_ptr<DirectXTexture> irradianceSmoothMap;
+	shared_ptr<DirectXTexture> irradianceRoughMap;
+	shared_ptr<DirectXTexture> irradianceMultiMap;
 
-	map<int, DirectionalLight> directionalLights;
-	map<int, PunctualLight> punctualLights;
+	DirectionalLight directionalLight;
+	SphereLight sphereLights[4];
 
 	public:
 
 	Environment();
-	Environment(LPCWSTR fileName);
 	~Environment();
 
-	int AddDirectionalLight(DirectionalLight dirLight);
-	int AddPunctualLight(PunctualLight punctualLight);
-	DirectionalLight GetDirectionalLight(int directionalLightNum);
-	PunctualLight GetPunctualLight(int punctualLightNum);
-	void ModifyDirectionalLight(int directionalLightNum, DirectionalLight dirLight);
-	void ModifyPunctualLight(int punctualLightNum, PunctualLight punctualLight);
-	void RemoveDirectionalLight(int directionalLightNum);
-	void RemovePunctualLight(int punctualLightNum);
+	DirectionalLight GetDirectionalLight();
+	SphereLight GetSphereLight(int index);
+	int GetEnvironmentMapIndex();
+
+	void SetDirectionalLight(DirectionalLight dirLight);
+	void SetSphereLight(int index, SphereLight sphereLight);
+	void SetEnvironmentMap(LPCWSTR fileName, int environmentMapIndex_);
 
 	void Set();
 

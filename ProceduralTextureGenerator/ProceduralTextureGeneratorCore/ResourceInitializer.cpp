@@ -24,13 +24,13 @@ struct PBSVertex
 };
 
 
-struct PinVertex
+struct PortVertex
 {
 	XMFLOAT3 pos;
-	XMFLOAT4 color0;
-	XMFLOAT4 color1;
-	XMFLOAT4 color2;
-	XMFLOAT4 color3;
+	XMFLOAT4 colorColor;
+	XMFLOAT4 colorGrayscale;
+	XMFLOAT4 colorMandatoryNotLinked;
+	XMFLOAT4 colorNotMandatoryOrLinked;
 	XMFLOAT2 uv;
 };
 
@@ -262,6 +262,85 @@ void ResourceInitializer::InitializePolygonMeshes()
 	DirectXObjectPool::SetPolygonMesh("Cube", make_shared<PolygonMesh>((void*) &cubeVertices[0], sizeof(PBSVertex), cubeVertices.size(), &cubeIndices[0], cubeIndices.size()));
 
 
+	vector<PBSVertex> sphereVertices(3109);
+
+	for(int j = 0; j < 60; j++)
+	{
+		float psi = (j + 0.5f) * 2 * _Pi / 60.0;
+
+		float u = 0.5f + atan2(-sin(psi), -cos(psi)) / (2 * _Pi);
+
+		XMFLOAT3 coords0 = XMFLOAT3(0.0f, 1.0f, 0.0f);
+		XMFLOAT3 coords1 = XMFLOAT3(0.0f, -1.0f, 0.0f);
+		XMFLOAT3 tangent = XMFLOAT3(-sin(psi), 0, -cos(psi));
+		XMFLOAT2 uv0 = XMFLOAT2(u, 0.0f);
+		XMFLOAT2 uv1 = XMFLOAT2(u, 1.0f);
+
+		sphereVertices[j] = { coords0, coords0, tangent, uv0 };
+		sphereVertices[j + 3049] = { coords1, coords1, tangent, uv1 };
+	}
+
+	for(int i = 1; i < 50; i++)
+	{
+		float phi = i * _Pi / 50.0;
+		float y = cos(phi);
+
+		float v = 0.5f - asin(y) / _Pi;
+
+		float sinPhi = sin(phi);
+
+		for(int j = 0; j < 60; j++)
+		{
+			float psi = j * 2 * _Pi / 60.0;
+			float x = sinPhi * cos(psi);
+			float z = -sinPhi * sin(psi);
+
+			float u = 0.5f + atan2(z, -x) / (2 * _Pi);
+
+			XMFLOAT3 coords = XMFLOAT3(x, y, z);
+			XMFLOAT3 tangent = XMFLOAT3(-sin(psi), 0, -cos(psi));
+			XMFLOAT2 uv = XMFLOAT2(u, v);
+
+			sphereVertices[i * 61 + j - 1] = { coords, coords, tangent, uv };
+		}
+
+		XMFLOAT3 coords = XMFLOAT3(sinPhi, y, 0.0f);
+		XMFLOAT3 tangent = XMFLOAT3(0.0f, 0, -1.0f);
+		XMFLOAT2 uv = XMFLOAT2(1.0f, v);
+
+		sphereVertices[i * 61 + 59] = { coords, coords, tangent, uv };
+	}
+
+	vector<UINT> sphereIndices(17640);
+
+	for(int j = 0; j < 60; j++)
+	{
+		sphereIndices[j * 3 + 0] = j;
+		sphereIndices[j * 3 + 1] = j + 61;
+		sphereIndices[j * 3 + 2] = j + 60;
+
+		sphereIndices[j * 3 + 17460] = j + 3049;
+		sphereIndices[j * 3 + 17461] = j + 2988;
+		sphereIndices[j * 3 + 17462] = j + 2989;
+	}
+
+	for(int i = 1; i < 49; i++)
+	{
+		for(int j = 0; j < 60; j++)
+		{
+			sphereIndices[i * 360 + j * 6 - 180] = i * 61 + j + 60;
+			sphereIndices[i * 360 + j * 6 - 179] = i * 61 + j - 1;
+			sphereIndices[i * 360 + j * 6 - 178] = i * 61 + j;
+
+			sphereIndices[i * 360 + j * 6 - 177] = i * 61 + j + 60;
+			sphereIndices[i * 360 + j * 6 - 176] = i * 61 + j;
+			sphereIndices[i * 360 + j * 6 - 175] = i * 61 + j + 61;
+		}
+	}
+
+	DirectXObjectPool::SetPolygonMesh("Sphere", make_shared<PolygonMesh>((void*) &sphereVertices[0], sizeof(PBSVertex), sphereVertices.size(), &sphereIndices[0], sphereIndices.size()));
+
+
 	vector<BasicVertex> textureQuadVertices(4);
 
 	textureQuadVertices[0] = { XMFLOAT3(-256.0f, -256.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) };
@@ -300,25 +379,25 @@ void ResourceInitializer::InitializePolygonMeshes()
 	DirectXObjectPool::SetPolygonMesh("TextureFrame", make_shared<PolygonMesh>((void*) &textureFrameVertices[0], sizeof(BasicVertex), textureFrameVertices.size(), &textureFrameIndices[0], textureFrameIndices.size()));
 
 
-	vector<PinVertex> pinVertices(13);
+	vector<PortVertex> portVertices(13);
 
-	XMFLOAT3 pos1 = XMFLOAT3(-OutputPin::r0, OutputPin::r0, 0.0f);
-	XMFLOAT3 pos2 = XMFLOAT3(OutputPin::r0, OutputPin::r0, 0.0f);
-	XMFLOAT3 pos3 = XMFLOAT3(-OutputPin::r0, -OutputPin::r0, 0.0f);
-	XMFLOAT3 pos4 = XMFLOAT3(OutputPin::r0, -OutputPin::r0, 0.0f);
-	XMFLOAT3 pos5 = XMFLOAT3(-OutputPin::r0, 0.577350f * OutputPin::r0, 0.0f);
-	XMFLOAT3 pos6 = XMFLOAT3(OutputPin::r0, 0.577350f * OutputPin::r0, 0.0f);
-	XMFLOAT3 pos7 = XMFLOAT3(0.0f, -OutputPin::r0, 0.0f);
+	XMFLOAT3 pos1 = XMFLOAT3(-Port::r0, Port::r0, 0.0f);
+	XMFLOAT3 pos2 = XMFLOAT3(Port::r0, Port::r0, 0.0f);
+	XMFLOAT3 pos3 = XMFLOAT3(-Port::r0, -Port::r0, 0.0f);
+	XMFLOAT3 pos4 = XMFLOAT3(Port::r0, -Port::r0, 0.0f);
+	XMFLOAT3 pos5 = XMFLOAT3(-Port::r0, 0.577350f * Port::r0, 0.0f);
+	XMFLOAT3 pos6 = XMFLOAT3(Port::r0, 0.577350f * Port::r0, 0.0f);
+	XMFLOAT3 pos7 = XMFLOAT3(0.0f, -Port::r0, 0.0f);
 	XMFLOAT3 pos8 = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-	XMFLOAT4 red0 = XMFLOAT4(0.75f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 green0 = XMFLOAT4(0.0f, 0.75f, 0.0f, 1.0f);
-	XMFLOAT4 blue0 = XMFLOAT4(0.0f, 0.0f, 0.75f, 1.0f);
-	XMFLOAT4 gray = XMFLOAT4(0.75f, 0.75f, 0.75f, 1.0f);
-	XMFLOAT4 red1 = XMFLOAT4(0.1f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 green1 = XMFLOAT4(0.0f, 0.1f, 0.0f, 1.0f);
-	XMFLOAT4 blue1 = XMFLOAT4(0.0f, 0.0f, 0.1f, 1.0f);
-	XMFLOAT4 white = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	XMFLOAT4 red = XMFLOAT4(0.9f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT4 green = XMFLOAT4(0.0f, 0.9f, 0.0f, 1.0f);
+	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 0.9f, 1.0f);
+	XMFLOAT4 lightGray = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+	XMFLOAT4 gray = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	XMFLOAT4 darkGray = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	XMFLOAT4 dark = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+	XMFLOAT4 silver = XMFLOAT4(0.75f, 0.75f, 0.75f, 1.0f);
 
 	XMFLOAT2 uv1 = XMFLOAT2(-1.0f, 1.0f);
 	XMFLOAT2 uv2 = XMFLOAT2(1.0f, 1.0f);
@@ -329,53 +408,53 @@ void ResourceInitializer::InitializePolygonMeshes()
 	XMFLOAT2 uv7 = XMFLOAT2(0.0f, -1.0f);
 	XMFLOAT2 uv8 = XMFLOAT2(0.0f, 0.0f);
 
-	pinVertices[0] = { pos1, red0, red1, gray, white, uv1 };
-	pinVertices[1] = { pos2, red0, red1, gray, white, uv2 };
-	pinVertices[2] = { pos5, red0, red1, gray, white, uv5 };
-	pinVertices[3] = { pos6, red0, red1, gray, white, uv6 };
-	pinVertices[4] = { pos8, red0, red1, gray, white, uv8 };
+	portVertices[0] = { pos1, red, lightGray, dark, silver, uv1 };
+	portVertices[1] = { pos2, red, lightGray, dark, silver, uv2 };
+	portVertices[2] = { pos5, red, lightGray, dark, silver, uv5 };
+	portVertices[3] = { pos6, red, lightGray, dark, silver, uv6 };
+	portVertices[4] = { pos8, red, lightGray, dark, silver, uv8 };
 
-	pinVertices[5] = { pos3, green0, green1, gray, white, uv3 };
-	pinVertices[6] = { pos5, green0, green1, gray, white, uv5 };
-	pinVertices[7] = { pos7, green0, green1, gray, white, uv7 };
-	pinVertices[8] = { pos8, green0, green1, gray, white, uv8 };
+	portVertices[5] = { pos3, green, gray, dark, silver, uv3 };
+	portVertices[6] = { pos5, green, gray, dark, silver, uv5 };
+	portVertices[7] = { pos7, green, gray, dark, silver, uv7 };
+	portVertices[8] = { pos8, green, gray, dark, silver, uv8 };
 
-	pinVertices[9] = { pos4, blue0, blue1, gray, white, uv4 };
-	pinVertices[10] = { pos6, blue0, blue1, gray, white, uv6 };
-	pinVertices[11] = { pos7, blue0, blue1, gray, white, uv7 };
-	pinVertices[12] = { pos8, blue0, blue1, gray, white, uv8 };
+	portVertices[9] = { pos4, blue, darkGray, dark, silver, uv4 };
+	portVertices[10] = { pos6, blue, darkGray, dark, silver, uv6 };
+	portVertices[11] = { pos7, blue, darkGray, dark, silver, uv7 };
+	portVertices[12] = { pos8, blue, darkGray, dark, silver, uv8 };
 
-	vector<UINT> pinIndices(21);
+	vector<UINT> portIndices(21);
 
-	pinIndices[0] = 0;
-	pinIndices[1] = 1;
-	pinIndices[2] = 4;
+	portIndices[0] = 0;
+	portIndices[1] = 1;
+	portIndices[2] = 4;
 
-	pinIndices[3] = 0;
-	pinIndices[4] = 4;
-	pinIndices[5] = 2;
+	portIndices[3] = 0;
+	portIndices[4] = 4;
+	portIndices[5] = 2;
 
-	pinIndices[6] = 1;
-	pinIndices[7] = 3;
-	pinIndices[8] = 4;
+	portIndices[6] = 1;
+	portIndices[7] = 3;
+	portIndices[8] = 4;
 
-	pinIndices[9] = 5;
-	pinIndices[10] = 6;
-	pinIndices[11] = 8;
+	portIndices[9] = 5;
+	portIndices[10] = 6;
+	portIndices[11] = 8;
 
-	pinIndices[12] = 5;
-	pinIndices[13] = 8;
-	pinIndices[14] = 7;
+	portIndices[12] = 5;
+	portIndices[13] = 8;
+	portIndices[14] = 7;
 
-	pinIndices[15] = 9;
-	pinIndices[16] = 12;
-	pinIndices[17] = 10;
+	portIndices[15] = 9;
+	portIndices[16] = 12;
+	portIndices[17] = 10;
 
-	pinIndices[18] = 9;
-	pinIndices[19] = 11;
-	pinIndices[20] = 12;
+	portIndices[18] = 9;
+	portIndices[19] = 11;
+	portIndices[20] = 12;
 
-	DirectXObjectPool::SetPolygonMesh("Pin", make_shared<PolygonMesh>((void*) &pinVertices[0], sizeof(PinVertex), pinVertices.size(), &pinIndices[0], pinIndices.size()));
+	DirectXObjectPool::SetPolygonMesh("Port", make_shared<PolygonMesh>((void*) &portVertices[0], sizeof(PortVertex), portVertices.size(), &portIndices[0], portIndices.size()));
 }
 
 
@@ -386,7 +465,7 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	DirectXObjectPool::SetVertexShader("BackgroundGrid", make_shared<VertexShader>(L"BackgroundGrid.fx", backgroundGridLayout, ARRAYSIZE(backgroundGridLayout)));
+	DirectXObjectPool::SetVertexShader("BackgroundGrid", make_shared<VertexShader>(L"Shaders\\BackgroundGrid.hlsl", backgroundGridLayout, ARRAYSIZE(backgroundGridLayout)));
 
 
 	D3D11_INPUT_ELEMENT_DESC environmentLayout[] =
@@ -394,7 +473,7 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	DirectXObjectPool::SetVertexShader("Environment", make_shared<VertexShader>(L"EnvironmentShader.fx", environmentLayout, ARRAYSIZE(environmentLayout)));
+	DirectXObjectPool::SetVertexShader("Environment", make_shared<VertexShader>(L"Shaders\\Environment.hlsl", environmentLayout, ARRAYSIZE(environmentLayout)));
 
 
 	D3D11_INPUT_ELEMENT_DESC radianceMapLayout[] =
@@ -403,7 +482,7 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	DirectXObjectPool::SetVertexShader("RadianceMap", make_shared<VertexShader>(L"RadianceMapShader.fx", radianceMapLayout, ARRAYSIZE(radianceMapLayout)));
+	DirectXObjectPool::SetVertexShader("RadianceMap", make_shared<VertexShader>(L"Shaders\\RadianceMap.hlsl", radianceMapLayout, ARRAYSIZE(radianceMapLayout)));
 
 
 	D3D11_INPUT_ELEMENT_DESC brdfLUTLayout[] =
@@ -412,7 +491,34 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	DirectXObjectPool::SetVertexShader("BRDFLUT", make_shared<VertexShader>(L"BRDFLUTShader.fx", brdfLUTLayout, ARRAYSIZE(brdfLUTLayout)));
+	DirectXObjectPool::SetVertexShader("BRDFLUT", make_shared<VertexShader>(L"Shaders\\BRDFLUT.hlsl", brdfLUTLayout, ARRAYSIZE(brdfLUTLayout)));
+
+
+	D3D11_INPUT_ELEMENT_DESC irradianceSmoothMapLayout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	DirectXObjectPool::SetVertexShader("IrradianceSmoothMap", make_shared<VertexShader>(L"Shaders\\IrradianceSmoothMap.hlsl", irradianceSmoothMapLayout, ARRAYSIZE(irradianceSmoothMapLayout)));
+
+
+	D3D11_INPUT_ELEMENT_DESC irradianceRoughMapLayout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	DirectXObjectPool::SetVertexShader("IrradianceRoughMap", make_shared<VertexShader>(L"Shaders\\IrradianceRoughMap.hlsl", irradianceRoughMapLayout, ARRAYSIZE(irradianceRoughMapLayout)));
+
+
+	D3D11_INPUT_ELEMENT_DESC irradianceMultiMapLayout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	DirectXObjectPool::SetVertexShader("IrradianceMultiMap", make_shared<VertexShader>(L"Shaders\\IrradianceMultiMap.hlsl", irradianceMultiMapLayout, ARRAYSIZE(irradianceMultiMapLayout)));
 
 
 	D3D11_INPUT_ELEMENT_DESC pbsLayout[] =
@@ -423,7 +529,7 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	DirectXObjectPool::SetVertexShader("PBS", make_shared<VertexShader>(L"PBS.fx", pbsLayout, ARRAYSIZE(pbsLayout)));
+	DirectXObjectPool::SetVertexShader("PBS", make_shared<VertexShader>(L"Shaders\\PBS.hlsl", pbsLayout, ARRAYSIZE(pbsLayout)));
 
 
 	D3D11_INPUT_ELEMENT_DESC textureQuadLayout[] =
@@ -432,7 +538,7 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	DirectXObjectPool::SetVertexShader("TextureQuad", make_shared<VertexShader>(L"TextureQuadColor.fx", textureQuadLayout, ARRAYSIZE(textureQuadLayout)));
+	DirectXObjectPool::SetVertexShader("TextureQuad", make_shared<VertexShader>(L"Shaders\\TextureQuadColor.hlsl", textureQuadLayout, ARRAYSIZE(textureQuadLayout)));
 
 
 	D3D11_INPUT_ELEMENT_DESC textureFrameLayout[] =
@@ -441,10 +547,10 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	DirectXObjectPool::SetVertexShader("TextureFrame", make_shared<VertexShader>(L"TextureFrameColor.fx", textureFrameLayout, ARRAYSIZE(textureFrameLayout)));
+	DirectXObjectPool::SetVertexShader("TextureFrame", make_shared<VertexShader>(L"Shaders\\TextureFrameColor.hlsl", textureFrameLayout, ARRAYSIZE(textureFrameLayout)));
 
 
-	D3D11_INPUT_ELEMENT_DESC pinLayout[] =
+	D3D11_INPUT_ELEMENT_DESC portLayout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -454,7 +560,7 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	DirectXObjectPool::SetVertexShader("Pin", make_shared<VertexShader>(L"OutputPin.fx", pinLayout, ARRAYSIZE(pinLayout)));
+	DirectXObjectPool::SetVertexShader("Port", make_shared<VertexShader>(L"Shaders\\Port.hlsl", portLayout, ARRAYSIZE(portLayout)));
 
 
 	D3D11_INPUT_ELEMENT_DESC polylineLayout[] =
@@ -465,35 +571,41 @@ void ResourceInitializer::InitializeVertexShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	DirectXObjectPool::SetVertexShader("Polyline", make_shared<VertexShader>(L"Polyline.fx", polylineLayout, ARRAYSIZE(polylineLayout)));
+	DirectXObjectPool::SetVertexShader("Polyline", make_shared<VertexShader>(L"Shaders\\Polyline.hlsl", polylineLayout, ARRAYSIZE(polylineLayout)));
 }
 
 
 void ResourceInitializer::InitializePixelShaders()
 {
-	DirectXObjectPool::SetPixelShader("BackgroundGrid", make_shared<PixelShader>(L"BackgroundGrid.fx"));
+	DirectXObjectPool::SetPixelShader("BackgroundGrid", make_shared<PixelShader>(L"Shaders\\BackgroundGrid.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("Environment", make_shared<PixelShader>(L"EnvironmentShader.fx"));
+	DirectXObjectPool::SetPixelShader("Environment", make_shared<PixelShader>(L"Shaders\\Environment.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("RadianceMap", make_shared<PixelShader>(L"RadianceMapShader.fx"));
+	DirectXObjectPool::SetPixelShader("RadianceMap", make_shared<PixelShader>(L"Shaders\\RadianceMap.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("BRDFLUT", make_shared<PixelShader>(L"BRDFLUTShader.fx"));
+	DirectXObjectPool::SetPixelShader("BRDFLUT", make_shared<PixelShader>(L"Shaders\\BRDFLUT.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("PBS", make_shared<PixelShader>(L"PBS.fx"));
+	DirectXObjectPool::SetPixelShader("IrradianceSmoothMap", make_shared<PixelShader>(L"Shaders\\IrradianceSmoothMap.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("TextureQuadGrayscale", make_shared<PixelShader>(L"TextureQuadGrayscale.fx"));
+	DirectXObjectPool::SetPixelShader("IrradianceRoughMap", make_shared<PixelShader>(L"Shaders\\IrradianceRoughMap.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("TextureQuadColor", make_shared<PixelShader>(L"TextureQuadColor.fx"));
+	DirectXObjectPool::SetPixelShader("IrradianceMultiMap", make_shared<PixelShader>(L"Shaders\\IrradianceMultiMap.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("TextureFrameGrayscale", make_shared<PixelShader>(L"TextureFrameGrayscale.fx"));
+	DirectXObjectPool::SetPixelShader("PBS", make_shared<PixelShader>(L"Shaders\\PBS.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("TextureFrameColor", make_shared<PixelShader>(L"TextureFrameColor.fx"));
+	DirectXObjectPool::SetPixelShader("TextureQuadGrayscale", make_shared<PixelShader>(L"Shaders\\TextureQuadGrayscale.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("Pin", make_shared<PixelShader>(L"OutputPin.fx"));
+	DirectXObjectPool::SetPixelShader("TextureQuadColor", make_shared<PixelShader>(L"Shaders\\TextureQuadColor.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("PolylineLines", make_shared<PixelShader>(L"Polyline.fx"));
+	DirectXObjectPool::SetPixelShader("TextureFrameGrayscale", make_shared<PixelShader>(L"Shaders\\TextureFrameGrayscale.hlsl"));
 
-	DirectXObjectPool::SetPixelShader("PolylinePoints", make_shared<PixelShader>(L"PolylinePoints.fx"));
+	DirectXObjectPool::SetPixelShader("TextureFrameColor", make_shared<PixelShader>(L"Shaders\\TextureFrameColor.hlsl"));
+
+	DirectXObjectPool::SetPixelShader("Port", make_shared<PixelShader>(L"Shaders\\Port.hlsl"));
+
+	DirectXObjectPool::SetPixelShader("PolylineLines", make_shared<PixelShader>(L"Shaders\\Polyline.hlsl"));
+
+	DirectXObjectPool::SetPixelShader("PolylinePoints", make_shared<PixelShader>(L"Shaders\\PolylinePoints.hlsl"));
 }
 
 
@@ -507,9 +619,11 @@ void ResourceInitializer::InitializeRasterizerStates()
 
 void ResourceInitializer::InitializeSamplerStates()
 {
-	DirectXObjectPool::SetSamplerState("Basic", make_shared<SamplerState>(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, 0));
+	DirectXObjectPool::SetSamplerState("LinearWrap", make_shared<SamplerState>(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, 0));
 
-	DirectXObjectPool::SetSamplerState("Anisotropic", make_shared<SamplerState>(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP, 16));
+	DirectXObjectPool::SetSamplerState("LinearClamp", make_shared<SamplerState>(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, 0));
+	
+	DirectXObjectPool::SetSamplerState("AnisotropicWrap", make_shared<SamplerState>(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP, 16));
 }
 
 
@@ -521,9 +635,15 @@ void ResourceInitializer::InitializeConstantBuffers()
 
 	DirectXObjectPool::SetConstantBuffer("RadianceMap", make_shared<ConstantBuffer>(sizeof(RadianceMapCB)));
 
+	DirectXObjectPool::SetConstantBuffer("IrradianceSmoothMap", make_shared<ConstantBuffer>(sizeof(IrradianceSmoothMapCB)));
+
+	DirectXObjectPool::SetConstantBuffer("IrradianceRoughMap", make_shared<ConstantBuffer>(sizeof(IrradianceRoughMapCB)));
+
+	DirectXObjectPool::SetConstantBuffer("IrradianceMultiMap", make_shared<ConstantBuffer>(sizeof(IrradianceMultiMapCB)));
+
 	DirectXObjectPool::SetConstantBuffer("TextureFrame", make_shared<ConstantBuffer>(sizeof(TextureFrameCB)));
 
-	DirectXObjectPool::SetConstantBuffer("Pin", make_shared<ConstantBuffer>(sizeof(OutputPinCB)));
+	DirectXObjectPool::SetConstantBuffer("Port", make_shared<ConstantBuffer>(sizeof(PortCB)));
 
 	DirectXObjectPool::SetConstantBuffer("Polyline", make_shared<ConstantBuffer>(sizeof(PolyLineCB)));
 }

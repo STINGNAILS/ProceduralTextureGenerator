@@ -4,37 +4,32 @@
 
 Environment::Environment()
 {
-	lastDirectionalLightNum = 0;
-	lastPunctualLightNum = 0;
+	directionalLight.color = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	directionalLight.intensity = 3.14f;
+	directionalLight.direction = XMFLOAT2(0.0f, 0.0f);
+	directionalLight.isEnabled = 1;
 
-	environmentMappingIsEnabled = false;
-
-	constantBuffer = DirectXObjectPool::GetConstantBuffer("Environment");
-}
-
-
-Environment::Environment(LPCWSTR fileName)
-{
-	lastDirectionalLightNum = 0;
-	lastPunctualLightNum = 0;
+	for(int i = 0; i < 4; i++)
+	{
+		sphereLights[i].color = XMFLOAT3(1.0f, 1.0f, 1.0f);
+		sphereLights[i].intensity = 3.14f;
+		sphereLights[i].position = XMFLOAT3(0.0f, 2.0f, 0.0f);
+		sphereLights[i].lightRadius = 10.0f;
+		sphereLights[i].sourceRadius = 0.1f;
+		sphereLights[i].isEnabled = 0;
+	}
 
 	vertexShader = DirectXObjectPool::GetVertexShader("Environment");
 	pixelShader = DirectXObjectPool::GetPixelShader("Environment");
 	rasterizerState = DirectXObjectPool::GetRasterizerState("CullFront");
-	basicSamplerState = DirectXObjectPool::GetSamplerState("Basic");
-	anistotropicSamplerState = DirectXObjectPool::GetSamplerState("Anisotropic");
+	linearWrapSamplerState = DirectXObjectPool::GetSamplerState("LinearWrap");
+	anistotropicWrapSamplerState = DirectXObjectPool::GetSamplerState("AnisotropicWrap");
+	linearClampSamplerState = DirectXObjectPool::GetSamplerState("LinearClamp");
 	constantBuffer = DirectXObjectPool::GetConstantBuffer("Environment");
 	polygonMesh = DirectXObjectPool::GetPolygonMesh("Environment");
+	constantBuffer = DirectXObjectPool::GetConstantBuffer("Environment");
 
-	environmentMap = make_shared<DirectXTexture>(fileName);
-
-	shared_ptr<RadianceMapRenderer> radianceMapRenderer = make_shared<RadianceMapRenderer>(environmentMap, 2048);
-	radianceMap = make_shared<DirectXTexture>(radianceMapRenderer);
-
-	shared_ptr<BRDFLUTRenderer> brdfLUTRenderer = make_shared<BRDFLUTRenderer>(2048);
-	brdfLUT = make_shared<DirectXTexture>(brdfLUTRenderer);
-
-	environmentMappingIsEnabled = true;
+	environmentMappingIsEnabled = false;
 }
 
 
@@ -44,68 +39,94 @@ Environment::~Environment()
 }
 
 
-int Environment::AddDirectionalLight(DirectionalLight dirLight)
+DirectionalLight Environment::GetDirectionalLight()
 {
-	lastDirectionalLightNum++;
-	directionalLights[lastDirectionalLightNum] = dirLight;
-	return lastDirectionalLightNum;
+	return directionalLight;
 }
 
 
-int Environment::AddPunctualLight(PunctualLight punctualLight)
+SphereLight Environment::GetSphereLight(int sphereLightNum)
 {
-	lastPunctualLightNum++;
-	punctualLights[lastPunctualLightNum] = punctualLight;
-	return lastPunctualLightNum;
+	if(sphereLightNum < 0 || sphereLightNum >= 4)
+	{
+		return SphereLight();
+	}
+
+	return sphereLights[sphereLightNum];
 }
 
 
-DirectionalLight Environment::GetDirectionalLight(int directionalLightNum)
+int Environment::GetEnvironmentMapIndex()
 {
-	return directionalLights[directionalLightNum];
+	return environmentMapIndex;
 }
 
 
-PunctualLight Environment::GetPunctualLight(int punctualLightNum)
+void Environment::SetDirectionalLight(DirectionalLight dirLight)
 {
-	return punctualLights[punctualLightNum];
+	directionalLight = dirLight;
 }
 
 
-void Environment::ModifyDirectionalLight(int directionalLightNum, DirectionalLight dirLight)
+void Environment::SetSphereLight(int sphereLightNum, SphereLight punctualLight)
 {
-	directionalLights[directionalLightNum] = dirLight;
+	if(sphereLightNum >= 0 && sphereLightNum < 4)
+	{
+		sphereLights[sphereLightNum] = punctualLight;
+	}
 }
 
 
-void Environment::ModifyPunctualLight(int punctualLightNum, PunctualLight punctualLight)
+void Environment::SetEnvironmentMap(LPCWSTR fileName, int environmentMapIndex_)
 {
-	punctualLights[punctualLightNum] = punctualLight;
-}
+	environmentMapIndex = environmentMapIndex_;
 
-void Environment::RemoveDirectionalLight(int directionalLightNum)
-{
-	directionalLights.erase(directionalLightNum);
-}
+	environmentMappingIsEnabled = false;
 
+	environmentMap = make_shared<DirectXTexture>(fileName);
 
-void Environment::RemovePunctualLight(int punctualLightNum)
-{
-	punctualLights.erase(punctualLightNum);
+	shared_ptr<RadianceMapRenderer> radianceMapRenderer = make_shared<RadianceMapRenderer>(environmentMap, 2048);
+	radianceMap = make_shared<DirectXTexture>(radianceMapRenderer);
+
+	shared_ptr<BRDFLUTRenderer> brdfLUTRenderer = make_shared<BRDFLUTRenderer>(2048);
+	brdfLUT = make_shared<DirectXTexture>(brdfLUTRenderer);
+
+	shared_ptr<IrradianceSmoothMapRenderer> irradianceSmoothMapRenderer = make_shared<IrradianceSmoothMapRenderer>(environmentMap, 512);
+	irradianceSmoothMap = make_shared<DirectXTexture>(irradianceSmoothMapRenderer);
+
+	shared_ptr<IrradianceRoughMapRenderer> irradianceRoughMapRenderer = make_shared<IrradianceRoughMapRenderer>(environmentMap, 512);
+	irradianceRoughMap = make_shared<DirectXTexture>(irradianceRoughMapRenderer);
+
+	shared_ptr<IrradianceMultiMapRenderer> irradianceMultiMapRenderer = make_shared<IrradianceMultiMapRenderer>(environmentMap, 512);
+	irradianceMultiMap = make_shared<DirectXTexture>(irradianceMultiMapRenderer);
+
+	environmentMappingIsEnabled = true;
 }
 
 
 void Environment::Set()
 {
-	EnvironmentCB environmentCB;
-	environmentCB.directionalLightsNum = min(directionalLights.size(), 4);
-	environmentCB.radianceMapMipLevelsFactor = 9;
+	float sinPhi = sin(directionalLight.direction.x * _Pi / 180.0f);
+	float cosPhi = cos(directionalLight.direction.x * _Pi / 180.0f);
+	float sinPsi = sin(directionalLight.direction.y * _Pi / 180.0f);
+	float cosPsi = cos(directionalLight.direction.y * _Pi / 180.0f);
 
-	int i = 0;
-	for(auto it = directionalLights.begin(); i < 4, it != directionalLights.end(); it++)
+	EnvironmentCB environmentCB;
+	environmentCB.sphereLightsNum = 0;
+	environmentCB.radianceMapMipLevelsFactor = 9;
+	environmentCB.directionalLight.intensity = XMFLOAT4(directionalLight.intensity * directionalLight.color.x, directionalLight.intensity * directionalLight.color.y, directionalLight.intensity * directionalLight.color.z, 1.0f);
+	environmentCB.directionalLight.direction = XMFLOAT3(sinPhi * cosPsi, -cosPhi, sinPhi * sinPsi);
+	environmentCB.directionalLight.isEnabled = directionalLight.isEnabled;
+	for(int i = 0; i < 4; i++)
 	{
-		environmentCB.directionalLights[i] = it->second;
-		i++;
+		if(sphereLights[i].isEnabled)
+		{
+			environmentCB.sphereLights[environmentCB.sphereLightsNum].intensity = XMFLOAT3(sphereLights[i].intensity * sphereLights[i].color.x, sphereLights[i].intensity * sphereLights[i].color.y, sphereLights[i].intensity * sphereLights[i].color.z);;
+			environmentCB.sphereLights[environmentCB.sphereLightsNum].position = sphereLights[i].position;
+			environmentCB.sphereLights[environmentCB.sphereLightsNum].lightRadius = sphereLights[i].lightRadius;
+			environmentCB.sphereLights[environmentCB.sphereLightsNum].sourceRadius = sphereLights[i].sourceRadius;
+			environmentCB.sphereLightsNum++;
+		}
 	}
 
 	constantBuffer->Update(&environmentCB);
@@ -113,9 +134,15 @@ void Environment::Set()
 
 	if(environmentMappingIsEnabled)
 	{
-		anistotropicSamplerState->Set(0);
+		anistotropicWrapSamplerState->Set(0);
+		linearClampSamplerState->Set(1);
+
 		radianceMap->Set(0);
 		brdfLUT->Set(1);
+
+		irradianceSmoothMap->Set(2);
+		irradianceRoughMap->Set(3);
+		irradianceMultiMap->Set(4);
 	}
 }
 
@@ -128,8 +155,8 @@ void Environment::Render()
 		pixelShader->Set();
 		rasterizerState->Set();
 
-		basicSamplerState->Set(1);
-		environmentMap->Set(2);
+		linearWrapSamplerState->Set(2);
+		environmentMap->Set(5);
 
 		polygonMesh->Render();
 	}

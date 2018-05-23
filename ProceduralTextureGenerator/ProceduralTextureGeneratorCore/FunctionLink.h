@@ -16,7 +16,7 @@ class FunctionLink
 	int inputNodeIndex;
 	int outputNodeIndex;
 
-	int inputPinIndex;
+	int inputPortIndex;
 
 	PolylinePtr polylinePtr;
 
@@ -27,12 +27,12 @@ class FunctionLink
 
 	int GetInputNodeIndex();
 	int GetOutputNodeIndex();
-	int GetInputPinIndex();
+	int GetInputPortIndex();
 	vector<XMFLOAT2> GetPolylineVertices();
 
 	void SetInputNodeIndex(int inputNodeIndex_);
 	void SetOutputNodeIndex(int outputNodeIndex_);
-	void SetInputPinIndex(int inputPinIndex_);
+	void SetInputPortIndex(int inputPortIndex_);
 	void SetPolylineCoords(XMFLOAT2 p0, XMFLOAT2 p1, TextureType textureType);
 
 	void Select();

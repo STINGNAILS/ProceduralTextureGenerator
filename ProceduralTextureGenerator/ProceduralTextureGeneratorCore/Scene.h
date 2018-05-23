@@ -21,7 +21,8 @@ class Scene
 	shared_ptr<Environment> environment;
 
 	map<string, shared_ptr<RenderableObject>> renderableObjects;
-
+	mutex renderableObjectsMutex;
+	
 	void CheckInitialization();
 
 	public:

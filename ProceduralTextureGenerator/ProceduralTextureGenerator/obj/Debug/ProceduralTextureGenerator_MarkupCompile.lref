@@ -8,6 +8,14 @@ FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureG
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\NodeName.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\NewFunctionGraphDialog.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\NotSavedDialog.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\ObjectDialog.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\LightControls\DirectionalLightParameters.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\LightingDialog.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\LightControls\SphereLightParameters.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\EnvironmentDialog.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\GradientSetter.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Dialogs\GradientDialog.xaml;;
+FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\HoveredPortName.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Styles\Brushes.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\ParameterControls\ColorSetter.xaml;;
 FD:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\Controls\GraphView.xaml;;

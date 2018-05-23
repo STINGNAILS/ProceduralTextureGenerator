@@ -5,9 +5,6 @@
 #include "DirectXObjectPool.h"
 
 
-using namespace std;
-
-
 class RenderableObject
 {
 	public:

@@ -117,6 +117,14 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void AddGradientParameters(int gradientSizeIndex, int gradient0Index)
+		{
+			parameterStackPanel.Children.Add(new CategoryName("Gradient Parameters"));
+
+			parameterStackPanel.Children.Add(new GradientSetter("Gradient", gradientSizeIndex, gradient0Index));
+		}
+
+
 		private void AddNoiseParameters(int seedIndex)
 		{
 			parameterStackPanel.Children.Add(new CategoryName("Noise Parameters"));
@@ -257,6 +265,24 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void AddWarpParameters(int intensityIndex)
+		{
+			parameterStackPanel.Children.Add(new CategoryName("Warp Parameters"));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Intensity", intensityIndex, 0.0f, 100.0f));
+		}
+
+
+		private void AddSlopeBlurParameters(int intensityIndex, int samplesNumIndex)
+		{
+			parameterStackPanel.Children.Add(new CategoryName("Slope Blur Parameters"));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Intensity", intensityIndex, 0.0f, 100.0f));
+
+			parameterStackPanel.Children.Add(new IntegerParameter("Number of Samples", samplesNumIndex, 0, 32));
+		}
+
+
 		public void Update()
 		{
 			parameterStackPanel.Children.Clear();
@@ -313,6 +339,7 @@ namespace ProceduralTextureGenerator
 
 					break;
 				}
+				//Height : 4
 				//Uniform Color
 				case 5:
 				{
@@ -367,9 +394,12 @@ namespace ProceduralTextureGenerator
 				{
 					int textureResolutionIndex = 0;
 					int bpcIndex = 1;
+					int gradientSizeIndex = 2;
+					int gradient0Index = 0;
 
 					AddNodeName("Gradient");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddGradientParameters(gradientSizeIndex, gradient0Index);
 
 					break;
 				}
@@ -501,6 +531,33 @@ namespace ProceduralTextureGenerator
 					AddNodeName("Transform");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
 					AddTransformParameters(tilingModeIndex, xScaleIndex, yScaleIndex, rotationIndex, xTranslateIndex, yTranslateIndex);
+
+					break;
+				}
+				//Warp
+				case 18:
+				{
+					int textureResolutionIndex = 0;
+					int bpcIndex = 1;
+					int intensityIndex = 0;
+
+					AddNodeName("Warp");
+					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddWarpParameters(intensityIndex);
+
+					break;
+				}
+				//Slope Blur
+				case 19:
+				{
+					int textureResolutionIndex = 0;
+					int bpcIndex = 1;
+					int samplesNumIndex = 2;
+					int intensityIndex = 0;
+
+					AddNodeName("Slope Blur");
+					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddSlopeBlurParameters(intensityIndex, samplesNumIndex);
 
 					break;
 				}

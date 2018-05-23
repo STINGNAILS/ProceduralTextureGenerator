@@ -49,21 +49,18 @@ namespace ProceduralTextureGenerator
 			bPrevious = b;
 
 			redColorTextBox.Text = r.ToString("F4").Replace(",", ".");
-			redColorTextBox.Tag = rIndex;
 			redColorTextBox.LostFocus += FocusLostRed;
 			redColorTextBox.GotKeyboardFocus += SelectText;
 			redColorTextBox.MouseDoubleClick += SelectText;
 			redColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
 
 			greenColorTextBox.Text = g.ToString("F4").Replace(",", ".");
-			greenColorTextBox.Tag = gIndex;
 			greenColorTextBox.LostFocus += FocusLostGreen;
 			greenColorTextBox.GotKeyboardFocus += SelectText;
 			greenColorTextBox.MouseDoubleClick += SelectText;
 			greenColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
 
 			blueColorTextBox.Text = b.ToString("F4").Replace(",", ".");
-			blueColorTextBox.Tag = bIndex;
 			blueColorTextBox.LostFocus += FocusLostBlue;
 			blueColorTextBox.GotKeyboardFocus += SelectText;
 			blueColorTextBox.MouseDoubleClick += SelectText;
@@ -83,9 +80,10 @@ namespace ProceduralTextureGenerator
 				if(value != rPrevious)
 				{
 					CoreDll.GraphViewSetSelectedNodeFloatParameter(rIndex, value);
-					CoreDll.GraphViewProcess();
-					
-					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+
+					MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+					mainWindow?.OnFunctionGraphChanged();
+					mainWindow?.InvalidateSaving();
 
 					rPrevious = value;
 				}
@@ -105,9 +103,10 @@ namespace ProceduralTextureGenerator
 				if(value != gPrevious)
 				{
 					CoreDll.GraphViewSetSelectedNodeFloatParameter(gIndex, value);
-					CoreDll.GraphViewProcess();
 
-					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+					MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+					mainWindow?.OnFunctionGraphChanged();
+					mainWindow?.InvalidateSaving();
 
 					gPrevious = value;
 				}
@@ -127,9 +126,10 @@ namespace ProceduralTextureGenerator
 				if(value != bPrevious)
 				{
 					CoreDll.GraphViewSetSelectedNodeFloatParameter(bIndex, value);
-					CoreDll.GraphViewProcess();
 
-					ParentHelper.GetParentMainWindow(this)?.InvalidateSaving();
+					MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+					mainWindow?.OnFunctionGraphChanged();
+					mainWindow?.InvalidateSaving();
 
 					bPrevious = value;
 				}

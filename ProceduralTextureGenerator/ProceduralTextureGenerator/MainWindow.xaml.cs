@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using System.Threading;
 
 namespace ProceduralTextureGenerator
 {
@@ -23,12 +24,17 @@ namespace ProceduralTextureGenerator
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private AutoResetEvent processGraphEvent;
+		private AutoResetEvent terminateThreadEvent;
+		private WaitHandle[] waitHandles;
+		private Thread graphProcessingThread;
+
 		private Stopwatch frameTime;
 		private TimeSpan lastRenderTime;
 
 		private string functionGraphName;
 
-
+		private bool functionGraphIsSet;
 		private bool progressIsSaved;
 
 
@@ -42,22 +48,36 @@ namespace ProceduralTextureGenerator
 				MessageBox.Show("Initialization error; the program will be shut down");
 				Close();
 			}
-			
+
+			processGraphEvent = new AutoResetEvent(true);
+			terminateThreadEvent = new AutoResetEvent(false);
+			waitHandles = new WaitHandle[]
+			{
+				processGraphEvent,
+				terminateThreadEvent
+			};
+			graphProcessingThread = new Thread(ProcessGraph);
+			graphProcessingThread.Start();
+
 			graphView.SetParameterPanel(parameterPannel);
 
 			frameTime = new Stopwatch();
 
 			functionGraphName = "";
 
+			functionGraphIsSet = false;
 			progressIsSaved = true;
+			
+			Closing += OnClosing;
+			Closed += OnExit;
 		}
 
 
-		private void OnLoaded(object sender, RoutedEventArgs e)
+		public void OnFunctionGraphChanged()
 		{
-			CompositionTarget.Rendering += Update;
+			CoreDll.GraphViewAbortProcessing();
 
-			frameTime.Start();
+			processGraphEvent.Set();
 		}
 
 
@@ -74,6 +94,7 @@ namespace ProceduralTextureGenerator
 			if(lastRenderTime != args.RenderingTime)
 			{
 				UpdateControls();
+				CoreDll.ProcessEnvironmentTasks();
 				objectView.Render();
 				graphView.Render();
 				textureView.Render();
@@ -95,9 +116,18 @@ namespace ProceduralTextureGenerator
 		}
 
 
-		private void OnKeyDown(object sender, KeyEventArgs e)
+		private void ProcessGraph()
 		{
+			while(true)
+			{
+				CoreDll.GraphViewProcess();
 
+				int eventIndex = WaitHandle.WaitAny(waitHandles);
+				if(eventIndex == 1)
+				{
+					break;
+				}
+			}
 		}
 
 
@@ -129,6 +159,9 @@ namespace ProceduralTextureGenerator
 
 		private void OnExit(object sender, EventArgs e)
 		{
+			terminateThreadEvent.Set();
+			graphProcessingThread.Join();
+
 			CoreDll.Release();
 		}
 
@@ -157,20 +190,36 @@ namespace ProceduralTextureGenerator
 				}
 			}
 
-			NewFunctionGraphDialog newFunctionGraphWindow = new NewFunctionGraphDialog
+			NewFunctionGraphDialog newFunctionGraphDialog = new NewFunctionGraphDialog
 			{
 				Owner = Application.Current.MainWindow,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner
 			};
 
-			if(newFunctionGraphWindow.ShowDialog() == true)
+			if(newFunctionGraphDialog.ShowDialog() == true)
 			{
+				CoreDll.GraphViewAbortProcessing();
+				terminateThreadEvent.Set();
+				graphProcessingThread.Join();
+
 				CoreDll.ResetFunctionGraph();
 
-				functionGraphName = newFunctionGraphWindow.FunctionGraphName;
+				graphProcessingThread = new Thread(ProcessGraph);
+				graphProcessingThread.Start();
+
+				OnFunctionGraphChanged();
+				InvalidateSaving();
+
+				functionGraphName = newFunctionGraphDialog.FunctionGraphName;
 				Title = functionGraphName + " - Procedural Texture Generator";
 
-				progressIsSaved = false;
+				if(!functionGraphIsSet)
+				{
+					CompositionTarget.Rendering += Update;
+					frameTime.Start();
+
+					functionGraphIsSet = true;
+				}
 			}
 		}
 
@@ -208,10 +257,22 @@ namespace ProceduralTextureGenerator
 			{
 				CoreDll.LoadFunctionGraphFromFile(openFileDialog.FileName);
 				
+				OnFunctionGraphChanged();
+
 				functionGraphName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
 				Title = functionGraphName + " - Procedural Texture Generator";
 
+				parameterPannel.Update();
+
 				progressIsSaved = true;
+
+				if(!functionGraphIsSet)
+				{
+					CompositionTarget.Rendering += Update;
+					frameTime.Start();
+
+					functionGraphIsSet = true;
+				}
 			}
 		}
 

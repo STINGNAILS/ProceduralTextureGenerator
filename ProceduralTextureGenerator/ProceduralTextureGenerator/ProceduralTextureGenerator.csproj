@@ -33,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Wpf.Interop.DirectX, Version=0.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86">
@@ -116,6 +117,38 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\ObjectDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\LightControls\DirectionalLightParameters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\LightingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\LightControls\SphereLightParameters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\EnvironmentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ParameterControls\GradientSetter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\GradientDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\HoveredPortName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Brushes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -166,6 +199,30 @@
     </Compile>
     <Compile Include="Controls\ParameterControls\IntegerParameter.xaml.cs">
       <DependentUpon>IntegerParameter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ObjectDialog.xaml.cs">
+      <DependentUpon>ObjectDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LightControls\DirectionalLightParameters.xaml.cs">
+      <DependentUpon>DirectionalLightParameters.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\LightingDialog.xaml.cs">
+      <DependentUpon>LightingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LightControls\SphereLightParameters.xaml.cs">
+      <DependentUpon>SphereLightParameters.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\EnvironmentDialog.xaml.cs">
+      <DependentUpon>EnvironmentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ParameterControls\GradientSetter.xaml.cs">
+      <DependentUpon>GradientSetter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\GradientDialog.xaml.cs">
+      <DependentUpon>GradientDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HoveredPortName.xaml.cs">
+      <DependentUpon>HoveredPortName.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\CoreDll.cs" />
     <Compile Include="MainWindow.xaml.cs">

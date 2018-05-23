@@ -8,9 +8,10 @@
 #include "Scene.h"
 #include "Camera2D.h"
 #include "Camera3D.h"
-#include "Cube.h"
+#include "DummyObject.h"
 #include "FunctionGraph.h"
 #include "TextureQuad.h"
+#include "EnvironmentTaskQueue.h"
 
 
 #define CPP_EXPORTS_API
@@ -24,10 +25,11 @@
 map<int, shared_ptr<Scene>> scenes;
 
 shared_ptr<FunctionGraph> functionGraph;
-
-shared_ptr<Cube> cube1;
-
+shared_ptr<DummyObject> dummyObject;
+CurrentDummyObject currentDummyObject;
 shared_ptr<TextureQuad> textureQuad;
+
+shared_ptr<EnvironmentTaskQueue> environmentTaskQueue;
 
 string errorMessage;
 
@@ -54,12 +56,15 @@ CPP_API int Init()
 		scenes[1]->SetCamera(camera1);
 
 
-		shared_ptr<Environment> environment1 = make_shared<Environment>(L"Cubemap.dds");
+		shared_ptr<Environment> environment1 = make_shared<Environment>();
+		environment1->SetEnvironmentMap(L"Environment\\Citadella.dds", 0);
 
-		DirectionalLight dirLight1;
-		dirLight1.intensity = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-		dirLight1.direction = XMFLOAT4(0.4f, -0.824621f, -0.4f, 0.0f);
-		environment1->AddDirectionalLight(dirLight1);
+		DirectionalLight dirLight;
+		dirLight.color = XMFLOAT3(1.0f, 1.0f, 1.0f);
+		dirLight.intensity = 3.14f;
+		dirLight.direction = XMFLOAT2(30.0f, 315.0f);
+		dirLight.isEnabled = 1;
+		environment1->SetDirectionalLight(dirLight);
 
 		scenes[1]->SetEnvironment(environment1);
 
@@ -74,13 +79,12 @@ CPP_API int Init()
 		scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
 
 
-		cube1 = make_shared<Cube>();
-		cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-		cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-		cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-		cube1->SetNormalMap(functionGraph->GetNormalTexture());
+		dummyObject = make_shared<DummyObject>("Cube");
+		currentDummyObject = CUBE;
 
-		scenes[1]->AddRenderableObject(cube1, "Cube1");
+		functionGraph->BindDummyObject(dummyObject);
+
+		scenes[1]->AddRenderableObject(dummyObject, "DummyObject");
 
 
 		shared_ptr<Camera2D> camera2 = make_shared<Camera2D>();
@@ -98,9 +102,12 @@ CPP_API int Init()
 
 
 		textureQuad = make_shared<TextureQuad>();
-		textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+
+		functionGraph->BindTextureQuad(textureQuad);
 
 		scenes[3]->AddRenderableObject(textureQuad, "TextureQuad");
+
+		environmentTaskQueue = make_shared<EnvironmentTaskQueue>();
 	}
 	catch(string e)
 	{
@@ -149,18 +156,26 @@ CPP_API void Render(int viewIndex)
 }
 
 
+CPP_API void ProcessEnvironmentTasks()
+{
+	environmentTaskQueue->Process();
+}
+
+
 CPP_API void Release()
 {
-	cube1 = nullptr;
+	dummyObject = nullptr;
 	textureQuad = nullptr;
 	functionGraph = nullptr;
 
 	scenes.clear();
 
-	/*ID3D11Debug* debug = 0;
-	device->GetDevice()->QueryInterface(IID_ID3D11Debug, (void**) &debug);*/
+	DirectXObjectPool::Release();
+
+	//ID3D11Debug* debug = 0;
+	//DirectXDevice::GetDevice()->QueryInterface(IID_ID3D11Debug, (void**) &debug);
 	DirectXDevice::Release();
-	/*debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);*/
+	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 }
 
 
@@ -170,11 +185,93 @@ CPP_API void Release()
 //}
 
 
+CPP_API int ObjectViewGetObjectType()
+{
+	return currentDummyObject;
+}
+
+
+CPP_API void ObjectViewSetObjectType(int objectType)
+{
+	switch(objectType)
+	{
+		case 0:
+		{
+			dummyObject = make_shared<DummyObject>("Cube");
+			currentDummyObject = CUBE;
+			break;
+		}
+		case 1:
+		{
+			dummyObject = make_shared<DummyObject>("Sphere");
+			currentDummyObject = SPHERE;
+			break;
+		}
+	}
+
+	functionGraph->BindDummyObject(dummyObject);
+
+	scenes[1]->AddRenderableObject(dummyObject, "DummyObject");
+}
+
+
+CPP_API DirectionalLight ObjectViewGetDirectionalLight()
+{
+	return scenes[1]->GetEnvironment()->GetDirectionalLight();
+}
+
+
+CPP_API SphereLight ObjectViewGetSphereLight(int sphereLightIndex)
+{
+	return scenes[1]->GetEnvironment()->GetSphereLight(sphereLightIndex);
+}
+
+
+CPP_API int ObjectViewGetEnvironmentMapIndex()
+{
+	return scenes[1]->GetEnvironment()->GetEnvironmentMapIndex();
+}
+
+
+CPP_API void ObjectViewSetDirectionalLight(DirectionalLight directionalLight)
+{
+	scenes[1]->GetEnvironment()->SetDirectionalLight(directionalLight);
+}
+
+
+CPP_API void ObjectViewSetSphereLight(int sphereLightIndex, SphereLight sphereLight)
+{
+	scenes[1]->GetEnvironment()->SetSphereLight(sphereLightIndex, sphereLight);
+}
+
+
+CPP_API void ObjectViewSetEnvironmentMap(int environmentMapIndex)
+{
+	environmentTaskQueue->AddTask(scenes[1]->GetEnvironment(), environmentMapIndex);
+}
+
+
+CPP_API void ObjectViewScope()
+{
+	shared_ptr<Camera> camera = scenes[1]->GetCamera();
+	Camera3D &camera1 = dynamic_cast<Camera3D&>(*camera.get());
+
+	camera1.SetPosition(XMFLOAT3(0.0f, 5.0f, 0.0f));
+	camera1.SetRotation(XMFLOAT2(-1.57f, 3.14f));
+}
+
+
 CPP_API void GraphViewAddNode(int functionIndex, float x, float y)
 {
 	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 
 	functionGraph->AddNode(functionIndex, world.x, world.y);
+}
+
+
+CPP_API int GraphViewGraphWasChanged()
+{
+	return functionGraph->GraphWasChanged();
 }
 
 
@@ -199,13 +296,6 @@ CPP_API void GraphViewOnMouseUp(float x, float y)
 	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 	
 	functionGraph->OnMouseUp(world.x, world.y);
-
-	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-	cube1->SetNormalMap(functionGraph->GetNormalTexture());
-
-	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
 }
 
 
@@ -214,20 +304,12 @@ CPP_API void GraphViewOnMouseDoubleClick(float x, float y)
 	XMFLOAT3 world = scenes[2]->GetCamera()->ScreenToWorld(x, y);
 	
 	functionGraph->OnMouseDoubleClick(world.x, world.y);
-	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
 }
 
 
 CPP_API void GraphViewRemoveSelected()
 {
 	functionGraph->RemoveSelected();
-
-	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-	cube1->SetNormalMap(functionGraph->GetNormalTexture());
-
-	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
 }
 
 
@@ -249,6 +331,17 @@ CPP_API int GraphViewGetSelectedNodeIntParameter(int parameterIndex)
 }
 
 
+CPP_API HoveredPortDescriptor GraphViewGetHoveredPointDescriptor()
+{
+	HoveredPortDescriptor hoveredPortDescriptor = functionGraph->GetHoveredPortDescriptor();
+	XMFLOAT3 screenCoords = scenes[2]->GetCamera()->WorldToScreen(hoveredPortDescriptor.position.x, hoveredPortDescriptor.position.y + 20.0f);
+
+	hoveredPortDescriptor.position = XMFLOAT2(screenCoords.x, screenCoords.y);
+
+	return hoveredPortDescriptor;
+}
+
+
 CPP_API float GraphViewGetSelectedNodeFloatParameter(int parameterIndex)
 {
 	return functionGraph->GetSelectedNodeFloatParameter(parameterIndex);
@@ -267,31 +360,35 @@ CPP_API void GraphViewSetSelectedNodeFloatParameter(int parameterIndex, float va
 }
 
 
+CPP_API void GraphViewScope()
+{
+	XMFLOAT4 scope = functionGraph->GetScope();
+	
+	scenes[2]->GetCamera()->Scope(scope.x, scope.y, scope.z, scope.w);
+}
+
+
 CPP_API void GraphViewProcess()
 {
 	functionGraph->Process();
+}
 
-	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-	cube1->SetNormalMap(functionGraph->GetNormalTexture());
 
-	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+CPP_API void GraphViewAbortProcessing()
+{
+	functionGraph->AbortProcessing();
+}
+
+
+CPP_API void TextureViewScope()
+{
+	scenes[3]->GetCamera()->Scope(-256.0f, -256.0f, 256.0f, 256.0f);
 }
 
 
 CPP_API void ResetFunctionGraph()
 {
-	functionGraph = make_shared<FunctionGraph>();
-
-	scenes[2]->AddRenderableObject(functionGraph, "FunctionGraph");
-
-	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-	cube1->SetNormalMap(functionGraph->GetNormalTexture());
-
-	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
+	functionGraph->Reset();
 }
 
 
@@ -304,11 +401,4 @@ CPP_API void SaveFunctionGraphToFile(LPSTR fileName)
 CPP_API void LoadFunctionGraphFromFile(LPSTR fileName)
 {
 	functionGraph->LoadFromFile(fileName);
-
-	cube1->SetBaseColorMap(functionGraph->GetBaseColorTexture());
-	cube1->SetMetallicMap(functionGraph->GetMetallicTexture());
-	cube1->SetRoughnessMap(functionGraph->GetRoughnessTexture());
-	cube1->SetNormalMap(functionGraph->GetNormalTexture());
-
-	textureQuad->SetTexture(functionGraph->GetTrackedTexture());
 }

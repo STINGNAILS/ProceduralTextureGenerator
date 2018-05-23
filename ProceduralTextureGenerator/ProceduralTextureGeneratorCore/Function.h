@@ -11,7 +11,7 @@
 #define METALLIC 1
 #define ROUGHNESS 2
 #define NORMAL 3
-#define HEIGHT 4
+//#define HEIGHT 4
 #define UNIFORM_COLOR 5
 #define BLEND 6
 #define REMAP 7
@@ -25,11 +25,21 @@
 #define HEIGHT_TO_NORMAL 15
 #define SHAPE 16
 #define TRANSFORM 17
+#define WARP 18
+#define SLOPE_BLUR 19
+
+
+struct InputSlotDescriptor
+{
+	TextureType textureType;
+	bool isMandatory;
+};
 
 
 TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTexturePtrs, vector<int> intParameters, vector<float> floatParameters);
 
-int FunctionInputNodesNum(int functionIndex);
+vector<InputSlotDescriptor> FunctionInputSlotDescriptors(int functionIndex);
+TextureType FunctionOutputSlotTextureType(int functionIndex);
 
 vector<int> FunctionIntParametersBase(int functionIndex);
 vector<float> FunctionFloatParametersBase(int functionIndex);

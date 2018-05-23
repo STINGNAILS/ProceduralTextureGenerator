@@ -85,7 +85,7 @@ DirectXTexture::DirectXTexture(LPCWSTR fileName)
 
 	textureType = COLOR;
 
-	ID3D11Resource *resource;
+	ID3D11Resource *resource = nullptr;
 	hr = CreateDDSTextureFromFile(device, fileName, &resource, &textureSRV);
 	if(resource) resource->Release();
 	if(FAILED(hr))

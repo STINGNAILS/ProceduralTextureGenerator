@@ -161,23 +161,27 @@
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="ConstantBuffer.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="DirectXDependencies.h" />
     <ClInclude Include="DirectXDevice.h" />
     <ClInclude Include="DirectXObjectPool.h" />
     <ClInclude Include="DirectXRenderer.h" />
     <ClInclude Include="DirectXTexture.h" />
     <ClInclude Include="DirectXView.h" />
+    <ClInclude Include="DummyObject.h" />
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="EnvironmentTaskQueue.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="FunctionGraph.h" />
     <ClInclude Include="FunctionLink.h" />
     <ClInclude Include="FunctionNode.h" />
     <ClInclude Include="GeometryHelper.h" />
+    <ClInclude Include="IrradianceMultiMapRenderer.h" />
+    <ClInclude Include="IrradianceRoughMapRenderer.h" />
+    <ClInclude Include="IrradianceSmoothMapRenderer.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="NoiseFunctions.h" />
     <ClInclude Include="NormalFunctions.h" />
-    <ClInclude Include="OutputPin.h" />
+    <ClInclude Include="Port.h" />
     <ClInclude Include="PatternFunctions.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="PolygonMesh.h" />
@@ -205,7 +209,6 @@
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DirectXDevice.cpp" />
     <ClCompile Include="DirectXObjectPool.cpp" />
     <ClCompile Include="DirectXRenderer.cpp" />
@@ -225,16 +228,21 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DummyObject.cpp" />
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="EnvironmentTaskQueue.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="FunctionGraph.cpp" />
     <ClCompile Include="FunctionLink.cpp" />
     <ClCompile Include="FunctionNode.cpp" />
     <ClCompile Include="GeometryHelper.cpp" />
+    <ClCompile Include="IrradianceMultiMapRenderer.cpp" />
+    <ClCompile Include="IrradianceRoughMapRenderer.cpp" />
+    <ClCompile Include="IrradianceSmoothMapRenderer.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="NoiseFunctions.cpp" />
     <ClCompile Include="NormalFunctions.cpp" />
-    <ClCompile Include="OutputPin.cpp" />
+    <ClCompile Include="Port.cpp" />
     <ClCompile Include="PatternFunctions.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PolygonMesh.cpp" />
