@@ -7,7 +7,8 @@
 enum CurrentDummyObject
 {
 	CUBE	= 0,
-	SPHERE	= 1
+	SPHERE	= 1,
+	PLANE	= 2
 };
 
 

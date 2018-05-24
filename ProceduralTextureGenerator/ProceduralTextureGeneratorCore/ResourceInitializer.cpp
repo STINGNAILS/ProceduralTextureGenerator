@@ -341,6 +341,33 @@ void ResourceInitializer::InitializePolygonMeshes()
 	DirectXObjectPool::SetPolygonMesh("Sphere", make_shared<PolygonMesh>((void*) &sphereVertices[0], sizeof(PBSVertex), sphereVertices.size(), &sphereIndices[0], sphereIndices.size()));
 
 
+	vector<PBSVertex> planeVertices(4);
+
+	v1 = XMFLOAT3(-2.0f, 0.0f, -2.0f);
+	v2 = XMFLOAT3(2.0f, 0.0f, -2.0f);
+	v3 = XMFLOAT3(-2.0f, 0.0f, 2.0f);
+	v4 = XMFLOAT3(2.0f, 0.0f, 2.0f);
+
+	normal = CalculateNormal(v1, v2, v3);
+	tangent = CalculateTangent(v1, v2, v3, XMFLOAT2(0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f));
+
+	planeVertices[0] = { v1, normal, tangent, XMFLOAT2(0.0f, 0.0f) };
+	planeVertices[1] = { v2, normal, tangent, XMFLOAT2(1.0f, 0.0f) };
+	planeVertices[2] = { v3, normal, tangent, XMFLOAT2(0.0f, 1.0f) };
+	planeVertices[3] = { v4, normal, tangent, XMFLOAT2(1.0f, 1.0f) };
+
+	vector<UINT> planeIndices(6);
+
+	planeIndices[0] = 0;
+	planeIndices[1] = 1;
+	planeIndices[2] = 2;
+	planeIndices[3] = 1;
+	planeIndices[4] = 3;
+	planeIndices[5] = 2;
+
+	DirectXObjectPool::SetPolygonMesh("Plane", make_shared<PolygonMesh>((void*) &planeVertices[0], sizeof(PBSVertex), planeVertices.size(), &planeIndices[0], planeIndices.size()));
+
+
 	vector<BasicVertex> textureQuadVertices(4);
 
 	textureQuadVertices[0] = { XMFLOAT3(-256.0f, -256.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) };

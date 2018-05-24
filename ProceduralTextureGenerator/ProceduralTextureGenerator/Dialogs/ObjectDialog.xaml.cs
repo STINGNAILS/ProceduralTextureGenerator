@@ -25,6 +25,7 @@ namespace ProceduralTextureGenerator
 
 			objectComboBox.Items.Add("Cube");
 			objectComboBox.Items.Add("Sphere");
+			objectComboBox.Items.Add("Plane");
 			objectComboBox.SelectedIndex = CoreDll.ObjectViewGetObjectType();
 		}
 

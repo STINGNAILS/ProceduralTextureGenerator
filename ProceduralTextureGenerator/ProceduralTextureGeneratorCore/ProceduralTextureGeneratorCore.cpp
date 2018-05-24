@@ -207,6 +207,12 @@ CPP_API void ObjectViewSetObjectType(int objectType)
 			currentDummyObject = SPHERE;
 			break;
 		}
+		case 2:
+		{
+			dummyObject = make_shared<DummyObject>("Plane");
+			currentDummyObject = PLANE;
+			break;
+		}
 	}
 
 	functionGraph->BindDummyObject(dummyObject);
