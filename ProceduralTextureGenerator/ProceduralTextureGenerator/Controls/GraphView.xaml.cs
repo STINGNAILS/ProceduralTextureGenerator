@@ -25,22 +25,25 @@ namespace ProceduralTextureGenerator
 
 		private ParameterPanel parameterPanel;
 
-		private float scale;
-
 
 		public GraphView()
         {
             InitializeComponent();
 
 			view.Bind(2);
-
-			scale = 1.0f;
 		}
 
 
 		public void Update(float dt)
 		{
 			view.Update(dt);
+
+			HoveredPortDescriptor hoveredPortDescriptor = CoreDll.GraphViewGetHoveredPointDescriptor();
+			float scale = CoreDll.GraphViewGetScale();
+			hoveredPortName.Update(hoveredPortDescriptor);
+			Canvas.SetLeft(hoveredPortName, hoveredPortDescriptor.x * ActualWidth - hoveredPortName.ActualWidth * scale / 2.0);
+			Canvas.SetTop(hoveredPortName, (1.0 - hoveredPortDescriptor.y) * ActualHeight - hoveredPortName.ActualHeight * scale / 2.0);
+			hoveredPortName.RenderTransform = new ScaleTransform(scale, scale);
 		}
 
 
@@ -229,11 +232,6 @@ namespace ProceduralTextureGenerator
 		{
 			Point mouseCoords = e.GetPosition(this);
 			CoreDll.GraphViewOnMouseMove((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
-
-			HoveredPortDescriptor hoveredPortDescriptor = CoreDll.GraphViewGetHoveredPointDescriptor();
-			hoveredPortName.Update(hoveredPortDescriptor);
-			Canvas.SetLeft(hoveredPortName, hoveredPortDescriptor.x * ActualWidth - hoveredPortName.ActualWidth * scale / 2.0);
-			Canvas.SetTop(hoveredPortName, (1.0 - hoveredPortDescriptor.y) * ActualHeight - hoveredPortName.ActualHeight * scale / 2.0);
 		}
 
 
@@ -262,18 +260,6 @@ namespace ProceduralTextureGenerator
 				Point mouseCoords = e.GetPosition(this);
 				CoreDll.GraphViewOnMouseDoubleClick((float)(mouseCoords.X / ActualWidth), (float)(1.0 - mouseCoords.Y / ActualHeight));
 			}
-		}
-
-
-		private void OnMouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			scale *= ((float) Math.Pow(1.15, e.Delta / 120.0));
-
-			HoveredPortDescriptor hoveredPortDescriptor = CoreDll.GraphViewGetHoveredPointDescriptor();
-			hoveredPortName.Update(hoveredPortDescriptor);
-			Canvas.SetLeft(hoveredPortName, hoveredPortDescriptor.x * ActualWidth - hoveredPortName.ActualWidth * scale / 2.0);
-			Canvas.SetTop(hoveredPortName, (1.0 - hoveredPortDescriptor.y) * ActualHeight - hoveredPortName.ActualHeight * scale / 2.0);
-			hoveredPortName.RenderTransform = new ScaleTransform(scale, scale);
 		}
 
 

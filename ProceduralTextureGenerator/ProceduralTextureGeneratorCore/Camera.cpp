@@ -8,6 +8,8 @@ Camera::Camera()
 	position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	velocity = 1.0f;
 
+	scale = 1.0f;
+
 	w = 1.0f;
 	h = 1.0f;
 
@@ -57,6 +59,12 @@ const XMMATRIX Camera::ViewProjCentered()
 }
 
 
+const float Camera::GetScale()
+{
+	return scale;
+}
+
+
 void Camera::Set()
 {
 	CameraCB cameraCB;
@@ -64,7 +72,7 @@ void Camera::Set()
 	XMStoreFloat4x4(&cameraCB.viewProjInverse, XMMatrixTranspose(XMMatrixInverse(nullptr, ViewProj())));
 	XMStoreFloat4x4(&cameraCB.viewProjCentered, XMMatrixTranspose(ViewProjCentered()));
 	cameraCB.cameraPosW = position;
-	cameraCB.scale = zoom;
+	cameraCB.scale = scale;
 
 	constantBuffer->Update(&cameraCB);
 	constantBuffer->Set(0);

@@ -114,6 +114,12 @@ namespace ProceduralTextureGenerator
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewRemoveSelected")]
 		public static extern void GraphViewRemoveSelected();
 
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetHoveredPointDescriptor")]
+		public static extern HoveredPortDescriptor GraphViewGetHoveredPointDescriptor();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetScale")]
+		public static extern float GraphViewGetScale();
+
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetSelectedNodeIndex")]
 		public static extern int GraphViewGetSelectedNodeIndex();
 
@@ -125,9 +131,6 @@ namespace ProceduralTextureGenerator
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetSelectedNodeFloatParameter")]
 		public static extern float GraphViewGetSelectedNodeFloatParameter(int parameterIndex);
-
-		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewGetHoveredPointDescriptor")]
-		public static extern HoveredPortDescriptor GraphViewGetHoveredPointDescriptor();
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewSetSelectedNodeIntParameter")]
 		public static extern void GraphViewSetSelectedNodeIntParameter(int parameterIndex, int value);

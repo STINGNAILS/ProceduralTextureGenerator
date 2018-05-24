@@ -159,6 +159,8 @@ namespace ProceduralTextureGenerator
 
 		private void OnExit(object sender, EventArgs e)
 		{
+			CoreDll.GraphViewAbortProcessing();
+
 			terminateThreadEvent.Set();
 			graphProcessingThread.Join();
 

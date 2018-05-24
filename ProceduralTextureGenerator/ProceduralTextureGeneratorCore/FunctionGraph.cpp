@@ -17,11 +17,6 @@ FunctionGraph::FunctionGraph()
 
 	graphWasChanged = false;
 
-	AddNode(0, -192.0f, 0.0f);
-	AddNode(1, -64.0f, 0.0f);
-	AddNode(2, 64.0f, 0.0f);
-	AddNode(3, 192.0f, 0.0f);
-
 	newFunctionLink = nullptr;
 
 	interactionState = INTERACTION_NONE;
@@ -783,7 +778,8 @@ void FunctionGraph::Process()
 {
 	abortProcessing = false;
 
-	for(int i = 0; i < graphTraverseOrderPtr->size() && !abortProcessing; i++)
+	int graphSize = graphTraverseOrderPtr->size();
+	for(int i = 0; i < graphSize && !abortProcessing; i++)
 	{
 		unique_lock<mutex> lock1(functionGraphMutex);
 
@@ -906,6 +902,8 @@ void FunctionGraph::Reset()
 	functionLinksPtr = make_shared<map<int, FunctionLink>>();
 
 	graphTraverseOrderPtr = make_shared<vector<int>>();
+
+	graphWasChanged = false;
 
 	AddNode(0, -192.0f, 0.0f);
 	AddNode(1, -64.0f, 0.0f);
@@ -1118,6 +1116,8 @@ void FunctionGraph::LoadFromFile(LPSTR fileName)
 	selectedNodeIndex = -1;
 	selectedNodeIndex = -1;
 	trackedNodeIndex = 0;
+
+	graphWasChanged = false;
 
 	UpdateDummyObjectTexture();
 	UpdateTextureQuadTexture();

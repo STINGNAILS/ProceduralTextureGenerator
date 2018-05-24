@@ -31,7 +31,7 @@ class Camera
 	XMFLOAT3 position;
 	float velocity;
 
-	float zoom;
+	float scale;
 
 	float w;
 	float h;
@@ -56,6 +56,8 @@ class Camera
 	const XMMATRIX Proj();
 	const XMMATRIX ViewProj();
 	const XMMATRIX ViewProjCentered();
+
+	const float GetScale();
 
 	virtual XMFLOAT3 ScreenToWorld(float x, float y) = 0;
 	virtual XMFLOAT3 WorldToScreen(float x, float y) = 0;

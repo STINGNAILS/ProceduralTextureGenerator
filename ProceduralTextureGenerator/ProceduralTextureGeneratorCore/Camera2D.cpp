@@ -4,7 +4,7 @@
 
 Camera2D::Camera2D()
 {
-	zoom = 1.0f;
+
 }
 
 
@@ -16,13 +16,13 @@ Camera2D::~Camera2D()
 
 void Camera2D::CalculateView()
 {
-	view(0, 0) = zoom;
+	view(0, 0) = scale;
 	view(1, 0) = 0.0f;
 	view(2, 0) = 0.0f;
 	view(3, 0) = -position.x;
 
 	view(0, 1) = 0.0f;
-	view(1, 1) = zoom;
+	view(1, 1) = scale;
 	view(2, 1) = 0.0f;
 	view(3, 1) = -position.y;
 
@@ -60,8 +60,8 @@ void Camera2D::SetPosition(XMFLOAT2 position_)
 XMFLOAT3 Camera2D::ScreenToWorld(float x, float y)
 {
 	XMFLOAT3 world;
-	world.x = (position.x + w * (x - 0.5f)) / zoom;
-	world.y = (position.y + h * (y - 0.5f)) / zoom;
+	world.x = (position.x + w * (x - 0.5f)) / scale;
+	world.y = (position.y + h * (y - 0.5f)) / scale;
 	world.z = 0.0f;
 	
 	return world;
@@ -71,8 +71,8 @@ XMFLOAT3 Camera2D::ScreenToWorld(float x, float y)
 XMFLOAT3 Camera2D::WorldToScreen(float x, float y)
 {
 	XMFLOAT3 screen;
-	screen.x = (zoom * x - position.x) / w + 0.5f;
-	screen.y = (zoom * y - position.y) / h + 0.5f;
+	screen.x = (scale * x - position.x) / w + 0.5f;
+	screen.y = (scale * y - position.y) / h + 0.5f;
 	screen.z = 0.0f;
 
 	return screen;
@@ -91,10 +91,10 @@ void Camera2D::Navigate(float dx, float dy, float dt)
 void Camera2D::Zoom(float x, float y, float dz)
 {
 	XMFLOAT3 world = ScreenToWorld(x, y);
-	float s1 = zoom;
-	float s2 = zoom * pow(1.15, dz / 120.0);
+	float s1 = scale;
+	float s2 = scale * pow(1.15, dz / 120.0);
 
-	zoom = s2;
+	scale = s2;
 	position.x += (s2 - s1) * world.x;
 	position.y += (s2 - s1) * world.y;
 
@@ -106,10 +106,10 @@ void Camera2D::Scope(float xMin, float yMin, float xMax, float yMax)
 {
 	float sX = w / (xMax - xMin);
 	float sY = h / (yMax - yMin);
-	zoom = min(sX, sY);
+	scale = min(sX, sY);
 
-	position.x = zoom * (xMin + xMax) / 2.0f;
-	position.y = zoom * (yMin + yMax) / 2.0f;
+	position.x = scale * (xMin + xMax) / 2.0f;
+	position.y = scale * (yMin + yMax) / 2.0f;
 
 	CalculateView();
 }

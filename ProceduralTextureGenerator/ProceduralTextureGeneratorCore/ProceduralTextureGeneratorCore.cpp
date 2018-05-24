@@ -313,6 +313,23 @@ CPP_API void GraphViewRemoveSelected()
 }
 
 
+CPP_API HoveredPortDescriptor GraphViewGetHoveredPointDescriptor()
+{
+	HoveredPortDescriptor hoveredPortDescriptor = functionGraph->GetHoveredPortDescriptor();
+	XMFLOAT3 screenCoords = scenes[2]->GetCamera()->WorldToScreen(hoveredPortDescriptor.position.x, hoveredPortDescriptor.position.y + 20.0f);
+
+	hoveredPortDescriptor.position = XMFLOAT2(screenCoords.x, screenCoords.y);
+
+	return hoveredPortDescriptor;
+}
+
+
+CPP_API float GraphViewGetScale()
+{
+	return scenes[2]->GetCamera()->GetScale();
+}
+
+
 CPP_API int GraphViewGetSelectedNodeIndex()
 {
 	return functionGraph->GetSelectedNodeIndex();
@@ -328,17 +345,6 @@ CPP_API int GraphViewGetSelectedNodeFunctionIndex()
 CPP_API int GraphViewGetSelectedNodeIntParameter(int parameterIndex)
 {
 	return functionGraph->GetSelectedNodeIntParameter(parameterIndex);
-}
-
-
-CPP_API HoveredPortDescriptor GraphViewGetHoveredPointDescriptor()
-{
-	HoveredPortDescriptor hoveredPortDescriptor = functionGraph->GetHoveredPortDescriptor();
-	XMFLOAT3 screenCoords = scenes[2]->GetCamera()->WorldToScreen(hoveredPortDescriptor.position.x, hoveredPortDescriptor.position.y + 20.0f);
-
-	hoveredPortDescriptor.position = XMFLOAT2(screenCoords.x, screenCoords.y);
-
-	return hoveredPortDescriptor;
 }
 
 
