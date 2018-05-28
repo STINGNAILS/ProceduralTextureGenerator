@@ -67,7 +67,7 @@ d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturege
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(700): warning C4101: p0: неиспользованная локальная переменная
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(701): warning C4101: p1: неиспользованная локальная переменная
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(796): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(840): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(844): warning C4018: <: несоответствие типов со знаком и без знака
   FunctionLink.cpp
   FunctionNode.cpp
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(112): warning C4018: <: несоответствие типов со знаком и без знака

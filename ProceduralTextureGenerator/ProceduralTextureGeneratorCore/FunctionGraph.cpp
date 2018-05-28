@@ -797,7 +797,11 @@ void FunctionGraph::Process()
 		{
 			if(inputLinkIndices[j] != -1)
 			{
-				textureMemoryPtrs[j] = functionNodesInput[functionLinksInput[inputLinkIndices[j]].GetInputNodeIndex()].GetTextureMemory();
+				FunctionNode &functionNode = functionNodesInput[functionLinksInput[inputLinkIndices[j]].GetInputNodeIndex()];
+				TextureMemoryPtr textureMemoryPtr = functionNode.GetTextureMemory();
+
+				textureMemoryPtrs[j] = textureMemoryPtr;
+				currentNode.SetInputPortTextureType(j, textureMemoryPtr->GetTextureType());
 			}
 			else
 			{
