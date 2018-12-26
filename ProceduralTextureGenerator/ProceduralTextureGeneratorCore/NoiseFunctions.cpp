@@ -22,9 +22,17 @@ TextureMemoryPtr PerlinNoise(TextureResolution resolution, BitsPerChannel bitsPe
 		amplitude[k] = pow(persistence, k);
 
 		gradients[k].resize(gridSize[k] * gridSize[k]);
-		for(int i = 0; i < gradients[k].size(); i++)
+		for(int i = 0; i < gridSize[k] - 1; i++)
 		{
-			gradients[k][i] = XMFLOAT2(uniformRNG(rng), uniformRNG(rng));
+			for(int j = 0; j < gridSize[k] - 1; j++)
+			{
+				gradients[k][i * gridSize[k] + j] = XMFLOAT2(uniformRNG(rng), uniformRNG(rng));
+			}
+			gradients[k][(i + 1) * gridSize[k] - 1] = gradients[k][i * gridSize[k]];
+		}
+		for(int j = 0; j < gridSize[k]; j++)
+		{
+			gradients[k][(gridSize[k] - 1) * gridSize[k] + j] = gradients[k][j];
 		}
 	}
 
@@ -101,7 +109,7 @@ TextureMemoryPtr PerlinNoise(TextureResolution resolution, BitsPerChannel bitsPe
 	{
 		for(int j = 0; j < resolution; j++)
 		{
-			perlinNoiseTexturePtr->SetValue(i, j, XMFLOAT2((noise[i * resolution + j] - valueMin) / dv, 1.0));
+			perlinNoiseTexturePtr->SetValue(i, j, (noise[i * resolution + j] - valueMin) / dv);
 		}
 	}
 
@@ -1022,7 +1030,7 @@ TextureMemoryPtr WorleyNoise(TextureResolution resolution, BitsPerChannel bitsPe
 	{
 		for(int j = 0; j < resolution; j++)
 		{
-			worleyNoiseTexturePtr->SetValue(i, j, XMFLOAT2((noise[i * resolution + j] - valueMin) / dv, 1.0));
+			worleyNoiseTexturePtr->SetValue(i, j, (noise[i * resolution + j] - valueMin) / dv);
 		}
 	}
 

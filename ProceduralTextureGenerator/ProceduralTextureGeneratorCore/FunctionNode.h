@@ -83,5 +83,7 @@ class FunctionNode
 	void Unselect();
 
 	void Render();
+
+	void SaveTextureToFile(LPCWSTR fileName, int formatIndex);
 };
 

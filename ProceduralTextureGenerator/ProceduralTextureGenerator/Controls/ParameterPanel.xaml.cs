@@ -283,6 +283,14 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void AddLinearGradientParameters(int angleIndex)
+		{
+			parameterStackPanel.Children.Add(new CategoryName("Linear Gradient Parameters"));
+
+			parameterStackPanel.Children.Add(new FloatParameter("Rotation", angleIndex, 0.0f, 360.0f));
+		}
+
+
 		public void Update()
 		{
 			parameterStackPanel.Children.Clear();
@@ -558,6 +566,19 @@ namespace ProceduralTextureGenerator
 					AddNodeName("Slope Blur");
 					AddBaseParameters(textureResolutionIndex, bpcIndex);
 					AddSlopeBlurParameters(intensityIndex, samplesNumIndex);
+
+					break;
+				}
+				//Linear Gradient
+				case 20:
+				{
+					int textureResolutionIndex = 0;
+					int bpcIndex = 1;
+					int angleIndex = 0;
+
+					AddNodeName("Linear Gradient");
+					AddBaseParameters(textureResolutionIndex, bpcIndex);
+					AddLinearGradientParameters(angleIndex);
 
 					break;
 				}

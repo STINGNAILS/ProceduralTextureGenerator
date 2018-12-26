@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\App.xaml
-26229418633
+27-1717095789
 
-33-627527920
+34-1266206082
 17-1787121461
-Controls\ParameterControls\CategoryName.xaml;Controls\ParameterControls\SelectionParameter.xaml;Controls\ParameterControls\FloatParameter.xaml;Controls\ParameterControls\IntegerParameter.xaml;Controls\ParameterControls\RemapSetter.xaml;Controls\ParameterControls\NodeName.xaml;Dialogs\NewFunctionGraphDialog.xaml;Dialogs\NotSavedDialog.xaml;Dialogs\ObjectDialog.xaml;Controls\LightControls\DirectionalLightParameters.xaml;Dialogs\LightingDialog.xaml;Controls\LightControls\SphereLightParameters.xaml;Dialogs\EnvironmentDialog.xaml;Controls\ParameterControls\GradientSetter.xaml;Dialogs\GradientDialog.xaml;Controls\HoveredPortName.xaml;Styles\Brushes.xaml;Controls\ParameterControls\ColorSetter.xaml;Controls\GraphView.xaml;Controls\TextureView.xaml;Controls\View.xaml;Controls\ParameterControls\GrayscaleSetter.xaml;Styles\Core.xaml;MainWindow.xaml;Controls\ObjectView.xaml;Controls\ParameterPanel.xaml;
+Controls\ParameterControls\CategoryName.xaml;Controls\ParameterControls\SelectionParameter.xaml;Controls\ParameterControls\FloatParameter.xaml;Controls\ParameterControls\IntegerParameter.xaml;Controls\ParameterControls\RemapSetter.xaml;Controls\ParameterControls\NodeName.xaml;Dialogs\NewFunctionGraphDialog.xaml;Dialogs\NotSavedDialog.xaml;Dialogs\ObjectDialog.xaml;Controls\LightControls\DirectionalLightParameters.xaml;Dialogs\LightingDialog.xaml;Controls\LightControls\SphereLightParameters.xaml;Dialogs\EnvironmentDialog.xaml;Controls\ParameterControls\GradientSetter.xaml;Dialogs\GradientDialog.xaml;Controls\HoveredPortName.xaml;Dialogs\SaveMaterialDialog.xaml;Styles\Brushes.xaml;Controls\ParameterControls\ColorSetter.xaml;Controls\GraphView.xaml;Controls\TextureView.xaml;Controls\View.xaml;Controls\ParameterControls\GrayscaleSetter.xaml;Styles\Core.xaml;MainWindow.xaml;Controls\ObjectView.xaml;Controls\ParameterPanel.xaml;
 
 False
 

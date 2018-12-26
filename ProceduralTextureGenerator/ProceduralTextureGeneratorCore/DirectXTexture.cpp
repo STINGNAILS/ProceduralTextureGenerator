@@ -15,7 +15,7 @@ DirectXTexture::DirectXTexture(TextureMemoryPtr textureMemoryPtr)
 	painter = DirectXDevice::GetPainter();
 
 	textureType = textureMemoryPtr->GetTextureType();
-	BitsPerChannel bpc = textureMemoryPtr->GetFormat();
+	bpc = textureMemoryPtr->GetFormat();
 
 	switch(textureType)
 	{
@@ -84,6 +84,7 @@ DirectXTexture::DirectXTexture(LPCWSTR fileName)
 	HRESULT hr = S_OK;
 
 	textureType = COLOR;
+	bpc = BPC8;
 
 	ID3D11Resource *resource = nullptr;
 	hr = CreateDDSTextureFromFile(device, fileName, &resource, &textureSRV);
@@ -110,6 +111,7 @@ DirectXTexture::DirectXTexture(shared_ptr<DirectXRenderer> renderer)
 	HRESULT hr = S_OK;
 
 	textureType = COLOR;
+	bpc = BPC8;
 
 	ID3D11Texture2D *texture = nullptr;
 	hr = renderer->Render(&texture);
@@ -171,7 +173,7 @@ void DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.Height = resolution;
 	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R8G8_UNORM;
+	textureDesc.Format = DXGI_FORMAT_R8_UNORM;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -185,7 +187,7 @@ void DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 	memory[0] = textureMemoryPtr;
 	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
 	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
-	textureData[0].SysMemPitch = resolution * sizeof(XMUBYTEN2);
+	textureData[0].SysMemPitch = resolution * sizeof(uint8_t);
 	textureData[0].SysMemSlicePitch = 0;
 
 	for(int k = 1; k < memory.size(); k++)
@@ -204,7 +206,7 @@ void DirectXTexture::InitGrayscale8(TextureMemoryPtr textureMemoryPtr)
 
 		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
 		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
-		textureData[k].SysMemPitch = mipResolution * sizeof(XMUBYTEN2);
+		textureData[k].SysMemPitch = mipResolution * sizeof(uint8_t);
 		textureData[k].SysMemSlicePitch = 0;
 	}
 
@@ -244,7 +246,7 @@ void DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.Height = resolution;
 	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R16G16_UNORM;
+	textureDesc.Format = DXGI_FORMAT_R16_UNORM;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -258,7 +260,7 @@ void DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 	memory[0] = textureMemoryPtr;
 	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
 	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
-	textureData[0].SysMemPitch = resolution * sizeof(XMUSHORTN2);
+	textureData[0].SysMemPitch = resolution * sizeof(uint16_t);
 	textureData[0].SysMemSlicePitch = 0;
 
 	for(int k = 1; k < memory.size(); k++)
@@ -277,7 +279,7 @@ void DirectXTexture::InitGrayscale16(TextureMemoryPtr textureMemoryPtr)
 
 		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
 		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
-		textureData[k].SysMemPitch = mipResolution * sizeof(XMUSHORTN2);
+		textureData[k].SysMemPitch = mipResolution * sizeof(uint16_t);
 		textureData[k].SysMemSlicePitch = 0;
 	}
 
@@ -317,7 +319,7 @@ void DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	textureDesc.Height = resolution;
 	textureDesc.MipLevels = GetMipLevelsNum(resolution);
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+	textureDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -331,7 +333,7 @@ void DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 	memory[0] = textureMemoryPtr;
 	ZeroMemory(&textureData[0], sizeof(D3D11_SUBRESOURCE_DATA));
 	textureData[0].pSysMem = memory[0]->GetMemoryPtr();
-	textureData[0].SysMemPitch = resolution * sizeof(XMFLOAT2);
+	textureData[0].SysMemPitch = resolution * sizeof(float);
 	textureData[0].SysMemSlicePitch = 0;
 
 	for(int k = 1; k < memory.size(); k++)
@@ -350,7 +352,7 @@ void DirectXTexture::InitGrayscale32(TextureMemoryPtr textureMemoryPtr)
 
 		ZeroMemory(&textureData[k], sizeof(D3D11_SUBRESOURCE_DATA));
 		textureData[k].pSysMem = memory[k]->GetMemoryPtr();
-		textureData[k].SysMemPitch = mipResolution * sizeof(XMFLOAT2);
+		textureData[k].SysMemPitch = mipResolution * sizeof(float);
 		textureData[k].SysMemSlicePitch = 0;
 	}
 
@@ -607,4 +609,108 @@ void DirectXTexture::Set(int slot)
 {
 	painter->VSSetShaderResources(slot, 1, &textureSRV);
 	painter->PSSetShaderResources(slot, 1, &textureSRV);
+}
+
+
+void DirectXTexture::SaveAsJPG(LPCWSTR fileName)
+{
+	ID3D11Resource *texture = nullptr;
+	textureSRV->GetResource(&texture);
+
+	if(texture != nullptr)
+	{
+		GUID pixelFormat;
+		switch(textureType)
+		{
+			case GRAYSCALE:
+			{
+				pixelFormat = GUID_WICPixelFormat8bppGray;
+				break;
+			}
+			case COLOR:
+			{
+				pixelFormat = GUID_WICPixelFormat24bppBGR;
+				break;
+			}
+		}
+
+		SaveWICTextureToFile(painter, texture, GUID_ContainerFormatJpeg, fileName, &pixelFormat);
+	}
+}
+
+
+void DirectXTexture::SaveAsPNG(LPCWSTR fileName)
+{
+	ID3D11Resource *texture = nullptr;
+	textureSRV->GetResource(&texture);
+
+	if(texture != nullptr)
+	{
+		GUID pixelFormat;
+		switch(textureType)
+		{
+			case GRAYSCALE:
+			{
+				if(bpc == BPC8)
+				{
+					pixelFormat = GUID_WICPixelFormat8bppGray;
+				}
+				else
+				{
+					pixelFormat = GUID_WICPixelFormat16bppGray;
+				}
+
+				break;
+			}
+			case COLOR:
+			{
+				if(bpc == BPC8)
+				{
+					pixelFormat = GUID_WICPixelFormat32bppBGRA;
+				}
+				else
+				{
+					pixelFormat = GUID_WICPixelFormat64bppBGRA;
+				}
+
+				break;
+			}
+		}
+
+		SaveWICTextureToFile(painter, texture, GUID_ContainerFormatPng, fileName, &pixelFormat);
+	}
+}
+
+
+void DirectXTexture::SaveAsBMP(LPCWSTR fileName)
+{
+	ID3D11Resource *texture = nullptr;
+	textureSRV->GetResource(&texture);
+
+	if(texture != nullptr)
+	{
+		GUID pixelFormat;
+		if(bpc == BPC8)
+		{
+			pixelFormat = GUID_WICPixelFormat32bppBGRA;
+		}
+		else
+		{
+			pixelFormat = GUID_WICPixelFormat64bppBGRAFixedPoint;
+		}
+
+		SaveWICTextureToFile(painter, texture, GUID_ContainerFormatBmp, fileName, &pixelFormat);
+	}
+}
+
+
+void DirectXTexture::SaveAsDDS(LPCWSTR fileName)
+{
+	ID3D11Resource *texture = nullptr;
+	textureSRV->GetResource(&texture);
+
+	if(texture != nullptr)
+	{
+		SaveDDSTextureToFile(painter, texture, fileName);
+	}
 }

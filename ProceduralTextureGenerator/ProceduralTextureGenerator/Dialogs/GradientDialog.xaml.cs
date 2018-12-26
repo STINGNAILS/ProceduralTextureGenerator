@@ -91,21 +91,25 @@ namespace ProceduralTextureGenerator
 			kTextBox.GotKeyboardFocus += SelectText;
 			kTextBox.MouseDoubleClick += SelectText;
 			kTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
-			
+			kTextBox.KeyDown += OnEnterDown;
+
 			redColorTextBox.LostFocus += TextBoxFocusLost;
 			redColorTextBox.GotKeyboardFocus += SelectText;
 			redColorTextBox.MouseDoubleClick += SelectText;
 			redColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
-			
+			redColorTextBox.KeyDown += OnEnterDown;
+
 			greenColorTextBox.LostFocus += TextBoxFocusLost;
 			greenColorTextBox.GotKeyboardFocus += SelectText;
 			greenColorTextBox.MouseDoubleClick += SelectText;
 			greenColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
-			
+			greenColorTextBox.KeyDown += OnEnterDown;
+
 			blueColorTextBox.LostFocus += TextBoxFocusLost;
 			blueColorTextBox.GotKeyboardFocus += SelectText;
 			blueColorTextBox.MouseDoubleClick += SelectText;
 			blueColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			blueColorTextBox.KeyDown += OnEnterDown;
 
 			UpdateCurrentGradientStep();
 		}
@@ -199,24 +203,27 @@ namespace ProceduralTextureGenerator
 
 		private void GradientDragMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			UpdateCurrentGradientStep();
+			if(e.ChangedButton == MouseButton.Left)
+			{
+				UpdateCurrentGradientStep();
 
-			((Ellipse)gradientCanvas.Children[currentGradientStepIndex]).Stroke = new SolidColorBrush(Colors.DarkRed);
-			currentGradientStepIndex = gradientCanvas.Children.IndexOf((UIElement) sender);
-			((Ellipse)gradientCanvas.Children[currentGradientStepIndex]).Stroke = new SolidColorBrush(Colors.White);
+				((Ellipse)gradientCanvas.Children[currentGradientStepIndex]).Stroke = new SolidColorBrush(Colors.DarkRed);
+				currentGradientStepIndex = gradientCanvas.Children.IndexOf((UIElement)sender);
+				((Ellipse)gradientCanvas.Children[currentGradientStepIndex]).Stroke = new SolidColorBrush(Colors.White);
 
-			kTextBox.Text = gradients[currentGradientStepIndex].k.ToString("F6").Replace(",", ".");
-			redColorTextBox.Text = gradients[currentGradientStepIndex].r.ToString("F6").Replace(",", ".");
-			greenColorTextBox.Text = gradients[currentGradientStepIndex].g.ToString("F6").Replace(",", ".");
-			blueColorTextBox.Text = gradients[currentGradientStepIndex].b.ToString("F6").Replace(",", ".");
+				kTextBox.Text = gradients[currentGradientStepIndex].k.ToString("F6").Replace(",", ".");
+				redColorTextBox.Text = gradients[currentGradientStepIndex].r.ToString("F6").Replace(",", ".");
+				greenColorTextBox.Text = gradients[currentGradientStepIndex].g.ToString("F6").Replace(",", ".");
+				blueColorTextBox.Text = gradients[currentGradientStepIndex].b.ToString("F6").Replace(",", ".");
 
-			Color color = Color.FromArgb((byte)255, (byte)((int)(gradients[currentGradientStepIndex].r * 255)), (byte)((int)(gradients[currentGradientStepIndex].g * 255)), (byte)((int)(gradients[currentGradientStepIndex].b * 255)));
+				Color color = Color.FromArgb((byte)255, (byte)((int)(gradients[currentGradientStepIndex].r * 255)), (byte)((int)(gradients[currentGradientStepIndex].g * 255)), (byte)((int)(gradients[currentGradientStepIndex].b * 255)));
 
-			colorRect.Fill = new SolidColorBrush(color);
+				colorRect.Fill = new SolidColorBrush(color);
 
-			Mouse.Capture(gradientCanvas);
-			((UIElement)sender).Focus();
-			isDragging = true;
+				Mouse.Capture(gradientCanvas);
+				((UIElement)sender).Focus();
+				isDragging = true;
+			}
 		}
 
 
@@ -266,84 +273,87 @@ namespace ProceduralTextureGenerator
 
 		private void CreateGradientStep(object sender, MouseButtonEventArgs e)
 		{
-			UpdateCurrentGradientStep();
-
-			if(gradientSize <= 100)
+			if(e.ChangedButton == MouseButton.Left)
 			{
-				Point coords = e.GetPosition(gradientCanvas);
+				UpdateCurrentGradientStep();
 
-				float k = (float)(Math.Min(Math.Max(coords.X / 450.0, 0.0), 1.0));
-
-				int insertionIndex;
-				for(insertionIndex = 0; insertionIndex < gradientSize; insertionIndex++)
+				if(gradientSize <= 100)
 				{
-					if(k < gradients[insertionIndex].k)
+					Point coords = e.GetPosition(gradientCanvas);
+
+					float k = (float)(Math.Min(Math.Max(coords.X / 450.0, 0.0), 1.0));
+
+					int insertionIndex;
+					for(insertionIndex = 0; insertionIndex < gradientSize; insertionIndex++)
 					{
-						break;
+						if(k < gradients[insertionIndex].k)
+						{
+							break;
+						}
 					}
+
+					float r;
+					float g;
+					float b;
+
+					if(insertionIndex == 0)
+					{
+						r = gradients[0].r;
+						g = gradients[0].g;
+						b = gradients[0].b;
+					}
+					else if(insertionIndex == gradientSize)
+					{
+						r = gradients[gradientSize - 1].r;
+						g = gradients[gradientSize - 1].g;
+						b = gradients[gradientSize - 1].b;
+					}
+					else
+					{
+						Grad grad1 = gradients[insertionIndex - 1];
+						Grad grad2 = gradients[insertionIndex];
+						float t = (k - grad1.k) / (grad2.k - grad1.k);
+
+						r = (1.0f - t) * grad1.r + t * grad2.r;
+						g = (1.0f - t) * grad1.g + t * grad2.g;
+						b = (1.0f - t) * grad1.b + t * grad2.b;
+					}
+
+					gradients.Insert(insertionIndex, new Grad(k, r, g, b));
+
+					Color color = Color.FromArgb((byte)255, (byte)((int)(r * 255)), (byte)((int)(g * 255)), (byte)((int)(b * 255)));
+
+					gradientStops.Insert(insertionIndex, new GradientStop(color, k));
+
+					((Ellipse)gradientCanvas.Children[currentGradientStepIndex]).Stroke = new SolidColorBrush(Colors.DarkRed);
+					currentGradientStepIndex = insertionIndex;
+
+					Ellipse ellipse = new Ellipse()
+					{
+						Width = 10.0,
+						Height = 10.0,
+						Fill = new SolidColorBrush(color),
+						Stroke = new SolidColorBrush(Colors.White),
+						StrokeThickness = 1.0,
+						Focusable = true
+					};
+					ellipse.MouseDown += GradientDragMouseDown;
+
+					gradientCanvas.Children.Insert(insertionIndex, ellipse);
+					Canvas.SetLeft(ellipse, k * 450.0 - 5.0);
+
+					gradientSize++;
+
+					kTextBox.Text = k.ToString("F6").Replace(",", ".");
+					redColorTextBox.Text = r.ToString("F6").Replace(",", ".");
+					greenColorTextBox.Text = g.ToString("F6").Replace(",", ".");
+					blueColorTextBox.Text = b.ToString("F6").Replace(",", ".");
+
+					colorRect.Fill = new SolidColorBrush(color);
 				}
 
-				float r;
-				float g;
-				float b;
-
-				if(insertionIndex == 0)
-				{
-					r = gradients[0].r;
-					g = gradients[0].g;
-					b = gradients[0].b;
-				}
-				else if(insertionIndex == gradientSize)
-				{
-					r = gradients[gradientSize - 1].r;
-					g = gradients[gradientSize - 1].g;
-					b = gradients[gradientSize - 1].b;
-				}
-				else
-				{
-					Grad grad1 = gradients[insertionIndex - 1];
-					Grad grad2 = gradients[insertionIndex];
-					float t = (k - grad1.k) / (grad2.k - grad1.k);
-
-					r = (1.0f - t) * grad1.r + t * grad2.r;
-					g = (1.0f - t) * grad1.g + t * grad2.g;
-					b = (1.0f - t) * grad1.b + t * grad2.b;
-				}
-
-				gradients.Insert(insertionIndex, new Grad(k, r, g, b));
-
-				Color color = Color.FromArgb((byte)255, (byte)((int)(r * 255)), (byte)((int)(g * 255)), (byte)((int)(b * 255)));
-
-				gradientStops.Insert(insertionIndex, new GradientStop(color, k));
-
-				((Ellipse)gradientCanvas.Children[currentGradientStepIndex]).Stroke = new SolidColorBrush(Colors.DarkRed);
-				currentGradientStepIndex = insertionIndex;
-
-				Ellipse ellipse = new Ellipse()
-				{
-					Width = 10.0,
-					Height = 10.0,
-					Fill = new SolidColorBrush(color),
-					Stroke = new SolidColorBrush(Colors.White),
-					StrokeThickness = 1.0,
-					Focusable = true
-				};
-				ellipse.MouseDown += GradientDragMouseDown;
-
-				gradientCanvas.Children.Insert(insertionIndex, ellipse);
-				Canvas.SetLeft(ellipse, k * 450.0 - 5.0);
-
-				gradientSize++;
-
-				kTextBox.Text = k.ToString("F6").Replace(",", ".");
-				redColorTextBox.Text = r.ToString("F6").Replace(",", ".");
-				greenColorTextBox.Text = g.ToString("F6").Replace(",", ".");
-				blueColorTextBox.Text = b.ToString("F6").Replace(",", ".");
-
-				colorRect.Fill = new SolidColorBrush(color);
+			((UIElement)sender).Focus();
 			}
-
-			((UIElement) sender).Focus();
 		}
 
 
@@ -409,6 +419,15 @@ namespace ProceduralTextureGenerator
 
 			e.Handled = true;
 			textBox.Focus();
+		}
+
+
+		private void OnEnterDown(object sender, KeyEventArgs e)
+		{
+			if(e.Key == Key.Enter)
+			{
+				ParentHelper.GetParentParameterPanel(this)?.Focus();
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@
 #include "TextureMemory.h"
 #include "DirectXRenderer.h"
 #include "DDSTextureLoader.h"
+#include "ScreenGrab.h"
 
 
 #define DirectXTexturePtr shared_ptr<DirectXTexture>
@@ -19,6 +20,7 @@ class DirectXTexture
 	ID3D11ShaderResourceView *textureSRV;
 
 	TextureType textureType;
+	BitsPerChannel bpc;
 
 	int GetMipLevelsNum(int textureSize);
 
@@ -39,5 +41,10 @@ class DirectXTexture
 	TextureType GetTextureType();
 
 	void Set(int slot);
+
+	void SaveAsJPG(LPCWSTR fileName);
+	void SaveAsPNG(LPCWSTR fileName);
+	void SaveAsBMP(LPCWSTR fileName);
+	void SaveAsDDS(LPCWSTR fileName);
 };
 

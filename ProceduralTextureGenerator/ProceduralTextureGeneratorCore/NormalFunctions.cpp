@@ -42,8 +42,8 @@ TextureMemoryPtr HeightToNormal(TextureMemoryPtr inputTexturePtr, TextureResolut
 			int j1 = j != 0 ? j - 1 : resolution - 1;
 			int j2 = j != resolution - 1 ? j + 1 : 0;
 
-			XMVECTOR tangentV = XMVectorSet(step, 0.0f, height * (inputTexturePtr->SampleGrayscale(i, j2, resolution).x - inputTexturePtr->SampleGrayscale(i, j1, resolution).x), 0.0f);
-			XMVECTOR binormalV = XMVectorSet(0.0f, step, height * (inputTexturePtr->SampleGrayscale(i1, j, resolution).x - inputTexturePtr->SampleGrayscale(i2, j, resolution).x), 0.0f);
+			XMVECTOR tangentV = XMVectorSet(step, 0.0f, height * (inputTexturePtr->SampleGrayscale(i, j2, resolution) - inputTexturePtr->SampleGrayscale(i, j1, resolution)), 0.0f);
+			XMVECTOR binormalV = XMVectorSet(0.0f, step, height * (inputTexturePtr->SampleGrayscale(i1, j, resolution) - inputTexturePtr->SampleGrayscale(i2, j, resolution)), 0.0f);
 
 			XMVECTOR normalV = XMVector3Normalize(XMVector3Cross(tangentV, binormalV));
 			XMVECTOR valueV = XMVectorMultiplyAdd(bias, normalV, bias);

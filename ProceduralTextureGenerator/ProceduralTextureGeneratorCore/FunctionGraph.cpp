@@ -268,17 +268,26 @@ void FunctionGraph::Validate(shared_ptr<map<int, FunctionNode>> functionNodesCop
 void FunctionGraph::UpdateDummyObjectTexture()
 {
 	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
-	dummyObjectPtr->SetBaseColorMap(functionNodes[0].GetDirectXTexture());
-	dummyObjectPtr->SetMetallicMap(functionNodes[1].GetDirectXTexture());
-	dummyObjectPtr->SetRoughnessMap(functionNodes[2].GetDirectXTexture());
-	dummyObjectPtr->SetNormalMap(functionNodes[3].GetDirectXTexture());
+
+	if(functionNodesPtr->find(0) != functionNodesPtr->end())
+	{
+		dummyObjectPtr->SetBaseColorMap(functionNodes[0].GetDirectXTexture());
+		dummyObjectPtr->SetMetallicMap(functionNodes[1].GetDirectXTexture());
+		dummyObjectPtr->SetRoughnessMap(functionNodes[2].GetDirectXTexture());
+		dummyObjectPtr->SetNormalMap(functionNodes[3].GetDirectXTexture());
+	}
 }
 
 
 void FunctionGraph::UpdateTextureQuadTexture()
 {
 	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
-	textureQuadPtr->SetTexture(functionNodes[trackedNodeIndex].GetDirectXTexture());
+
+
+	if(functionNodesPtr->find(0) != functionNodesPtr->end())
+	{
+		textureQuadPtr->SetTexture(functionNodes[trackedNodeIndex].GetDirectXTexture());
+	}
 }
 
 
@@ -495,6 +504,9 @@ void FunctionGraph::RemoveSelected()
 	{
 		graphWasChanged = false;
 	}
+
+	UpdateDummyObjectTexture();
+	UpdateTextureQuadTexture();
 }
 
 
@@ -917,6 +929,9 @@ void FunctionGraph::Reset()
 	newFunctionLink = nullptr;
 
 	interactionState = INTERACTION_NONE;
+
+	UpdateDummyObjectTexture();
+	UpdateTextureQuadTexture();
 }
 
 
@@ -1125,4 +1140,27 @@ void FunctionGraph::LoadFromFile(LPSTR fileName)
 
 	UpdateDummyObjectTexture();
 	UpdateTextureQuadTexture();
+}
+
+
+void FunctionGraph::SaveMaterialTexturesToFiles(LPCWSTR baseColorFileName, LPCWSTR metallicFileName, LPCWSTR roughnessFileName, LPCWSTR normalFileName, int formatIndex)
+{
+	lock_guard<mutex> lock(functionGraphMutex);
+
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+
+	functionNodes[0].SaveTextureToFile(baseColorFileName, formatIndex);
+	functionNodes[1].SaveTextureToFile(metallicFileName, formatIndex);
+	functionNodes[2].SaveTextureToFile(roughnessFileName, formatIndex);
+	functionNodes[3].SaveTextureToFile(normalFileName, formatIndex);
+}
+
+
+void FunctionGraph::SaveTrackedTextureToFile(LPCWSTR fileName, int formatIndex)
+{
+	lock_guard<mutex> lock(functionGraphMutex);
+
+	map<int, FunctionNode> &functionNodes = *functionNodesPtr.get();
+
+	functionNodes[trackedNodeIndex].SaveTextureToFile(fileName, formatIndex);
 }

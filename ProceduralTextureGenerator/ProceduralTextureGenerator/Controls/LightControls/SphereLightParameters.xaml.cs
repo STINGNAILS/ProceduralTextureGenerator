@@ -34,46 +34,55 @@ namespace ProceduralTextureGenerator
 			redColorTextBox.GotKeyboardFocus += SelectText;
 			redColorTextBox.MouseDoubleClick += SelectText;
 			redColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			redColorTextBox.KeyDown += OnEnterDown;
 
 			greenColorTextBox.LostFocus += FocusLostGreen;
 			greenColorTextBox.GotKeyboardFocus += SelectText;
 			greenColorTextBox.MouseDoubleClick += SelectText;
 			greenColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			greenColorTextBox.KeyDown += OnEnterDown;
 
 			blueColorTextBox.LostFocus += FocusLostBlue;
 			blueColorTextBox.GotKeyboardFocus += SelectText;
 			blueColorTextBox.MouseDoubleClick += SelectText;
 			blueColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			blueColorTextBox.KeyDown += OnEnterDown;
 
 			intensityTextBox.LostFocus += FocusLostIntensity;
 			intensityTextBox.GotKeyboardFocus += SelectText;
 			intensityTextBox.MouseDoubleClick += SelectText;
 			intensityTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			intensityTextBox.KeyDown += OnEnterDown;
 
 			lightRadiusTextBox.LostFocus += FocusLostLightRadius;
 			lightRadiusTextBox.GotKeyboardFocus += SelectText;
 			lightRadiusTextBox.MouseDoubleClick += SelectText;
 			lightRadiusTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			lightRadiusTextBox.KeyDown += OnEnterDown;
 
 			sourceRadiusTextBox.LostFocus += FocusLostSourceRadius;
 			sourceRadiusTextBox.GotKeyboardFocus += SelectText;
 			sourceRadiusTextBox.MouseDoubleClick += SelectText;
 			sourceRadiusTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			sourceRadiusTextBox.KeyDown += OnEnterDown;
 
 			xTextBox.LostFocus += FocusLostX;
 			xTextBox.GotKeyboardFocus += SelectText;
 			xTextBox.MouseDoubleClick += SelectText;
 			xTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			xTextBox.KeyDown += OnEnterDown;
 
 			yTextBox.LostFocus += FocusLostY;
 			yTextBox.GotKeyboardFocus += SelectText;
 			yTextBox.MouseDoubleClick += SelectText;
 			yTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			yTextBox.KeyDown += OnEnterDown;
 
 			zTextBox.LostFocus += FocusLostZ;
 			zTextBox.GotKeyboardFocus += SelectText;
 			zTextBox.MouseDoubleClick += SelectText;
 			zTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			zTextBox.KeyDown += OnEnterDown;
 		}
 
 
@@ -283,6 +292,15 @@ namespace ProceduralTextureGenerator
 
 			e.Handled = true;
 			textBox.Focus();
+		}
+
+
+		private void OnEnterDown(object sender, KeyEventArgs e)
+		{
+			if(e.Key == Key.Enter)
+			{
+				ParentHelper.GetParentParameterPanel(this)?.Focus();
+			}
 		}
 	}
 }

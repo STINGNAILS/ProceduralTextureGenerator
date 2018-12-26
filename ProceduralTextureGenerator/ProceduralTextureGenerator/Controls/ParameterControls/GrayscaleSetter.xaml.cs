@@ -42,6 +42,7 @@ namespace ProceduralTextureGenerator
 			grayscaleTextBox.GotKeyboardFocus += SelectText;
 			grayscaleTextBox.MouseDoubleClick += SelectText;
 			grayscaleTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			grayscaleTextBox.KeyDown += OnEnterDown;
 
 			grayscaleRect.Fill = new SolidColorBrush(Color.FromArgb((byte)255, (byte)((int)(s * 255)), (byte)((int)(s * 255)), (byte)((int)(s * 255))));
 		}
@@ -94,6 +95,15 @@ namespace ProceduralTextureGenerator
 
 			e.Handled = true;
 			textBox.Focus();
+		}
+
+
+		private void OnEnterDown(object sender, KeyEventArgs e)
+		{
+			if(e.Key == Key.Enter)
+			{
+				ParentHelper.GetParentParameterPanel(this)?.Focus();
+			}
 		}
 	}
 }

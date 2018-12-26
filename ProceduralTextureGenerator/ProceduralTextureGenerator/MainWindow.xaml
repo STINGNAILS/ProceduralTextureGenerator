@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
 
         <Menu Style="{StaticResource MainMenuStyle}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
-            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_New Function Graph" Click="NewFunctionGraph" ClipToBounds="True">
+            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="New Function Graph" Click="NewFunctionGraph" ClipToBounds="True">
                 <MenuItem.Icon>
                     <Path Width="16" Height="16" Stretch="Fill" Fill="DarkRed" Data="{StaticResource NewFunctionGraph}" RenderTransformOrigin="0.5,0.5" >
                         <Path.RenderTransform>
@@ -35,14 +35,14 @@
                     </Path>
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_Open" Click="OpenFunctionGraph">
+            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="Open" Click="OpenFunctionGraph">
                 <MenuItem.Icon>
                     <Path Width="16" Height="16" Stretch="Uniform" Fill="DarkRed" Data="{StaticResource OpenFunctionGraph}" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="_Save" Click="SaveFunctionGraph">
+            <MenuItem Style="{StaticResource MainMenuItemStyle}" Header="Save" Click="SaveFunctionGraph">
                 <MenuItem.Icon>
-                    <Path Width="16" Height="16" Stretch="Fill" Fill="DarkRed" Data="{StaticResource SaveFunctionGraph}" />
+                    <Path Width="16" Height="16" Stretch="Fill" Fill="DarkRed" Data="{StaticResource Save}" />
                 </MenuItem.Icon>
             </MenuItem>
         </Menu>

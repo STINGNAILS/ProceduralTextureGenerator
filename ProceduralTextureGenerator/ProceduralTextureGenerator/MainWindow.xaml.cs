@@ -61,6 +61,10 @@ namespace ProceduralTextureGenerator
 
 			graphView.SetParameterPanel(parameterPannel);
 
+			objectView.Visibility = Visibility.Hidden;
+			graphView.Visibility = Visibility.Hidden;
+			textureView.Visibility = Visibility.Hidden;
+
 			frameTime = new Stopwatch();
 
 			functionGraphName = "";
@@ -84,6 +88,15 @@ namespace ProceduralTextureGenerator
 		public void InvalidateSaving()
 		{
 			progressIsSaved = false;
+		}
+
+
+		public string FunctionGraphName
+		{
+			get
+			{
+				return functionGraphName;
+			}
 		}
 
 
@@ -121,7 +134,7 @@ namespace ProceduralTextureGenerator
 			while(true)
 			{
 				CoreDll.GraphViewProcess();
-
+				
 				int eventIndex = WaitHandle.WaitAny(waitHandles);
 				if(eventIndex == 1)
 				{
@@ -220,6 +233,10 @@ namespace ProceduralTextureGenerator
 					CompositionTarget.Rendering += Update;
 					frameTime.Start();
 
+					objectView.Visibility = Visibility.Visible;
+					graphView.Visibility = Visibility.Visible;
+					textureView.Visibility = Visibility.Visible;
+
 					functionGraphIsSet = true;
 				}
 			}
@@ -272,6 +289,10 @@ namespace ProceduralTextureGenerator
 				{
 					CompositionTarget.Rendering += Update;
 					frameTime.Start();
+
+					objectView.Visibility = Visibility.Visible;
+					graphView.Visibility = Visibility.Visible;
+					textureView.Visibility = Visibility.Visible;
 
 					functionGraphIsSet = true;
 				}

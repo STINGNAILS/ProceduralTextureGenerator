@@ -46,7 +46,7 @@ namespace ProceduralTextureGenerator
 			integerParameterTextBox.GotKeyboardFocus += SelectText;
 			integerParameterTextBox.MouseDoubleClick += SelectText;
 			integerParameterTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
-			//integerParameterTextBox.PreviewTextInput += CheckInput;
+			integerParameterTextBox.KeyDown += OnEnterDown;
 		}
 
 
@@ -97,6 +97,15 @@ namespace ProceduralTextureGenerator
 
 			e.Handled = true;
 			textBox.Focus();
+		}
+
+
+		private void OnEnterDown(object sender, KeyEventArgs e)
+		{
+			if(e.Key == Key.Enter)
+			{
+				ParentHelper.GetParentParameterPanel(this)?.Focus();
+			}
 		}
 	}
 }

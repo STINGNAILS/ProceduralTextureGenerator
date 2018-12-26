@@ -92,32 +92,35 @@ namespace ProceduralTextureGenerator
 
 		private void OnClick(object sender, MouseButtonEventArgs e)
 		{
-			GradientDialog gradientDialog = new GradientDialog(gradientSize, gradients)
+			if(e.ChangedButton == MouseButton.Left)
 			{
-				Owner = Application.Current.MainWindow,
-				WindowStartupLocation = WindowStartupLocation.CenterOwner
-			};
+				GradientDialog gradientDialog = new GradientDialog(gradientSize, gradients)
+				{
+					Owner = Application.Current.MainWindow,
+					WindowStartupLocation = WindowStartupLocation.CenterOwner
+				};
 
-			gradientDialog.ShowDialog();
+				gradientDialog.ShowDialog();
 
-			gradientSize = gradientDialog.GradientSize;
+				gradientSize = gradientDialog.GradientSize;
 
-			CoreDll.GraphViewSetSelectedNodeIntParameter(gradientSizeIndex, gradientSize);
+				CoreDll.GraphViewSetSelectedNodeIntParameter(gradientSizeIndex, gradientSize);
 
-			for(int i = 0; i < gradientSize; i++)
-			{
-				int offset = gradient0Index + i * 4;
+				for(int i = 0; i < gradientSize; i++)
+				{
+					int offset = gradient0Index + i * 4;
 
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 0, gradients[i].k);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 1, gradients[i].r);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 2, gradients[i].g);
-				CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 3, gradients[i].b);
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 0, gradients[i].k);
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 1, gradients[i].r);
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 2, gradients[i].g);
+					CoreDll.GraphViewSetSelectedNodeFloatParameter(offset + 3, gradients[i].b);
+				}
+
+				MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+				mainWindow?.OnFunctionGraphChanged();
+				mainWindow?.InvalidateSaving();
+				ParentHelper.GetParentParameterPanel(this)?.Update();
 			}
-
-			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
-			mainWindow?.OnFunctionGraphChanged();
-			mainWindow?.InvalidateSaving();
-			ParentHelper.GetParentParameterPanel(this)?.Update();
 		}
 	}
 }

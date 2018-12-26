@@ -380,6 +380,12 @@ CPP_API void GraphViewScope()
 }
 
 
+CPP_API void GraphViewSaveMaterialTexturesToFiles(LPCWSTR baseColorFileName, LPCWSTR metallicFileName, LPCWSTR roughnessFileName, LPCWSTR normalFileName, int formatIndex)
+{
+	functionGraph->SaveMaterialTexturesToFiles(baseColorFileName, metallicFileName, roughnessFileName, normalFileName, formatIndex);
+}
+
+
 CPP_API void GraphViewProcess()
 {
 	functionGraph->Process();
@@ -395,6 +401,12 @@ CPP_API void GraphViewAbortProcessing()
 CPP_API void TextureViewScope()
 {
 	scenes[3]->GetCamera()->Scope(-256.0f, -256.0f, 256.0f, 256.0f);
+}
+
+
+CPP_API void TextureViewSaveTrackedTextureToFile(LPCWSTR fileName, int formatIndex)
+{
+	functionGraph->SaveTrackedTextureToFile(fileName, formatIndex);
 }
 
 

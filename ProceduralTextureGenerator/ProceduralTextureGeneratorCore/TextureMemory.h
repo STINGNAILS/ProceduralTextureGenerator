@@ -45,9 +45,9 @@ class TextureMemory
 
 	void *textureMemory;
 
-	inline XMFLOAT2 SampleGrayscale8(UINT u, UINT v, TextureResolution sampleResolution);
-	inline XMFLOAT2 SampleGrayscale16(UINT u, UINT v, TextureResolution sampleResolution);
-	inline XMFLOAT2 SampleGrayscale32(UINT u, UINT v, TextureResolution sampleResolution);
+	inline float SampleGrayscale8(UINT u, UINT v, TextureResolution sampleResolution);
+	inline float SampleGrayscale16(UINT u, UINT v, TextureResolution sampleResolution);
+	inline float SampleGrayscale32(UINT u, UINT v, TextureResolution sampleResolution);
 	inline XMFLOAT4 SampleColor8(UINT u, UINT v, TextureResolution sampleResolution);
 	inline XMFLOAT4 SampleColor16(UINT u, UINT v, TextureResolution sampleResolution);
 	inline XMFLOAT4 SampleColor32(UINT u, UINT v, TextureResolution sampleResolution);
@@ -62,10 +62,10 @@ class TextureMemory
 	BitsPerChannel GetFormat();
 	void *GetMemoryPtr();
 
-	XMFLOAT2 SampleGrayscale(UINT u, UINT v, TextureResolution sampleResolution);
+	float SampleGrayscale(UINT u, UINT v, TextureResolution sampleResolution);
 	XMFLOAT4 SampleColor(UINT u, UINT v, TextureResolution sampleResolution);
 
-	void SetValue(UINT u, UINT v, XMFLOAT2 value);
+	void SetValue(UINT u, UINT v, float value);
 	void SetValue(UINT u, UINT v, XMFLOAT4 value);
 };
 

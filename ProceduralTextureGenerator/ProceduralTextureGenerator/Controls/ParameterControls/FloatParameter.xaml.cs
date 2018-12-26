@@ -46,6 +46,7 @@ namespace ProceduralTextureGenerator
 			floatParameterTextBox.GotKeyboardFocus += SelectText;
 			floatParameterTextBox.MouseDoubleClick += SelectText;
 			floatParameterTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			floatParameterTextBox.KeyDown += OnEnterDown;
 		}
 
 
@@ -96,6 +97,15 @@ namespace ProceduralTextureGenerator
 
 			e.Handled = true;
 			textBox.Focus();
+		}
+
+
+		private void OnEnterDown(object sender, KeyEventArgs e)
+		{
+			if(e.Key == Key.Enter)
+			{
+				ParentHelper.GetParentParameterPanel(this)?.Focus();
+			}
 		}
 	}
 }

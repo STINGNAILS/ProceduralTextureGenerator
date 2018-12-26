@@ -86,5 +86,11 @@ namespace ProceduralTextureGenerator
 		{
 			CoreDll.ObjectViewScope();
 		}
+
+
+		private void OnMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			Focus();
+		}
 	}
 }

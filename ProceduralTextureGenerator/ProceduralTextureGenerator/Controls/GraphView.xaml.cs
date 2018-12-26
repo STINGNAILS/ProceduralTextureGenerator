@@ -215,6 +215,16 @@ namespace ProceduralTextureGenerator
 		}
 
 
+		private void AddLinearGradientNode(object sender, RoutedEventArgs e)
+		{
+			CoreDll.GraphViewAddNode(20, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+			mainWindow?.OnFunctionGraphChanged();
+			mainWindow?.InvalidateSaving();
+		}
+
+
 		private void OnMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			Focus();
@@ -268,6 +278,7 @@ namespace ProceduralTextureGenerator
 			if(e.Key == Key.Delete)
 			{
 				CoreDll.GraphViewRemoveSelected();
+				ModifyStackPanel();
 				if(CoreDll.GraphViewGraphWasChanged() == 1)
 				{
 					MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
@@ -281,6 +292,60 @@ namespace ProceduralTextureGenerator
 		private void ScopeGraph(object sender, RoutedEventArgs e)
 		{
 			CoreDll.GraphViewScope();
+		}
+
+
+		private void SaveMaterial(object sender, RoutedEventArgs e)
+		{
+			SaveMaterialDialog saveMaterialDialog = new SaveMaterialDialog()
+			{
+				Owner = Application.Current.MainWindow,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner
+			};
+
+			if(saveMaterialDialog.ShowDialog() == true)
+			{
+				string folderName = saveMaterialDialog.FolderName;
+				int formatIndex = saveMaterialDialog.FormatIndex;
+
+				string format;
+				switch(formatIndex)
+				{
+					case 1:
+					{
+						format = ".jpg";
+						break;
+					}
+					case 2:
+					{
+						format = ".png";
+						break;
+					}
+					case 3:
+					{
+						format = ".bmp";
+						break;
+					}
+					case 4:
+					{
+						format = ".dds";
+						break;
+					}
+					default:
+					{
+						format = "";
+						break;
+					}
+				}
+
+				string functionGraphName = ParentHelper.GetParentMainWindow(this).FunctionGraphName;
+				string baseColorFileName = folderName + functionGraphName + "_BaseColor" + format;
+				string metallicFileName = folderName + functionGraphName + "_Metallic" + format;
+				string roughnessFileName = folderName + functionGraphName + "_Roughness" + format;
+				string normalFileName = folderName + functionGraphName + "_Normal" + format;
+
+				CoreDll.GraphViewSaveMaterialTexturesToFiles(baseColorFileName, metallicFileName, roughnessFileName, normalFileName, formatIndex);
+			}
 		}
 	}
 }

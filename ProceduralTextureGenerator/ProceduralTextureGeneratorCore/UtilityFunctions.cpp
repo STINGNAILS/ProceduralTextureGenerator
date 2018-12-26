@@ -12,15 +12,15 @@ TextureMemoryPtr BackgroundGridTexture()
 		{
 			if(i <= 1 || i >= 126 || j <= 1 || j >= 126)
 			{
-				backgroundGridTexturePtr->SetValue(i, j, XMFLOAT2(0.5f, 1.0f));
+				backgroundGridTexturePtr->SetValue(i, j, 0.5f);
 			}
 			else if(i == 63 || i == 64 || j == 63 || j == 64)
 			{
-				backgroundGridTexturePtr->SetValue(i, j, XMFLOAT2(0.35f, 1.0f));
+				backgroundGridTexturePtr->SetValue(i, j, 0.35f);
 			}
 			else
 			{
-				backgroundGridTexturePtr->SetValue(i, j, XMFLOAT2(0.25f, 1.0f));
+				backgroundGridTexturePtr->SetValue(i, j, 0.25f);
 			}
 		}
 	}
@@ -37,7 +37,7 @@ TextureMemoryPtr NotProcessedTexture()
 	{
 		for(int j = 0; j < RES16; j++)
 		{
-			notProcessedTexturePtr->SetValue(i, j, XMFLOAT2(0.0f, 1.0f));
+			notProcessedTexturePtr->SetValue(i, j, 0.0f);
 		}
 	}
 

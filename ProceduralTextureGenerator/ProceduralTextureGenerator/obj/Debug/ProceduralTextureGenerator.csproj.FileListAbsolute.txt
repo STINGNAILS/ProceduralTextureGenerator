@@ -66,3 +66,5 @@ D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGe
 D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\obj\Debug\Dialogs\GradientDialog.baml
 D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\obj\Debug\Controls\HoveredPortName.g.cs
 D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\obj\Debug\Controls\HoveredPortName.baml
+D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\obj\Debug\Dialogs\SaveMaterialDialog.g.cs
+D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\ProceduralTextureGenerator\obj\Debug\Dialogs\SaveMaterialDialog.baml

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "AtomicFunctions.h"
+#include "BaseFunctions.h"
+#include "ColorFunctions.h"
+#include "FilterFunctions.h"
 #include "NoiseFunctions.h"
 #include "PatternFunctions.h"
 #include "NormalFunctions.h"
@@ -27,6 +29,7 @@
 #define TRANSFORM 17
 #define WARP 18
 #define SLOPE_BLUR 19
+#define LINEAR_GRADIENT 20
 
 
 struct InputSlotDescriptor

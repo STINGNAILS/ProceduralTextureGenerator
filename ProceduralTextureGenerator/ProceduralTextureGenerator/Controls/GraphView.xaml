@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProceduralTextureGenerator"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Background="Transparent" MouseDown="OnMouseDown" MouseMove="OnMouseMove" MouseUp="OnMouseUp" MouseDoubleClick="OnMouseDoubleClick" KeyDown="OnKeyDown">
+             d:DesignHeight="300" d:DesignWidth="300" Background="Transparent" Focusable="True" MouseDown="OnMouseDown" MouseMove="OnMouseMove" MouseUp="OnMouseUp" MouseDoubleClick="OnMouseDoubleClick" KeyDown="OnKeyDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
@@ -16,9 +16,14 @@
             <TextBlock x:Name="ObjectViewTitleName" Text="Graph View" FontFamily="Segoe UI Semibold" FontSize="14" HorizontalAlignment="Left" Foreground="White" Margin="15,2,15,0" Grid.Row="0"/>
             <Border Height="24" BorderThickness="1,0,1,0" BorderBrush="White"/>
             <Menu Panel.ZIndex="2" Background="{x:Null}" Margin="2,0,0,0">
-                <MenuItem Header="_Scope" Click="ScopeGraph" FontFamily="Segoe UI" FontSize="14" Foreground="Silver" Padding="1,0,3,0" Margin="0,1,0,0">
+                <MenuItem Header="Scope" Click="ScopeGraph" FontFamily="Segoe UI" FontSize="14" Foreground="Silver" Padding="1,0,3,0" Margin="0,1,0,0">
                     <MenuItem.Icon>
-                        <Path Width="15" Height="15" Stretch="Uniform" Fill="DarkRed" Data="{StaticResource Encompass}" />
+                        <Path Width="15" Height="15" Stretch="Uniform" Fill="DarkRed" Data="{StaticResource Scope}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Save Material" Click="SaveMaterial" FontFamily="Segoe UI" FontSize="14" Foreground="Silver" Padding="1,0,3,0" Margin="0,1,0,0">
+                    <MenuItem.Icon>
+                        <Path Width="15" Height="15" Stretch="Uniform" Fill="DarkRed" Data="{StaticResource Save}" />
                     </MenuItem.Icon>
                 </MenuItem>
             </Menu>
@@ -43,6 +48,7 @@
                     <MenuItem Header="Transform" Style="{StaticResource ContextMenuItemStyle}" Click="AddTransformNode"></MenuItem>
                     <MenuItem Header="Warp" Style="{StaticResource ContextMenuItemStyle}" Click="AddWarpNode"></MenuItem>
                     <MenuItem Header="Slope Blur" Style="{StaticResource ContextMenuItemStyle}" Click="AddSlopeBlurNode"></MenuItem>
+                    <MenuItem Header="Linear Gradient" Style="{StaticResource ContextMenuItemStyle}" Click="AddLinearGradientNode"></MenuItem>
                 </ContextMenu>
             </ContentControl.ContextMenu>
         </ContentControl>

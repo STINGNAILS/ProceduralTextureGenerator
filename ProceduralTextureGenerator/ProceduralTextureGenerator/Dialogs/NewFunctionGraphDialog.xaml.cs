@@ -22,6 +22,8 @@ namespace ProceduralTextureGenerator
         public NewFunctionGraphDialog()
         {
             InitializeComponent();
+
+			functionGraphNameTextBox.PreviewTextInput += CheckTextInput;
 		}
 
 
@@ -44,6 +46,18 @@ namespace ProceduralTextureGenerator
 			get
 			{
 				return functionGraphNameTextBox.Text;
+			}
+		}
+
+
+		private string restrictedSymbols = "\\/:*?\"<>|";
+
+
+		private void CheckTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if(restrictedSymbols.Contains(e.Text))
+			{
+				e.Handled = true;
 			}
 		}
 	}

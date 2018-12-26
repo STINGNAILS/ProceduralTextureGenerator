@@ -287,3 +287,37 @@ void FunctionNode::Render()
 		outputPortPtr->Render();
 	}
 }
+
+
+void FunctionNode::SaveTextureToFile(LPCWSTR fileName, int formatIndex)
+{
+	DirectXTexturePtr directXTextureToSavePtr = directXTexturePtr;
+
+	switch(formatIndex)
+	{
+		case 1:
+		{
+			directXTextureToSavePtr->SaveAsJPG(fileName);
+			break;
+		}
+		case 2:
+		{
+			directXTextureToSavePtr->SaveAsPNG(fileName);
+			break;
+		}
+		case 3:
+		{
+			directXTextureToSavePtr->SaveAsBMP(fileName);
+			break;
+		}
+		case 4:
+		{
+			directXTextureToSavePtr->SaveAsDDS(fileName);
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+}

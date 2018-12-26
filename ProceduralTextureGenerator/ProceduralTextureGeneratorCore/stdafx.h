@@ -22,6 +22,7 @@
 #include <random>
 #include <fstream>
 #include <mutex>
+#include <wincodec.h>
 
 
 using namespace std;

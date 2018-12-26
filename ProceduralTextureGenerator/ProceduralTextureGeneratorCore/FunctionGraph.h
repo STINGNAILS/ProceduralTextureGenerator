@@ -104,5 +104,8 @@ class FunctionGraph : public RenderableObject
 
 	void SaveToFile(LPSTR fileName);
 	void LoadFromFile(LPSTR fileName);
+	
+	void SaveMaterialTexturesToFiles(LPCWSTR baseColorFileName, LPCWSTR metallicFileName, LPCWSTR roughnessFileName, LPCWSTR normalFileName, int formatIndex);
+	void SaveTrackedTextureToFile(LPCWSTR fileName, int formatIndex);
 };
 

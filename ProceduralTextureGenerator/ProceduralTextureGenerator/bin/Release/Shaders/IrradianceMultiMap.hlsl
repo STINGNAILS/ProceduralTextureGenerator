@@ -127,7 +127,8 @@ float4 PS(VertexOut vertexOut) : SV_Target
 {
 	int samplesNum = 2048;
 	float3 r = Direction(faceIndex, vertexOut.uv);
-	
+
+	float weight = 0.0f;
 	float3 color = float3(0.0f, 0.0f, 0.0f);
 	for(int i = 0; i < samplesNum; i++)
 	{
@@ -141,7 +142,8 @@ float4 PS(VertexOut vertexOut) : SV_Target
 		float _1dotnl5 = _1dotnl2 * _1dotnl2 * _1dotnl1;
 	
 		color += environmentMap.SampleLevel(anisotropicWrapSampler, l, 0).rgb * LinearToSRGB(0.1159f * dotnl);
+		weight += dotnl;
 	}
 	
-	return float4(color / samplesNum, 1.0f);
+	return float4(color / weight, 1.0f);
 }

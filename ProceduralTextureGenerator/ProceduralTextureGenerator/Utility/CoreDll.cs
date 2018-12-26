@@ -141,6 +141,9 @@ namespace ProceduralTextureGenerator
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewScope")]
 		public static extern void GraphViewScope();
 
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewSaveMaterialTexturesToFiles")]
+		public static extern void GraphViewSaveMaterialTexturesToFiles([MarshalAs(UnmanagedType.LPWStr)] string baseColorFileName, [MarshalAs(UnmanagedType.LPWStr)] string metallicFileName, [MarshalAs(UnmanagedType.LPWStr)] string roughnessFileName, [MarshalAs(UnmanagedType.LPWStr)] string normalFileName, int formatIndex);
+
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GraphViewProcess")]
 		public static extern void GraphViewProcess();
 
@@ -149,6 +152,9 @@ namespace ProceduralTextureGenerator
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextureViewScope")]
 		public static extern void TextureViewScope();
+
+		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextureViewSaveTrackedTextureToFile")]
+		public static extern void TextureViewSaveTrackedTextureToFile([MarshalAs(UnmanagedType.LPWStr)] string fileName, int formatIndex);
 
 		[DllImport("ProceduralTextureGeneratorCore.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ResetFunctionGraph")]
 		public static extern void ResetFunctionGraph();

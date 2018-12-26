@@ -149,6 +149,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\SaveMaterialDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Brushes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -223,6 +227,9 @@
     </Compile>
     <Compile Include="Controls\HoveredPortName.xaml.cs">
       <DependentUpon>HoveredPortName.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SaveMaterialDialog.xaml.cs">
+      <DependentUpon>SaveMaterialDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\CoreDll.cs" />
     <Compile Include="MainWindow.xaml.cs">

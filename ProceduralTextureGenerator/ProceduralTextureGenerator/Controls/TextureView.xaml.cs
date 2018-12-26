@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace ProceduralTextureGenerator
 {
@@ -43,6 +44,26 @@ namespace ProceduralTextureGenerator
 		private void ScopeTexture(object sender, RoutedEventArgs e)
 		{
 			CoreDll.TextureViewScope();
+		}
+
+
+		private void SaveTexture(object sender, RoutedEventArgs e)
+		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog()
+			{
+				Filter = "JPEG (*.jpg)|*.jpg|Portable Network Graphics (*png)|*.png|Bitmap (*.bmp)|*.bmp|DirectDraw Surface (*.dds)|*.dds"
+			};
+
+			if(saveFileDialog.ShowDialog() == true)
+			{
+				CoreDll.TextureViewSaveTrackedTextureToFile(saveFileDialog.FileName, saveFileDialog.FilterIndex);
+			}
+		}
+
+
+		private void OnMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			Focus();
 		}
 	}
 }

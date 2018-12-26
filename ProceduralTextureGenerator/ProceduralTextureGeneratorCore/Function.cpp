@@ -207,6 +207,14 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return SlopeBlur(inputTexturePtr, slopeTexturePtr, resolution, bpc, intensity, samplesNum);
 		}
+		case LINEAR_GRADIENT:
+		{
+			TextureResolution resolution = (TextureResolution) intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel) intParameters[1];
+			float angle = floatParameters[0];
+
+			return LinearGradient(resolution, bpc, angle);
+		}
 		default:
 		{
 			return nullptr;
@@ -350,6 +358,12 @@ vector<InputSlotDescriptor> FunctionInputSlotDescriptors(int functionIndex)
 
 			return inputSlotDescriptors;
 		}
+		case LINEAR_GRADIENT:
+		{
+			vector<InputSlotDescriptor> inputSlotDescriptors(0);
+
+			return inputSlotDescriptors;
+		}
 		default:
 		{
 			vector<InputSlotDescriptor> inputSlotDescriptors(0);
@@ -423,6 +437,10 @@ TextureType FunctionOutputSlotTextureType(int functionIndex)
 		case SLOPE_BLUR:
 		{
 			return COLOR;
+		}
+		case LINEAR_GRADIENT:
+		{
+			return GRAYSCALE;
 		}
 		default:
 		{
@@ -604,6 +622,14 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
+		case LINEAR_GRADIENT:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
 		default:
 		{
 			vector<int> intParameters(2);
@@ -759,6 +785,13 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 		{
 			vector<float> floatParameters(1);
 			floatParameters[0] = 8.0f;
+
+			return floatParameters;
+		}
+		case LINEAR_GRADIENT:
+		{
+			vector<float> floatParameters(1);
+			floatParameters[0] = 0.0f;
 
 			return floatParameters;
 		}

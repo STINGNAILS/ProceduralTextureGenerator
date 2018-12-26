@@ -53,18 +53,21 @@ namespace ProceduralTextureGenerator
 			redColorTextBox.GotKeyboardFocus += SelectText;
 			redColorTextBox.MouseDoubleClick += SelectText;
 			redColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			redColorTextBox.KeyDown += OnEnterDown;
 
 			greenColorTextBox.Text = g.ToString("F4").Replace(",", ".");
 			greenColorTextBox.LostFocus += FocusLostGreen;
 			greenColorTextBox.GotKeyboardFocus += SelectText;
 			greenColorTextBox.MouseDoubleClick += SelectText;
 			greenColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			greenColorTextBox.KeyDown += OnEnterDown;
 
 			blueColorTextBox.Text = b.ToString("F4").Replace(",", ".");
 			blueColorTextBox.LostFocus += FocusLostBlue;
 			blueColorTextBox.GotKeyboardFocus += SelectText;
 			blueColorTextBox.MouseDoubleClick += SelectText;
 			blueColorTextBox.PreviewMouseLeftButtonDown += IgnoreMouseButton;
+			blueColorTextBox.KeyDown += OnEnterDown;
 
 			colorRect.Fill = new SolidColorBrush(Color.FromArgb((byte)255, (byte)((int)(r * 255)), (byte)((int)(g * 255)), (byte)((int)(b * 255))));
 		}
@@ -163,6 +166,15 @@ namespace ProceduralTextureGenerator
 
 			e.Handled = true;
 			textBox.Focus();
+		}
+
+
+		private void OnEnterDown(object sender, KeyEventArgs e)
+		{
+			if(e.Key == Key.Enter)
+			{
+				ParentHelper.GetParentParameterPanel(this)?.Focus();
+			}
 		}
 	}
 }

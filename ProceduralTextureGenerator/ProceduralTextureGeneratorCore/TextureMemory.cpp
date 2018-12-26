@@ -16,8 +16,8 @@ TextureMemory::TextureMemory(TextureType textureType_, TextureResolution texture
 			{
 				case GRAYSCALE:
 				{
-					textureMemory = new XMUBYTEN2[textureResolution * textureResolution];
-					ZeroMemory(textureMemory, textureResolution * textureResolution * sizeof(XMUBYTEN2));
+					textureMemory = new uint8_t[textureResolution * textureResolution];
+					ZeroMemory(textureMemory, textureResolution * textureResolution * sizeof(uint8_t));
 					break;
 				}
 				case COLOR:
@@ -35,8 +35,8 @@ TextureMemory::TextureMemory(TextureType textureType_, TextureResolution texture
 			{
 				case GRAYSCALE:
 				{
-					textureMemory = new XMUSHORTN2[textureResolution * textureResolution];
-					ZeroMemory(textureMemory, textureResolution * textureResolution * sizeof(XMUSHORTN2));
+					textureMemory = new uint16_t[textureResolution * textureResolution];
+					ZeroMemory(textureMemory, textureResolution * textureResolution * sizeof(uint16_t));
 					break;
 				}
 				case COLOR:
@@ -54,8 +54,8 @@ TextureMemory::TextureMemory(TextureType textureType_, TextureResolution texture
 			{
 				case GRAYSCALE:
 				{
-					textureMemory = new XMFLOAT2[textureResolution * textureResolution];
-					ZeroMemory(textureMemory, textureResolution * textureResolution * sizeof(XMFLOAT2));
+					textureMemory = new float[textureResolution * textureResolution];
+					ZeroMemory(textureMemory, textureResolution * textureResolution * sizeof(float));
 					break;
 				}
 				case COLOR:
@@ -77,14 +77,16 @@ TextureMemory::~TextureMemory()
 }
 
 
-inline XMFLOAT2 TextureMemory::SampleGrayscale8(UINT u, UINT v, TextureResolution sampleResolution)
+inline float TextureMemory::SampleGrayscale8(UINT u, UINT v, TextureResolution sampleResolution)
 {
 	if(sampleResolution == textureResolution)
 	{
-		XMFLOAT2 result;
-		XMStoreFloat2(&result, XMLoadUByteN2(&((XMUBYTEN2*) textureMemory)[u * textureResolution + v]));
+		XMUBYTEN2 value = XMUBYTEN2(((uint8_t*) textureMemory)[u * textureResolution + v], 0);
 
-		return result;
+		XMFLOAT2 result;
+		XMStoreFloat2(&result, XMLoadUByteN2(&value));
+
+		return result.x;
 	}
 	else if(sampleResolution < textureResolution)
 	{
@@ -99,7 +101,9 @@ inline XMFLOAT2 TextureMemory::SampleGrayscale8(UINT u, UINT v, TextureResolutio
 		{
 			for(UINT j = 0; j < k; j++)
 			{
-				sumV = XMVectorAdd(sumV, XMLoadUByteN2(&((XMUBYTEN2*) textureMemory)[(ku + i) * textureResolution + (kv + j)]));
+				XMUBYTEN2 value = XMUBYTEN2(((uint8_t*) textureMemory)[(ku + i) * textureResolution + (kv + j)], 0);
+
+				sumV = XMVectorAdd(sumV, XMLoadUByteN2(&value));
 			}
 		}
 
@@ -109,28 +113,32 @@ inline XMFLOAT2 TextureMemory::SampleGrayscale8(UINT u, UINT v, TextureResolutio
 		XMFLOAT2 sum;
 		XMStoreFloat2(&sum, sumV);
 
-		return sum;
+		return sum.x;
 	}
 	else
 	{
 		UINT k = sampleResolution / textureResolution;
 
-		XMFLOAT2 result;
-		XMStoreFloat2(&result, XMLoadUByteN2(&((XMUBYTEN2*) textureMemory)[(u / k) * textureResolution + (v / k)]));
+		XMUBYTEN2 value = XMUBYTEN2(((uint8_t*) textureMemory)[(u / k) * textureResolution + (v / k)], 0);
 
-		return result;
+		XMFLOAT2 result;
+		XMStoreFloat2(&result, XMLoadUByteN2(&value));
+		
+		return result.x;
 	}
 }
 
 
-inline XMFLOAT2 TextureMemory::SampleGrayscale16(UINT u, UINT v, TextureResolution sampleResolution)
+inline float TextureMemory::SampleGrayscale16(UINT u, UINT v, TextureResolution sampleResolution)
 {
 	if(sampleResolution == textureResolution)
 	{
-		XMFLOAT2 result;
-		XMStoreFloat2(&result, XMLoadUShortN2(&((XMUSHORTN2*) textureMemory)[u * textureResolution + v]));
+		XMUSHORTN2 value = XMUSHORTN2(((uint16_t*) textureMemory)[u * textureResolution + v], 0);
 
-		return result;
+		XMFLOAT2 result;
+		XMStoreFloat2(&result, XMLoadUShortN2(&value));
+
+		return result.x;
 	}
 	else if(sampleResolution < textureResolution)
 	{
@@ -145,7 +153,9 @@ inline XMFLOAT2 TextureMemory::SampleGrayscale16(UINT u, UINT v, TextureResoluti
 		{
 			for(UINT j = 0; j < k; j++)
 			{
-				sumV = XMVectorAdd(sumV, XMLoadUShortN2(&((XMUSHORTN2*) textureMemory)[(ku + i) * textureResolution + (kv + j)]));
+				XMUSHORTN2 value = XMUSHORTN2(((uint16_t*) textureMemory)[(ku + i) * textureResolution + (kv + j)], 0);
+
+				sumV = XMVectorAdd(sumV, XMLoadUShortN2(&value));
 			}
 		}
 
@@ -155,25 +165,27 @@ inline XMFLOAT2 TextureMemory::SampleGrayscale16(UINT u, UINT v, TextureResoluti
 		XMFLOAT2 sum;
 		XMStoreFloat2(&sum, sumV);
 
-		return sum;
+		return sum.x;
 	}
 	else
 	{
 		UINT k = sampleResolution / textureResolution;
 
-		XMFLOAT2 result;
-		XMStoreFloat2(&result, XMLoadUShortN2(&((XMUSHORTN2*) textureMemory)[(u / k) * textureResolution + (v / k)]));
+		XMUSHORTN2 value = XMUSHORTN2(((uint16_t*) textureMemory)[(u / k) * textureResolution + (v / k)], 0);
 
-		return result;
+		XMFLOAT2 result;
+		XMStoreFloat2(&result, XMLoadUShortN2(&value));
+
+		return result.x;
 	}
 }
 
 
-inline XMFLOAT2 TextureMemory::SampleGrayscale32(UINT u, UINT v, TextureResolution sampleResolution)
+inline float TextureMemory::SampleGrayscale32(UINT u, UINT v, TextureResolution sampleResolution)
 {
 	if(sampleResolution == textureResolution)
 	{
-		return ((XMFLOAT2*) textureMemory)[u * textureResolution + v];
+		return ((float*) textureMemory)[u * textureResolution + v];
 	}
 	else if(sampleResolution < textureResolution)
 	{
@@ -182,28 +194,24 @@ inline XMFLOAT2 TextureMemory::SampleGrayscale32(UINT u, UINT v, TextureResoluti
 		UINT ku = k * u;
 		UINT kv = k * v;
 
-		XMVECTOR sumV = XMVectorZero();
+		float sum = 0.0f;
 
 		for(UINT i = 0; i < k; i++)
 		{
 			for(UINT j = 0; j < k; j++)
 			{
-				sumV = XMVectorAdd(sumV, XMLoadFloat2(&((XMFLOAT2*) textureMemory)[(ku + i) * textureResolution + (kv + j)]));
+				sum += ((float*) textureMemory)[(ku + i) * textureResolution + (kv + j)];
 			}
 		}
 
-		XMVECTOR divisorV = XMVectorReplicate(k * k);
-		sumV = XMVectorDivide(sumV, divisorV);
-
-		XMFLOAT2 sum;
-		XMStoreFloat2(&sum, sumV);
+		sum /= k * k;
 
 		return sum;
 	}
 	else
 	{
 		UINT k = sampleResolution / textureResolution;
-		return ((XMFLOAT2*) textureMemory)[(u / k) * textureResolution + (v / k)];
+		return ((float*) textureMemory)[(u / k) * textureResolution + (v / k)];
 	}
 }
 
@@ -363,7 +371,7 @@ void *TextureMemory::GetMemoryPtr()
 }
 
 
-XMFLOAT2 TextureMemory::SampleGrayscale(UINT u, UINT v, TextureResolution sampleResolution)
+float TextureMemory::SampleGrayscale(UINT u, UINT v, TextureResolution sampleResolution)
 {
 	switch(textureType)
 	{
@@ -408,7 +416,7 @@ XMFLOAT2 TextureMemory::SampleGrayscale(UINT u, UINT v, TextureResolution sample
 				}
 			}
 
-			return XMFLOAT2((temp.x + temp.y + temp.z) / 3.0f, temp.w);
+			return (temp.x + temp.y + temp.z) / 3.0f;
 		}
 	}
 }
@@ -420,7 +428,7 @@ XMFLOAT4 TextureMemory::SampleColor(UINT u, UINT v, TextureResolution sampleReso
 	{
 		case GRAYSCALE:
 		{
-			XMFLOAT2 temp;
+			float temp;
 
 			switch(bitsPerChannel)
 			{
@@ -441,7 +449,7 @@ XMFLOAT4 TextureMemory::SampleColor(UINT u, UINT v, TextureResolution sampleReso
 				}
 			}
 
-			return XMFLOAT4(temp.x, temp.x, temp.x, temp.y);
+			return XMFLOAT4(temp, temp, temp, 1.0f);
 		}
 		case COLOR:
 		{
@@ -465,30 +473,34 @@ XMFLOAT4 TextureMemory::SampleColor(UINT u, UINT v, TextureResolution sampleReso
 }
 
 
-void TextureMemory::SetValue(UINT u, UINT v, XMFLOAT2 value)
+void TextureMemory::SetValue(UINT u, UINT v, float value)
 {
 	switch(textureType)
 	{
 		case GRAYSCALE:
 		{
-			XMFLOAT2 value_ = XMFLOAT2(value.x, 1.0f);
+			XMFLOAT2 value_ = XMFLOAT2(value, 1.0f);
 			XMVECTOR tempV = XMVectorSaturate(XMLoadFloat2(&value_));
 
 			switch(bitsPerChannel)
 			{
 				case BPC8:
 				{
-					XMStoreUByteN2(&((XMUBYTEN2*) textureMemory)[u * textureResolution + v], tempV);
+					XMUBYTEN2 result;
+					XMStoreUByteN2(&result, tempV);
+					((uint8_t*) textureMemory)[u * textureResolution + v] = result.x;
 					break;
 				}
 				case BPC16:
 				{
-					XMStoreUShortN2(&((XMUSHORTN2*) textureMemory)[u * textureResolution + v], tempV);
+					XMUSHORTN2 result;
+					XMStoreUShortN2(&result, tempV);
+					((uint16_t*) textureMemory)[u * textureResolution + v] = result.x;
 					break;
 				}
 				case BPC32:
 				{
-					XMStoreFloat2(&((XMFLOAT2*) textureMemory)[u * textureResolution + v], tempV);
+					((float*) textureMemory)[u * textureResolution + v] = min(max(value, 0.0f), 1.0f);
 					break;
 				}
 			}
@@ -496,7 +508,7 @@ void TextureMemory::SetValue(UINT u, UINT v, XMFLOAT2 value)
 		}
 		case COLOR:
 		{
-			XMFLOAT4 value_ = XMFLOAT4(value.x, value.x, value.x, 1.0f);
+			XMFLOAT4 value_ = XMFLOAT4(value, value, value, 1.0f);
 			XMVECTOR tempV = XMVectorSaturate(XMLoadFloat4(&value_));
 
 			switch(bitsPerChannel)
@@ -536,17 +548,21 @@ void TextureMemory::SetValue(UINT u, UINT v, XMFLOAT4 value)
 			{
 				case BPC8:
 				{
-					XMStoreUByteN2(&((XMUBYTEN2*) textureMemory)[u * textureResolution + v], tempV);
+					XMUBYTEN2 result;
+					XMStoreUByteN2(&result, tempV);
+					((uint8_t*) textureMemory)[u * textureResolution + v] = result.x;
 					break;
 				}
 				case BPC16:
 				{
-					XMStoreUShortN2(&((XMUSHORTN2*) textureMemory)[u * textureResolution + v], tempV);
+					XMUSHORTN2 result;
+					XMStoreUShortN2(&result, tempV);
+					((uint16_t*) textureMemory)[u * textureResolution + v] = result.x;
 					break;
 				}
 				case BPC32:
 				{
-					XMStoreFloat2(&((XMFLOAT2*) textureMemory)[u * textureResolution + v], tempV);
+					((float*) textureMemory)[u * textureResolution + v] = min(max(value_.x, 0.0f), 1.0f);
 					break;
 				}
 			}

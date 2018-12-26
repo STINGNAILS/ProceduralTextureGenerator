@@ -1,43 +1,23 @@
 ﻿  stdafx.cpp
-  AtomicFunctions.cpp
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(908): warning C4244: инициализация: преобразование "long double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(929): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(947): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(971): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(994): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1034): warning C4244: аргумент: преобразование "long double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1035): warning C4244: инициализация: преобразование "long double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1040): warning C4244: аргумент: преобразование "long double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1046): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1082): warning C4244: аргумент: преобразование "long double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1088): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1133): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1164): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1319): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1367): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1421): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1422): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1424): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1476): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1477): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\atomicfunctions.cpp(1479): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
   BackgroundGrid.cpp
+  BaseFunctions.cpp
   BRDFLUTRenderer.cpp
   Camera.cpp
   Camera2D.cpp
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\camera2d.cpp(95): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
   Camera3D.cpp
+  ColorFunctions.cpp
   ConstantBuffer.cpp
   DirectXDevice.cpp
   DirectXObjectPool.cpp
   DirectXRenderer.cpp
   DirectXTexture.cpp
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(191): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(264): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(337): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(410): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(483): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(556): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(193): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(266): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(339): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(412): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(485): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxtexture.cpp(558): warning C4018: <: несоответствие типов со знаком и без знака
   DirectXView.cpp
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxview.cpp(135): warning C4244: return: преобразование "FLOAT" в "UINT", возможна потеря данных
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\directxview.cpp(141): warning C4244: return: преобразование "FLOAT" в "UINT", возможна потеря данных
@@ -48,93 +28,114 @@ d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturege
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\environment.cpp(111): warning C4244: инициализация: преобразование "long double" в "float", возможна потеря данных
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\environment.cpp(112): warning C4244: инициализация: преобразование "long double" в "float", возможна потеря данных
   EnvironmentTaskQueue.cpp
+  FilterFunctions.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(760): warning C4244: инициализация: преобразование "long double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(781): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(799): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(823): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(846): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(886): warning C4244: аргумент: преобразование "long double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(887): warning C4244: инициализация: преобразование "long double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(892): warning C4244: аргумент: преобразование "long double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(898): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(934): warning C4244: аргумент: преобразование "long double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(940): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(985): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1016): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1109): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1157): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1211): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1212): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1214): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1266): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1267): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\filterfunctions.cpp(1269): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
   Function.cpp
   FunctionGraph.cpp
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(85): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(102): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(229): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(420): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(433): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(514): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(576): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(582): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(624): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(635): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(657): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(663): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(681): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(728): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(705): warning C4101: p0: неиспользованная локальная переменная
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(706): warning C4101: p1: неиспользованная локальная переменная
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(786): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(800): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(80): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(97): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(224): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(415): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(428): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(509): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(571): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(577): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(619): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(630): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(652): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(658): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(676): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(723): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(700): warning C4101: p0: неиспользованная локальная переменная
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(701): warning C4101: p1: неиспользованная локальная переменная
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(796): warning C4018: <: несоответствие типов со знаком и без знака
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.cpp(844): warning C4018: <: несоответствие типов со знаком и без знака
   FunctionLink.cpp
-  FunctionNode.cpp
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(111): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(149): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(162): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(176): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(186): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(208): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(227): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(245): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(274): warning C4018: <: несоответствие типов со знаком и без знака
-  GeometryHelper.cpp
   Создание кода...
   Компиляция...
+  FunctionNode.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(112): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(150): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(168): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(182): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(192): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(214): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(233): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(251): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functionnode.cpp(280): warning C4018: <: несоответствие типов со знаком и без знака
+  GeometryHelper.cpp
   IrradianceMultiMapRenderer.cpp
   IrradianceRoughMapRenderer.cpp
   IrradianceSmoothMapRenderer.cpp
   MathHelper.cpp
   NoiseFunctions.cpp
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(25): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(27): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(129): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(170): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(184): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(216): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(230): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(262): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(276): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(318): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(337): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(370): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(389): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(422): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(441): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(483): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(502): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(535): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(554): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(587): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(606): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(648): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(706): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(799): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(836): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(840): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(842): warning C4244: =: преобразование "double" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(875): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(923): warning C4018: <: несоответствие типов со знаком и без знака
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(971): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(29): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(137): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(178): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(192): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(224): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(238): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(270): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(284): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(326): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(345): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(378): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(397): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(430): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(449): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(491): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(510): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(543): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(562): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(595): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(614): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(656): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(714): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(807): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(844): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(848): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(850): warning C4244: =: преобразование "double" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(883): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(931): warning C4018: <: несоответствие типов со знаком и без знака
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\noisefunctions.cpp(979): warning C4018: <: несоответствие типов со знаком и без знака
   NormalFunctions.cpp
   Port.cpp
   PatternFunctions.cpp
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\patternfunctions.cpp(100): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
   PixelShader.cpp
   PolygonMesh.cpp
   Polyline.cpp
   ProceduralTextureGeneratorCore.cpp
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(129): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(219): warning C4190: для "ObjectViewGetDirectionalLight" задана С-компоновка, но возвращаемый тип UDT "DirectionalLight" несовместим с языком Си
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(225): warning C4190: для "ObjectViewGetDirectionalLight" задана С-компоновка, но возвращаемый тип UDT "DirectionalLight" несовместим с языком Си
   d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\environment.h(15): note:  см. объявление "DirectionalLight"
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(225): warning C4190: для "ObjectViewGetSphereLight" задана С-компоновка, но возвращаемый тип UDT "SphereLight" несовместим с языком Си
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(231): warning C4190: для "ObjectViewGetSphereLight" задана С-компоновка, но возвращаемый тип UDT "SphereLight" несовместим с языком Си
   d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\environment.h(24): note:  см. объявление "SphereLight"
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(282): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(290): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(298): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(306): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(335): warning C4190: для "GraphViewGetHoveredPointDescriptor" задана С-компоновка, но возвращаемый тип UDT "HoveredPortDescriptor" несовместим с языком Си
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(288): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(296): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(304): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(312): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\proceduraltexturegeneratorcore.cpp(323): warning C4190: для "GraphViewGetHoveredPointDescriptor" задана С-компоновка, но возвращаемый тип UDT "HoveredPortDescriptor" несовместим с языком Си
   d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\functiongraph.h(11): note:  см. объявление "HoveredPortDescriptor"
   RadianceMapRenderer.cpp
   RasterizerState.cpp
@@ -148,23 +149,22 @@ d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturege
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\resourceinitializer.cpp(298): warning C4244: инициализация: преобразование "long double" в "float", возможна потеря данных
   SamplerState.cpp
   Scene.cpp
-  ShaderCompiler.cpp
-  TextureFrame.cpp
   Создание кода...
   Компиляция...
+  ShaderCompiler.cpp
+  TextureFrame.cpp
   TextureMemory.cpp
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(106): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(152): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(195): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(237): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(283): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(326): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(110): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(162): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(245): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(291): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(334): warning C4244: аргумент: преобразование "UINT" в "float", возможна потеря данных
   TextureQuad.cpp
   UtilityFunctions.cpp
   VertexShader.cpp
   Создание кода...
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(414): warning C4715: TextureMemory::SampleGrayscale: значение возвращается не при всех путях выполнения
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(465): warning C4715: TextureMemory::SampleColor: значение возвращается не при всех путях выполнения
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(473): warning C4715: TextureMemory::SampleColor: значение возвращается не при всех путях выполнения
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(422): warning C4715: TextureMemory::SampleGrayscale: значение возвращается не при всех путях выполнения
   dllmain.cpp
      Создается библиотека D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Debug\ProceduralTextureGeneratorCore.lib и объект D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Debug\ProceduralTextureGeneratorCore.exp
   ProceduralTextureGeneratorCore.vcxproj -> D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Debug\ProceduralTextureGeneratorCore.dll

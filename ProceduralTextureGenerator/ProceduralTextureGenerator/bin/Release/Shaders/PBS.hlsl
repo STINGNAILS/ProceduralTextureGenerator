@@ -110,45 +110,6 @@ float3 LinearToSRGB(float3 linearColor)
 }
 
 
-//float3 LambertBRDF(float4 diffuse)
-//{
-//	return diffuse / PI;
-//}
-//
-//
-//float3 OrenNayarBRDF(float3 diffuse, float roughness, float dotnl, float dotnv, float dotvh)
-//{
-//	const float s2 = pow(roughness, 4);
-//	const float dotlv = 2.0f * dotvh * dotvh - 1.0f;
-//	const float cosphi = dotlv - dotnv * dotnl;
-//	const float C1 = 1.0f - 0.5f * s2 / (s2 + 0.33f);
-//	const float C2 = 0.45f * s2 / (s2 + 0.09f) * cosphi * (cosphi > 0 ? rcp(max(dotnl, dotnv)) : 1.0f);
-//
-//	return diffuse / PI * (C1 + C2);
-//}
-//
-//
-//float3 CookTorranceBRDF(float3 f0, float roughness, float dotnl, float dotnv, float dotnh, float dotvh)
-//{
-//	if (dotnl > 0.0f)
-//	{
-//		const float alpha2 = pow(roughness, 4);
-//		const float D = alpha2 / (PI * pow((dotnh * dotnh * (alpha2 - 1) + 1), 2));
-//
-//		const float3 F = f0 + (float3(1.0f, 1.0f, 1.0f) - f0) * exp2((-5.55473 * dotvh - 6.98316) * dotvh);
-//
-//		const float k = pow(roughness + 1, 2) / 8;
-//		const float G1l = 1 / (dotnl * (1 - k) + k);
-//		const float G1v = 1 / (dotnv * (1 - k) + k);
-//		const float G = G1l * G1v;
-//
-//		return D * F * G / 4;
-//	}
-//
-//	return float3(0.0f, 0.0f, 0.0f);
-//}
-
-
 float3 SpecularBRDF(float3 f0, float alpha, float dotnl, float dotnv, float dotnh, float dotvh)
 {
 	float _1dotvh1 = 1.0f - dotvh;
