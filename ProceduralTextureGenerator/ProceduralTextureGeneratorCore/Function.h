@@ -30,6 +30,7 @@
 #define WARP 18
 #define SLOPE_BLUR 19
 #define LINEAR_GRADIENT 20
+#define DIRECTIONAL_WARP 21
 
 
 struct InputSlotDescriptor

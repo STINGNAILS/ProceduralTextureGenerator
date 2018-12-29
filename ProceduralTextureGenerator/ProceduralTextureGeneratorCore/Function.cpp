@@ -215,6 +215,18 @@ TextureMemoryPtr Function(int functionIndex, vector<TextureMemoryPtr> inputTextu
 
 			return LinearGradient(resolution, bpc, angle);
 		}
+		case DIRECTIONAL_WARP:
+		{
+			TextureMemoryPtr inputTexturePtr = inputTexturePtrs[0];
+			TextureMemoryPtr intensityTexturePtr = inputTexturePtrs[1];
+
+			TextureResolution resolution = (TextureResolution)intParameters[0];
+			BitsPerChannel bpc = (BitsPerChannel)intParameters[1];
+			float intensity = floatParameters[0];
+			float angle = floatParameters[1];
+
+			return DirectionalWarp(inputTexturePtr, intensityTexturePtr, resolution, bpc, intensity, angle);
+		}
 		default:
 		{
 			return nullptr;
@@ -364,6 +376,14 @@ vector<InputSlotDescriptor> FunctionInputSlotDescriptors(int functionIndex)
 
 			return inputSlotDescriptors;
 		}
+		case DIRECTIONAL_WARP:
+		{
+			vector<InputSlotDescriptor> inputSlotDescriptors(2);
+			inputSlotDescriptors[0] = { COLOR, true };
+			inputSlotDescriptors[1] = { GRAYSCALE, true };
+
+			return inputSlotDescriptors;
+		}
 		default:
 		{
 			vector<InputSlotDescriptor> inputSlotDescriptors(0);
@@ -441,6 +461,10 @@ TextureType FunctionOutputSlotTextureType(int functionIndex)
 		case LINEAR_GRADIENT:
 		{
 			return GRAYSCALE;
+		}
+		case DIRECTIONAL_WARP:
+		{
+			return COLOR;
 		}
 		default:
 		{
@@ -630,6 +654,14 @@ vector<int> FunctionIntParametersBase(int functionIndex)
 
 			return intParameters;
 		}
+		case DIRECTIONAL_WARP:
+		{
+			vector<int> intParameters(2);
+			intParameters[0] = 1024;
+			intParameters[1] = 8;
+
+			return intParameters;
+		}
 		default:
 		{
 			vector<int> intParameters(2);
@@ -792,6 +824,14 @@ vector<float> FunctionFloatParametersBase(int functionIndex)
 		{
 			vector<float> floatParameters(1);
 			floatParameters[0] = 0.0f;
+
+			return floatParameters;
+		}
+		case DIRECTIONAL_WARP:
+		{
+			vector<float> floatParameters(2);
+			floatParameters[0] = 1.0f;
+			floatParameters[1] = 0.0f;
 
 			return floatParameters;
 		}

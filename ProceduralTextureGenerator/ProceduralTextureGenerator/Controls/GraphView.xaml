@@ -49,6 +49,7 @@
                     <MenuItem Header="Warp" Style="{StaticResource ContextMenuItemStyle}" Click="AddWarpNode"></MenuItem>
                     <MenuItem Header="Slope Blur" Style="{StaticResource ContextMenuItemStyle}" Click="AddSlopeBlurNode"></MenuItem>
                     <MenuItem Header="Linear Gradient" Style="{StaticResource ContextMenuItemStyle}" Click="AddLinearGradientNode"></MenuItem>
+                    <MenuItem Header="Directional Warp" Style="{StaticResource ContextMenuItemStyle}" Click="AddDirectionalWarpNode"></MenuItem>
                 </ContextMenu>
             </ContentControl.ContextMenu>
         </ContentControl>

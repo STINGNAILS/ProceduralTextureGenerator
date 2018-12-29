@@ -1436,3 +1436,86 @@ TextureMemoryPtr SlopeBlur(TextureMemoryPtr inputTexturePtr, TextureMemoryPtr sl
 
 	return blurredTexturePtr;
 }
+
+
+TextureMemoryPtr DirectionalWarp(TextureMemoryPtr inputTexturePtr, TextureMemoryPtr intensityTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity, float angle)
+{
+	if (inputTexturePtr.get() == nullptr || intensityTexturePtr.get() == nullptr)
+	{
+		return UniformColor(resolution, bitsPerChannel, COLOR, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	TextureType textureType = inputTexturePtr->GetTextureType();
+
+	TextureMemoryPtr warpedTexturePtr = make_shared<TextureMemory>(textureType, resolution, bitsPerChannel);
+
+	float baseSampleLength = intensity / 256.0f;
+	float duBase = baseSampleLength * cos(angle * _Pi / 180.0f);
+	float dvBase = baseSampleLength * sin(angle * _Pi / 180.0f);
+	
+	switch (textureType)
+	{
+		case GRAYSCALE:
+		{
+			#pragma omp parallel for
+			for (int i = 0; i < resolution; i++)
+			{
+				float u = (float)i / (resolution - 1);
+				for (int j = 0; j < resolution; j++)
+				{
+					float v = (float)j / (resolution - 1);
+
+					float localIntensity = intensityTexturePtr->SampleGrayscale(i, j, resolution);
+
+					float uWarped = u + duBase * localIntensity;
+					float vWarped = v + dvBase * localIntensity;
+
+					float uWarpedNormalized = uWarped - floor(uWarped);
+					float vWarpedNormalized = vWarped - floor(vWarped);
+
+					int iWarped = (int)floor(uWarpedNormalized * (resolution - 1));
+					int jWarped = (int)floor(vWarpedNormalized * (resolution - 1));
+
+					float value = inputTexturePtr->SampleGrayscale(iWarped, jWarped, resolution);
+
+					warpedTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			break;
+		}
+		case COLOR:
+		{
+			#pragma omp parallel for
+			for (int i = 0; i < resolution; i++)
+			{
+				float u = (float)i / (resolution - 1);
+				for (int j = 0; j < resolution; j++)
+				{
+					float v = (float)j / (resolution - 1);
+
+					float localIntensity = intensityTexturePtr->SampleGrayscale(i, j, resolution);
+
+					float uWarped = u + duBase * localIntensity;
+					float vWarped = v + dvBase * localIntensity;
+
+					float uWarpedNormalized = uWarped - floor(uWarped);
+					float vWarpedNormalized = vWarped - floor(vWarped);
+
+					int iWarped = (int)floor(uWarpedNormalized * (resolution - 1));
+					int jWarped = (int)floor(vWarpedNormalized * (resolution - 1));
+
+					XMVECTOR valueV = XMLoadFloat4(&inputTexturePtr->SampleColor(iWarped, jWarped, resolution));
+
+					XMFLOAT4 value;
+					XMStoreFloat4(&value, valueV);
+					warpedTexturePtr->SetValue(i, j, value);
+				}
+			}
+
+			break;
+		}
+	}
+
+	return warpedTexturePtr;
+}

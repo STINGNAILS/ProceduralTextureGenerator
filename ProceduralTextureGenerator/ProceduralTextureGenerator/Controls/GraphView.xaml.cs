@@ -222,10 +222,20 @@ namespace ProceduralTextureGenerator
 			MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
 			mainWindow?.OnFunctionGraphChanged();
 			mainWindow?.InvalidateSaving();
-		}
+        }
 
 
-		private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        private void AddDirectionalWarpNode(object sender, RoutedEventArgs e)
+        {
+            CoreDll.GraphViewAddNode(21, (float)(rmbClickCoords.X / ActualWidth), (float)(1.0 - rmbClickCoords.Y / ActualHeight));
+
+            MainWindow mainWindow = ParentHelper.GetParentMainWindow(this);
+            mainWindow?.OnFunctionGraphChanged();
+            mainWindow?.InvalidateSaving();
+        }
+
+
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			Focus();
 

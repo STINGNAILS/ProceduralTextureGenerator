@@ -13,3 +13,4 @@ TextureMemoryPtr DirectionalBlur(TextureMemoryPtr inputTexturePtr, TextureResolu
 TextureMemoryPtr Transform(TextureMemoryPtr inputTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, int tilingMode, float xScale, float yScale, float rotation, float xTranslate, float yTranslate);
 TextureMemoryPtr Warp(TextureMemoryPtr inputTexturePtr, TextureMemoryPtr slopeTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity);
 TextureMemoryPtr SlopeBlur(TextureMemoryPtr inputTexturePtr, TextureMemoryPtr slopeTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity, int samplesNum);
+TextureMemoryPtr DirectionalWarp(TextureMemoryPtr inputTexturePtr, TextureMemoryPtr intensityTexturePtr, TextureResolution resolution, BitsPerChannel bitsPerChannel, float intensity, float angle);
