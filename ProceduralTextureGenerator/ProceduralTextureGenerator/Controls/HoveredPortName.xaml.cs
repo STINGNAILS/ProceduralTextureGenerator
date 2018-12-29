@@ -161,6 +161,25 @@ namespace ProceduralTextureGenerator
 
 					break;
 				}
+				//Directional Warp
+				case 21:
+				{
+					switch(hoveredPortDescriptor.hoveredPortIndex)
+					{
+						case 0:
+						{
+							hoveredPortNameTextBlock.Text = "Input";
+							break;
+						}
+						case 1:
+						{
+							hoveredPortNameTextBlock.Text = "Intensity";
+							break;
+						}
+					}
+
+					break;
+				}
 				default:
 				{
 					break;

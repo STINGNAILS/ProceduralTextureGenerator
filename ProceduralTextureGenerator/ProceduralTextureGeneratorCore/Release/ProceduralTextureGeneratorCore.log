@@ -205,7 +205,7 @@ d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturege
   dllmain.cpp
      Creating library D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.lib and object D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.exp
   Generating code
-d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(422): warning C4715: 'TextureMemory::SampleGrayscale': not all control paths return a value
 d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(473): warning C4715: 'TextureMemory::SampleColor': not all control paths return a value
+d:\git\proceduraltexturegenerator\proceduraltexturegenerator\proceduraltexturegeneratorcore\texturememory.cpp(422): warning C4715: 'TextureMemory::SampleGrayscale': not all control paths return a value
   Finished generating code
   ProceduralTextureGeneratorCore.vcxproj -> D:\Git\ProceduralTextureGenerator\ProceduralTextureGenerator\Release\ProceduralTextureGeneratorCore.dll

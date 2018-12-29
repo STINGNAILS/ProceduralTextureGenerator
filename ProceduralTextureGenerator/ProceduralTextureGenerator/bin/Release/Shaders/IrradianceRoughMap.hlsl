@@ -141,5 +141,5 @@ float4 PS(VertexOut vertexOut) : SV_Target
 		weight += dotnl;
 	}
 
-	return float4(color / weight, 1.0f);
+	return float4(color / samplesNum, 1.0f);
 }
