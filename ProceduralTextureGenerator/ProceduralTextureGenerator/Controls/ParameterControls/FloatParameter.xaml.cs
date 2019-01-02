@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Globalization;
 
 namespace ProceduralTextureGenerator
 {
@@ -53,7 +54,7 @@ namespace ProceduralTextureGenerator
 		private void FocusLost(object sender, RoutedEventArgs e)
 		{
 			float value;
-			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), out value))
+			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), NumberStyles.Any, CultureInfo.InvariantCulture, out value))
 			{
 				value = Math.Min(Math.Max(value, minValue), maxValue);
 
