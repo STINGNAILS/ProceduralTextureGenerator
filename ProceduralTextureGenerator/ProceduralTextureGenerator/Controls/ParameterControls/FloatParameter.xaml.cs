@@ -54,7 +54,7 @@ namespace ProceduralTextureGenerator
 		private void FocusLost(object sender, RoutedEventArgs e)
 		{
 			float value;
-			if(float.TryParse(((TextBox)sender).Text.Replace(".", ","), NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+			if(float.TryParse(((TextBox)sender).Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out value))
 			{
 				value = Math.Min(Math.Max(value, minValue), maxValue);
 
